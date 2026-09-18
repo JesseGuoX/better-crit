@@ -961,11 +961,42 @@ func untrackedFiles() ([]FileChange, error) {
 	return untrackedFilesInDir("")
 }
 
-// untrackedFilesInDir returns untracked files, running from the specified directory.
-// git ls-files returns paths relative to cwd, so dir should be the repo root
-// to get repo-root-relative paths.
+// untrackedFilesInDir returns untracked files, running from the specified
+// directory. Start with status's cache-aware normal mode: it reports standalone
+// files exactly and collapses wholly-untracked directories with a trailing slash.
+// Only those directories require the slower full enumeration.
 func untrackedFilesInDir(dir string) ([]FileChange, error) {
-	cmd := exec.Command("git", "ls-files", "--others", "--exclude-standard")
+	cmd := exec.Command("git", "--no-optional-locks", "status", "--porcelain=v2", "-z", "--untracked-files=normal")
+	if dir != "" {
+		cmd.Dir = dir
+	}
+	out, err := cmd.Output()
+	if err == nil {
+		changes, needsFullScan := parseNormalUntrackedStatus(out)
+		if !needsFullScan {
+			return changes, nil
+		}
+	}
+	return untrackedFilesFullScanInDir(dir)
+}
+
+func parseNormalUntrackedStatus(out []byte) ([]FileChange, bool) {
+	var changes []FileChange
+	for _, record := range bytes.Split(out, []byte{0}) {
+		if !bytes.HasPrefix(record, []byte("? ")) {
+			continue
+		}
+		path := string(record[2:])
+		if strings.HasSuffix(path, "/") {
+			return nil, true
+		}
+		changes = append(changes, FileChange{Path: path, Status: "untracked"})
+	}
+	return changes, false
+}
+
+func untrackedFilesFullScanInDir(dir string) ([]FileChange, error) {
+	cmd := exec.Command("git", "ls-files", "-z", "--others", "--exclude-standard")
 	if dir != "" {
 		cmd.Dir = dir
 	}
@@ -974,11 +1005,10 @@ func untrackedFilesInDir(dir string) ([]FileChange, error) {
 		return nil, fmt.Errorf("ls-files failed: %w", err)
 	}
 	var changes []FileChange
-	for _, line := range strings.Split(strings.TrimSpace(string(out)), "\n") {
-		if line == "" {
-			continue
+	for _, path := range bytes.Split(out, []byte{0}) {
+		if len(path) > 0 {
+			changes = append(changes, FileChange{Path: string(path), Status: "untracked"})
 		}
-		changes = append(changes, FileChange{Path: line, Status: "untracked"})
 	}
 	return changes, nil
 }

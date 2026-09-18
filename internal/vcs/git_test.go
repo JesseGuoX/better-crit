@@ -3,6 +3,7 @@ package vcs
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -50,6 +51,77 @@ func TestDedup(t *testing.T) {
 	if result[0].Status != "modified" {
 		t.Error("should keep first occurrence")
 	}
+}
+
+func TestParseNormalUntrackedStatus(t *testing.T) {
+	t.Run("returns explicit untracked files", func(t *testing.T) {
+		out := []byte("1 .M N... 100644 100644 100644 abc abc tracked.go\x00? root file.txt\x00? line\nbreak.txt\x00")
+		changes, needsFullScan := parseNormalUntrackedStatus(out)
+
+		if needsFullScan {
+			t.Fatal("needsFullScan = true, want false")
+		}
+		want := []FileChange{
+			{Path: "root file.txt", Status: "untracked"},
+			{Path: "line\nbreak.txt", Status: "untracked"},
+		}
+		if !reflect.DeepEqual(changes, want) {
+			t.Fatalf("changes = %#v, want %#v", changes, want)
+		}
+	})
+
+	t.Run("requests full scan for collapsed directory", func(t *testing.T) {
+		changes, needsFullScan := parseNormalUntrackedStatus([]byte("? root.txt\x00? nested/\x00"))
+
+		if !needsFullScan {
+			t.Fatal("needsFullScan = false, want true")
+		}
+		if changes != nil {
+			t.Fatalf("changes = %#v, want nil because the full scan supersedes them", changes)
+		}
+	})
+}
+
+func TestUntrackedFilesInDir(t *testing.T) {
+	t.Run("returns standalone files and excludes ignored files", func(t *testing.T) {
+		dir := initTestRepo(t)
+		writeFile(t, filepath.Join(dir, ".gitignore"), "*.log\n")
+		gitT(t, dir, "add", ".gitignore")
+		gitT(t, dir, "commit", "-m", "add ignores")
+		writeFile(t, filepath.Join(dir, "root file.txt"), "review me")
+		writeFile(t, filepath.Join(dir, "ignored.log"), "ignore me")
+
+		changes, err := untrackedFilesInDir(dir)
+		if err != nil {
+			t.Fatal(err)
+		}
+		want := []FileChange{{Path: "root file.txt", Status: "untracked"}}
+		if !reflect.DeepEqual(changes, want) {
+			t.Fatalf("changes = %#v, want %#v", changes, want)
+		}
+	})
+
+	t.Run("expands files inside an untracked directory", func(t *testing.T) {
+		dir := initTestRepo(t)
+		writeFile(t, filepath.Join(dir, ".gitignore"), "*.log\n")
+		gitT(t, dir, "add", ".gitignore")
+		gitT(t, dir, "commit", "-m", "add ignores")
+		writeFile(t, filepath.Join(dir, "new-dir", "a.txt"), "a")
+		writeFile(t, filepath.Join(dir, "new-dir", "sub", "b.txt"), "b")
+		writeFile(t, filepath.Join(dir, "new-dir", "sub", "ignored.log"), "ignored")
+
+		changes, err := untrackedFilesInDir(dir)
+		if err != nil {
+			t.Fatal(err)
+		}
+		want := []FileChange{
+			{Path: "new-dir/a.txt", Status: "untracked"},
+			{Path: "new-dir/sub/b.txt", Status: "untracked"},
+		}
+		if !reflect.DeepEqual(changes, want) {
+			t.Fatalf("changes = %#v, want %#v", changes, want)
+		}
+	})
 }
 
 func TestParseUnifiedDiff_Simple(t *testing.T) {
