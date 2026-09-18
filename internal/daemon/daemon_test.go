@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -1392,6 +1393,136 @@ func TestStopDaemon_RemovesSessionFileWhenProcessGone(t *testing.T) {
 	path, _ := sessionFilePath(key)
 	if _, err := os.Stat(path); !os.IsNotExist(err) {
 		t.Error("session file should be removed when process is already gone")
+	}
+}
+
+func TestKillProcess(t *testing.T) {
+	// Start a short-lived helper so we can call killProcess on a real
+	// Process handle (Windows OpenProcess rejects bogus PIDs).
+	cmd := exec.Command("sleep", "30")
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("ping", "-n", "30", "127.0.0.1")
+	}
+	if err := cmd.Start(); err != nil {
+		t.Fatalf("start helper: %v", err)
+	}
+	t.Cleanup(func() {
+		_ = cmd.Process.Kill()
+		_, _ = cmd.Process.Wait()
+	})
+	if err := killProcess(cmd.Process); err != nil {
+		t.Fatalf("killProcess: %v", err)
+	}
+}
+
+func TestStopDaemon_KeepsSessionFileOnKillPermissionDenied(t *testing.T) {
+	home := t.TempDir()
+	testutil.SetHome(t, home)
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+	}))
+	defer ts.Close()
+	port, _ := strconv.Atoi(ts.URL[strings.LastIndex(ts.URL, ":")+1:])
+
+	key := "killpermtest123"
+	entry := SessionEntry{
+		PID:    os.Getpid(),
+		Port:   port,
+		CWD:    "/tmp/repo",
+		Branch: "main",
+	}
+	if err := WriteSessionFile(key, entry); err != nil {
+		t.Fatalf("WriteSessionFile: %v", err)
+	}
+
+	origTerminate := terminateProc
+	terminateProc = func(proc *os.Process) error {
+		return nil
+	}
+	t.Cleanup(func() { terminateProc = origTerminate })
+
+	origExists := procExists
+	procExists = func(proc *os.Process) bool {
+		return true
+	}
+	t.Cleanup(func() { procExists = origExists })
+
+	origKill := killProc
+	killProc = func(proc *os.Process) error {
+		return syscall.EPERM
+	}
+	t.Cleanup(func() { killProc = origKill })
+
+	err := StopDaemon(key)
+	if err == nil {
+		t.Fatal("expected error when kill is denied")
+	}
+	msg := err.Error()
+	if !strings.Contains(msg, key) {
+		t.Errorf("error = %q, want it to mention key %q", msg, key)
+	}
+	if !strings.Contains(msg, strconv.Itoa(os.Getpid())) {
+		t.Errorf("error = %q, want it to mention pid %d", msg, os.Getpid())
+	}
+
+	path, _ := sessionFilePath(key)
+	if _, statErr := os.Stat(path); os.IsNotExist(statErr) {
+		t.Error("session file should be kept when kill is denied")
+	}
+}
+
+func TestStopDaemon_RemovesSessionFileAfterKill(t *testing.T) {
+	tests := []struct {
+		name    string
+		killErr error
+	}{
+		{name: "kill succeeds", killErr: nil},
+		{name: "kill proves gone", killErr: syscall.ESRCH},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			home := t.TempDir()
+			testutil.SetHome(t, home)
+
+			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+			}))
+			defer ts.Close()
+			port, _ := strconv.Atoi(ts.URL[strings.LastIndex(ts.URL, ":")+1:])
+
+			key := "killoktest123"
+			entry := SessionEntry{
+				PID:    os.Getpid(),
+				Port:   port,
+				CWD:    "/tmp/repo",
+				Branch: "main",
+			}
+			if err := WriteSessionFile(key, entry); err != nil {
+				t.Fatalf("WriteSessionFile: %v", err)
+			}
+
+			origTerminate := terminateProc
+			terminateProc = func(proc *os.Process) error { return nil }
+			t.Cleanup(func() { terminateProc = origTerminate })
+
+			origExists := procExists
+			procExists = func(proc *os.Process) bool { return true }
+			t.Cleanup(func() { procExists = origExists })
+
+			origKill := killProc
+			killProc = func(proc *os.Process) error { return tt.killErr }
+			t.Cleanup(func() { killProc = origKill })
+
+			if err := StopDaemon(key); err != nil {
+				t.Fatalf("StopDaemon: %v", err)
+			}
+
+			path, _ := sessionFilePath(key)
+			if _, err := os.Stat(path); !os.IsNotExist(err) {
+				t.Error("session file should be removed after kill succeeds or proves gone")
+			}
+		})
 	}
 }
 
