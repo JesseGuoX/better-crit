@@ -1748,9 +1748,13 @@ func (s *Session) trackDeletedComment(filePath, id string) {
 }
 
 // RefreshFileContent re-reads all file content from disk.
+// No-op under FocusRange: content is pinned to the head SHA blob, not the working tree.
 func (s *Session) RefreshFileContent() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if s.Focus.Kind == FocusRange {
+		return
+	}
 	for _, f := range s.Files {
 		if f.AbsPath == "" || f.Lazy {
 			continue

@@ -15,9 +15,14 @@ import (
 )
 
 // RefreshDiffs re-computes diff hunks for all files.
+// No-op under FocusRange: diffs are pinned to base..head, not the working tree.
 func (s *Session) RefreshDiffs() {
 	// Snapshot file list and baseRef under read lock
 	s.mu.RLock()
+	if s.Focus.Kind == FocusRange {
+		s.mu.RUnlock()
+		return
+	}
 	type fileSnapshot struct {
 		path    string
 		status  string
@@ -75,8 +80,13 @@ func (s *Session) RefreshDiffs() {
 
 // RefreshFileList re-runs ChangedFiles and updates the session's file list.
 // New files are added, removed files are dropped.
+// No-op under FocusRange: the file list is pinned to base..head, not the working tree.
 func (s *Session) RefreshFileList() {
 	s.mu.RLock()
+	if s.Focus.Kind == FocusRange {
+		s.mu.RUnlock()
+		return
+	}
 	vc := s.VCS
 	s.mu.RUnlock()
 
@@ -549,7 +559,11 @@ func (s *Session) carryForwardAllComments() {
 // rereadFileContents re-reads all non-deleted files from disk and updates Content/FileHash.
 // If snapshotMarkdown is true, PreviousContent is set before overwriting (for files mode).
 // Must be called with s.mu held for writing.
+// No-op under FocusRange: content is pinned to the head SHA blob, not the working tree.
 func (s *Session) rereadFileContents(snapshotMarkdown bool) {
+	if s.Focus.Kind == FocusRange {
+		return
+	}
 	for _, f := range s.Files {
 		if f.Status == "deleted" || f.Lazy {
 			continue
@@ -583,6 +597,8 @@ func (s *Session) finishRoundComplete(edits int) {
 
 // handleRoundCompleteGit handles round completion in git mode.
 // Re-runs ChangedFiles, re-computes diffs, refreshes file list.
+// Under FocusRange those helpers no-op (pinned to base..head); carry-forward
+// and round advance still run.
 // Must only be called from the single watcher goroutine (watchGit).
 func (s *Session) handleRoundCompleteGit() {
 	s.mu.RLock()
