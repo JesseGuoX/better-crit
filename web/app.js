@@ -1849,7 +1849,8 @@
   // the reader had already scrolled past collapses to nothing, the document
   // ends up shorter than the current offset, and the browser clamps to the top.
   // Use this for view toggles that must rebuild diffs (split/unified, rendered
-  // diff) but should leave the reader where they were. Remounts only bodies at
+  // diff) and for the round-complete rebuild — anything that should leave the
+  // reader where they were. Remounts only bodies at
   // or above the reading position — below-fold stays deferred — and pins the
   // mid-viewport line (falling back to the topmost intersecting file section).
   // Not for hide-resolved (CSS + highlight sync) or initial load / scope change.
@@ -1917,7 +1918,9 @@
     const sections = document.querySelectorAll('#filesContainer .file-section[id]');
     for (let i = 0; i < sections.length; i++) {
       const rect = sections[i].getBoundingClientRect();
-      if (rect.bottom > 0) return { id: sections[i].id, top: rect.top };
+      if (rect.bottom > 0 && rect.top < window.innerHeight) {
+        return { id: sections[i].id, top: rect.top };
+      }
     }
     return null;
   }
@@ -7985,7 +7988,7 @@
         updateHeaderRound();
         updateDiffModeToggle();
         renderFileTree();
-        renderAllFiles();
+        renderAllFilesKeepingPlace();
         buildToc();
         updateCommentCount();
         updateViewedCount();
