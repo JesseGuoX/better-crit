@@ -351,10 +351,17 @@ func (fe *FileEntry) ensureLoadedAtRange(s *Session, focus Focus, repoRoot strin
 				fe.loadErr = fmt.Errorf("reading %s at %s: %w", fe.Path, focus.HeadSHA, err)
 				return
 			}
-			if data == nil {
+			if data == nil && s.RemoteFiles {
+				// Remote fetch returning nil means the file really isn't present
+				// at this SHA; treat it as a load error. (The eager path treats
+				// remote nil as empty content too; aligning that is left for a
+				// follow-up because this PR is about local submodule gitlinks.)
 				fe.loadErr = fmt.Errorf("reading %s at %s: not found", fe.Path, focus.HeadSHA)
 				return
 			}
+			// nil data from local git means the path is not a blob at this SHA
+			// (e.g. a submodule gitlink). Treat it as empty content, matching the
+			// eager-load path in buildFilesForFocus for local reads.
 			content = string(data)
 			hash = fileHash(data)
 		}

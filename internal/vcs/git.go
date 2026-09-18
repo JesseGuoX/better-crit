@@ -940,6 +940,17 @@ func ReadFileAtSHA(sha, path, dir string) ([]byte, error) {
 			if strings.Contains(lower, "path") || strings.Contains(lower, "does not exist") {
 				return nil, nil
 			}
+			// A submodule (gitlink) entry hits a third message shape: "fatal:
+			// bad object <sha>:<path>". Gitlinks aren't blobs — git can never
+			// show their "content" this way, regardless of whether the
+			// submodule is initialized locally — so this isn't the "sha
+			// missing entirely" case the branch above guards against (that one
+			// reads "fatal: invalid object name '<sha>'", with no path
+			// suffix). Treat it like a missing path rather than failing the
+			// whole focus rebuild.
+			if strings.Contains(lower, "bad object") && strings.Contains(msg, sha+":"+path) {
+				return nil, nil
+			}
 			return nil, fmt.Errorf("git show %s:%s: %s", sha, path, msg)
 		}
 		return nil, fmt.Errorf("git show %s:%s: %w", sha, path, err)
