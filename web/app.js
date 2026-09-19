@@ -369,16 +369,16 @@
   let pendingUpdatesVersion = '';
 
   // Returns true if at least one pending update entry has not been dismissed.
-  // Brew dismiss is keyed by version; integration dismiss is keyed per-agent
+  // Crit update dismiss is keyed by version; integration dismiss is keyed per-agent
   // by content hash (so re-prompts when we ship a new template).
   function hasActivePendingUpdates() {
     if (!pendingUpdates.length) return false;
-    const brewDismissed = getSetting('updatesDismissed', '');
+    const critDismissed = getSetting('updatesDismissed', '');
     const intDismissed = getSetting('dismissedIntegrations', {}) || {};
     for (let i = 0; i < pendingUpdates.length; i++) {
       const u = pendingUpdates[i];
-      if (u.kind === 'brew') {
-        if (brewDismissed !== pendingUpdatesVersion) return true;
+      if (u.kind === 'crit-update') {
+        if (critDismissed !== pendingUpdatesVersion) return true;
       } else if (u.kind === 'integration') {
         if (!u.hash || intDismissed[u.agent] !== u.hash) return true;
       } else if (u.kind === 'missing-integration') {
@@ -388,6 +388,11 @@
       }
     }
     return false;
+  }
+
+  function syncPendingUpdateButtons() {
+    const button = document.getElementById('updateBtn');
+    if (button) button.style.display = hasActivePendingUpdates() ? '' : 'none';
   }
 
   let reviewComments = []; // review-level (general) comments
@@ -938,16 +943,16 @@
     };
     window.crit.shared.applyProjectPromptTrustUI(promptTrustConfig, document.getElementById('finishBtn'));
 
-    // Update notifications (brew upgrade + stale integrations)
+    // Update notifications (Crit release + stale integrations)
     pendingUpdates = [];
-    const hasBrew = configRes.latest_version && configRes.version && configRes.latest_version !== configRes.version;
-    if (hasBrew) {
+    const hasCritUpdate = !configRes.no_update_check && configRes.latest_version && configRes.version && configRes.latest_version !== configRes.version;
+    if (hasCritUpdate) {
       pendingUpdates.push({
-        kind: 'brew',
+        kind: 'crit-update',
         version: configRes.latest_version,
         label: 'Crit ' + configRes.latest_version + ' available',
         labelUrl: 'https://github.com/tomasz-tomczyk/crit/releases/tag/v' + configRes.latest_version,
-        hint: 'brew update && brew upgrade crit'
+        hint: 'Open Updates for release-specific update instructions'
       });
     }
     if (configRes.stale_integrations) {
@@ -976,9 +981,7 @@
     }
 
     pendingUpdatesVersion = configRes.latest_version || configRes.version || '';
-    if (hasActivePendingUpdates()) {
-      document.getElementById('updateBtn').style.display = '';
-    }
+    syncPendingUpdateButtons();
 
     // Header context: branch name in git mode, filename in single-file file mode
     if (session.mode === 'git' && session.branch) {
@@ -8761,7 +8764,7 @@
 
   // ===== Update Button =====
   document.getElementById('updateBtn').addEventListener('click', function() {
-    openSettingsPanel('settings');
+    openSettingsPanel('updates');
   });
 
   // ===== Diff Mode Toggle (Split / Unified) =====
@@ -9751,11 +9754,13 @@
           }).then(function (cfg) {
             cachedConfig = cfg;
             renderSettingsPane(cfg);
+            renderUpdatesPane(cfg);
             renderAboutPane(cfg);
             loadCodeFonts(cfg);
           }).catch(function () {
             cachedConfig = {};
             renderSettingsPane(cachedConfig);
+            renderUpdatesPane(cachedConfig);
             renderAboutPane(cachedConfig);
             loadCodeFonts(cachedConfig);
           });
@@ -9818,6 +9823,7 @@
       setHideResolved: setHideResolved,
       onHideResolvedChange: function () { refreshHideResolvedView(); },
       hasActivePendingUpdates: hasActivePendingUpdates,
+      syncPendingUpdateButtons: syncPendingUpdateButtons,
       announceCopy: announceCopy,
       escape: escapeHtml,
     };
@@ -9835,6 +9841,17 @@
       show: isGit ? { ignoreWhitespace: true } : undefined,
       hooks: hooks,
     });
+  }
+
+  function renderUpdatesPane(cfg) {
+    const shared = window.crit && window.crit.settingsPanes;
+    if (shared && shared.renderUpdatesPane) {
+      shared.renderUpdatesPane(document.getElementById('updatesPane'), cfg, {
+        hasActivePendingUpdates: hasActivePendingUpdates,
+        syncPendingUpdateButtons: syncPendingUpdateButtons,
+        announceCopy: announceCopy,
+      });
+    }
   }
 
   function renderShortcutsPane() {

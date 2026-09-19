@@ -1551,7 +1551,8 @@
 
   // ============================================================
   // Settings overlay: live mode mounts the same Settings overlay as
-  // code review by delegating all three tabs to crit-settings-panes.js.
+  // code review by delegating Settings/Updates/Shortcuts/About tabs to
+  // crit-settings-panes.js.
   // Mode-specific behaviour (no width pill; live-scoped hide-resolved)
   // is supplied via the hooks/show options.
   // ============================================================
@@ -1600,6 +1601,9 @@
             },
           },
         });
+      }
+      if (panes.renderUpdatesPane) {
+        panes.renderUpdatesPane(overlay.querySelector('#updatesPane'), cfg);
       }
       if (panes.renderShortcutsPane) {
         panes.renderShortcutsPane(overlay.querySelector('#shortcutsPane'), {
