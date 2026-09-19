@@ -40,9 +40,10 @@
     routes: [],
     currentRoute: '/',
     viewport: { w: 1280, h: 800, key: 'desktop' },
-    mode: 'navigate',
+    mode: 'pin',
     comments: [],
     pinModeEnabled: false,
+    agentConnectionState: 'connecting',
     pendingPinId: null,
     // Per-pin collapse override store (consumed by buildCommentCard via the
     // get/setCollapseOverride callbacks). Map<commentId, boolean>.
@@ -101,6 +102,7 @@
   var finishInFlight = inflightAPI ? inflightAPI.makeInFlightFlag() : null;
 
   var els = {};
+  var connectionCtl = null;
 
   // Internal installer + panel-refresh registries. Sub-modules append here,
   // not by mutating window.
@@ -184,14 +186,26 @@
         '<button type="button" class="toggle-btn active" data-viewport="desktop" aria-pressed="true" title="Desktop 1280">Desktop</button>' +
         '<button type="button" class="toggle-btn" data-viewport="fit" aria-pressed="false" title="Fit pane">Fit</button>';
 
-      // Mode toggle (R4): .diff-mode-toggle + .toggle-btn; pin uses native disabled
+      // Mode toggle (R4): .diff-mode-toggle + .toggle-btn; pin uses native disabled.
+      // Default to Comment mode; the button stays disabled until agent-ready.
       var md = document.createElement('div');
       md.className = 'diff-mode-toggle';
       md.id = 'liveModeToggle';
       md.setAttribute('aria-label', 'Interaction mode');
       md.innerHTML =
-        '<button type="button" class="toggle-btn active" data-mode="navigate" aria-pressed="true">Browse</button>' +
-        '<button type="button" class="toggle-btn" data-mode="pin" disabled title="Comment mode" aria-label="Comment mode"><kbd id="liveModeShortcut"></kbd><span>Comment</span></button>';
+        '<button type="button" class="toggle-btn" data-mode="navigate" aria-pressed="false">Browse</button>' +
+        '<button type="button" class="toggle-btn active" data-mode="pin" disabled title="Loading…" aria-pressed="true" aria-label="Comment mode"><kbd id="liveModeShortcut"></kbd><span>Comment</span></button>';
+
+      // Connection status chip (connecting / unavailable only — ready is silent).
+      var connStatus = document.createElement('div');
+      connStatus.className = 'crit-live-conn-status';
+      connStatus.id = 'liveConnStatus';
+      connStatus.setAttribute('data-state', 'connecting');
+      connStatus.setAttribute('role', 'status');
+      connStatus.setAttribute('aria-live', 'polite');
+      connStatus.innerHTML =
+        '<span class="crit-live-conn-status-dot" aria-hidden="true"></span>' +
+        '<span class="crit-live-conn-status-text" id="liveConnStatusText">Connecting…</span>';
 
       // Round counter: code-review writes its round indicator into
       // #headerNotify (header-left). Reuse that slot so the live-mode
@@ -219,14 +233,16 @@
         rc.style.display = '';
       }
 
-      // Insert viewport + mode toggles before the existing settings toggle
-      // (which keeps it as rightmost icon button).
+      // Insert viewport + status + mode toggles before the existing settings
+      // toggle (which keeps it as rightmost icon button).
       var settingsToggle = document.getElementById('settingsToggle');
       if (settingsToggle) {
         headerRight.insertBefore(vp, settingsToggle);
+        headerRight.insertBefore(connStatus, settingsToggle);
         headerRight.insertBefore(md, settingsToggle);
       } else {
         headerRight.appendChild(vp);
+        headerRight.appendChild(connStatus);
         headerRight.appendChild(md);
       }
     }
@@ -249,9 +265,19 @@
       pane.className = 'crit-live-iframe-pane';
       pane.id = 'critLivePane';
       pane.innerHTML =
-        '<div class="crit-live-mode-hint" id="liveModeHint" data-mode="navigate" role="status">' +
-        '<strong id="liveModeHintState">Browsing</strong>' +
-        '<span id="liveModeHintText"></span>' +
+        '<div class="crit-live-context" id="liveModeHint" data-kind="hint" data-mode="pin" hidden role="status">' +
+        '<span class="crit-live-context-primary">' +
+        '<span id="liveModeHintBody"></span>' +
+        '</span>' +
+        '<button type="button" class="crit-live-context-dismiss" id="liveModeHintDismiss" aria-label="Dismiss hint">Dismiss</button>' +
+        '</div>' +
+        '<div class="crit-live-context" id="liveUnavailableFlash" data-kind="flash" hidden role="status">' +
+        '<span class="crit-live-context-primary">' +
+        '<span><strong>Commenting unavailable</strong> — Crit could not connect to this page.</span>' +
+        '</span>' +
+        '<p class="crit-live-context-help">You can still browse. Crit cannot inject its commenting agent. ' +
+        '<a class="crit-live-context-guide" id="liveUnavailableGuide" href="https://github.com/tomasz-tomczyk/crit/blob/main/docs/live-mode.md" target="_blank" rel="noopener noreferrer">Troubleshooting guide</a>' +
+        '</p>' +
         '</div>' +
         '<div class="crit-live-iframe-pane-inner">' +
         '<div class="crit-live-iframe-frame" id="critLiveFrame">' +
@@ -478,10 +504,14 @@
     var paneRect = els.pane.getBoundingClientRect();
     var w, h;
     if (vp.key === 'fit') {
-      var hintEl = document.getElementById('liveModeHint');
-      var hintH = hintEl ? Math.ceil(hintEl.getBoundingClientRect().height) + 10 : 0;
+      var stripH = 0;
+      if (els.pane) {
+        els.pane.querySelectorAll('.crit-live-context:not([hidden])').forEach(function (el) {
+          stripH += Math.ceil(el.getBoundingClientRect().height);
+        });
+      }
       w = Math.max(320, paneRect.width - 32);
-      h = Math.max(240, paneRect.height - 32 - hintH);
+      h = Math.max(240, paneRect.height - 32 - stripH);
     } else {
       w = vp.w;
       h = vp.h;
@@ -546,19 +576,60 @@
     });
   }
 
+  function modeHintDismissed() {
+    if (shared && shared.getSetting) {
+      return !!shared.getSetting('live_mode_hint_dismissed', false)
+        || !!shared.getSetting('live_comment_hint_dismissed', false);
+    }
+    return false;
+  }
+
+  function dismissModeHint() {
+    if (shared && shared.setSetting) {
+      try { shared.setSetting('live_mode_hint_dismissed', true); } catch (_) { /* noop */ }
+    }
+    updateModeHint();
+  }
+
   function updateModeHint() {
     var hint = document.getElementById('liveModeHint');
-    var label = document.getElementById('liveModeHintState');
-    var text = document.getElementById('liveModeHintText');
+    var body = document.getElementById('liveModeHintBody');
     var key = document.getElementById('liveModeShortcut');
     var binding = pinShortcutBinding();
     var bindingLabel = pinShortcutLabel(binding);
     var isPin = state.mode === 'pin';
-    if (hint) hint.dataset.mode = isPin ? 'pin' : 'navigate';
-    if (label) label.textContent = isPin ? 'Commenting' : 'Browsing';
+    var ready = state.agentConnectionState === 'ready';
     if (key) {
       key.textContent = bindingLabel;
       key.hidden = !binding;
+    }
+    // Persistent mode strip — stays visible across Browse↔Comment so the
+    // chrome doesn't jump. Cookie-gated after Dismiss. Hidden while the
+    // agent is still connecting / unavailable (Flash covers that case).
+    if (hint) {
+      hint.dataset.mode = isPin ? 'pin' : 'navigate';
+      hint.hidden = !(ready && !modeHintDismissed());
+    }
+    if (body) {
+      body.replaceChildren();
+      var strong = document.createElement('strong');
+      strong.textContent = isPin ? 'Commenting' : 'Browsing';
+      body.appendChild(strong);
+      if (isPin) {
+        body.append(' — click an element to leave feedback. Press ');
+        var pinKbd = document.createElement('kbd');
+        pinKbd.textContent = bindingLabel || 'P';
+        body.appendChild(pinKbd);
+        body.append(' to browse.');
+      } else if (binding) {
+        body.append(' — press ');
+        var navKbd = document.createElement('kbd');
+        navKbd.textContent = bindingLabel;
+        body.appendChild(navKbd);
+        body.append(' or choose Comment to leave feedback.');
+      } else {
+        body.append(' — choose Comment to leave feedback.');
+      }
     }
     var commentBtn = els.modeToggle && els.modeToggle.querySelector('.toggle-btn[data-mode="pin"]');
     // Keep the Loading… title while the pin button is still disabled.
@@ -567,24 +638,72 @@
       commentBtn.setAttribute('aria-label', ariaLabel);
       commentBtn.setAttribute('title', ariaLabel);
     }
-    if (!text) return;
-    text.replaceChildren();
-    if (isPin) {
-      text.textContent = 'Click an element in the page to leave a comment.';
-    } else if (binding) {
-      text.append('Press ');
-      var hintKey = document.createElement('kbd');
-      hintKey.textContent = bindingLabel;
-      text.appendChild(hintKey);
-      text.append(' or choose Comment to leave feedback.');
+  }
+
+  function updatePinButton() {
+    if (!els.modeToggle) return;
+    var pinBtn = els.modeToggle.querySelector('.toggle-btn[data-mode="pin"]');
+    if (!pinBtn) return;
+    var ready = state.agentConnectionState === 'ready';
+    if (ready) {
+      pinBtn.removeAttribute('disabled');
+      pinBtn.removeAttribute('aria-disabled');
     } else {
-      text.textContent = 'Choose Comment to leave feedback.';
+      pinBtn.setAttribute('disabled', '');
+      pinBtn.setAttribute('aria-disabled', 'true');
+      // Keep a Loading… title while unavailable/connecting so the disabled
+      // button's purpose is clear.
+      if (state.agentConnectionState === 'unavailable') {
+        pinBtn.setAttribute('title', 'Commenting unavailable');
+      } else {
+        pinBtn.setAttribute('title', 'Loading…');
+      }
     }
+    updateModeHint();
+  }
+
+  function updateConnectionUI() {
+    var chip = document.getElementById('liveConnStatus');
+    var textEl = document.getElementById('liveConnStatusText');
+    var flash = document.getElementById('liveUnavailableFlash');
+    var s = state.agentConnectionState || 'connecting';
+    // Navbar chip: connecting / unavailable only. Ready is silent.
+    if (chip) {
+      chip.dataset.state = s;
+      if (s === 'ready') {
+        chip.hidden = true;
+      } else {
+        chip.hidden = false;
+        if (textEl) {
+          textEl.textContent = s === 'connecting' ? 'Connecting…' : 'Unavailable';
+        }
+      }
+    }
+    // Non-dismissible Flash when commenting cannot start. Guide link lives
+    // in the markup — Retry was removed (iframe reload rarely fixes CSP /
+    // missing </body> / meta CSP failures).
+    if (flash) flash.hidden = s !== 'unavailable';
+    if (s === 'unavailable' && state.mode === 'pin') {
+      // Force Browse so the toggle matches what the user can actually do.
+      state.mode = 'navigate';
+      setActiveModeButton();
+    }
+    if (s === 'connecting') {
+      announce('Connecting to Crit');
+    } else if (s === 'ready') {
+      announce('Ready to comment');
+    } else {
+      announce('Commenting unavailable');
+    }
+    updatePinButton();
   }
 
   function setMode(value) {
     var next = value === 'pin' ? 'pin' : 'navigate';
     if (state.mode === next) return;
+    // Pin mode requires a connected agent. Navigate is always allowed so the
+    // user can browse even when commenting is unavailable.
+    if (next === 'pin' && state.agentConnectionState !== 'ready') return;
     state.mode = next;
     postToAgent({ type: 'set-mode', value: next });
     // Also flip marker tabindex so Tab does not jump into the iframe
@@ -599,14 +718,9 @@
 
   registerInstaller(function installMode() {
     if (!els.modeToggle) return;
-    var pinBtn = els.modeToggle.querySelector('.toggle-btn[data-mode="pin"]');
     // Keep Pin disabled until the agent reports ready, so a click
-    // never races the iframe→agent boot. handleAgentReady() re-enables.
-    if (pinBtn) {
-      pinBtn.setAttribute('disabled', '');
-      pinBtn.setAttribute('title', 'Loading…');
-      pinBtn.setAttribute('aria-disabled', 'true');
-    }
+    // never races the iframe→agent boot. updatePinButton() re-enables.
+    updatePinButton();
     els.modeToggle.addEventListener('click', function (e) {
       var btn = e.target.closest('.toggle-btn');
       if (!btn || btn.hasAttribute('disabled')) return;
@@ -634,9 +748,71 @@
     return 'http://' + host + ':' + port + (pathname || '/');
   }
 
+  // Set when agent-ready arrives for the in-flight iframe navigation.
+  // The iframe `load` event fires *after* deferred/sync scripts run, so
+  // agent-ready usually beats `load`. Restarting the connection timer on
+  // every load would wipe that ready state and falsely time out.
+  var agentReadyForCurrentLoad = false;
+
+  // Assign iframe.src for a new document. Always clear the ready latch so a
+  // prior page's agent-ready cannot mask a failed injection on the next load.
+  function loadIframe(url) {
+    agentReadyForCurrentLoad = false;
+    state.agentReady = false;
+    if (!els || !els.iframe) return;
+    els.iframe.src = url;
+  }
+
+  function startConnectionTracking() {
+    var connMod = window.crit && window.crit.live && window.crit.live.connection;
+    if (!connMod || !connMod.makeConnectionState) return;
+    if (connectionCtl) connectionCtl.destroy();
+    agentReadyForCurrentLoad = false;
+    state.agentReady = false;
+    state.agentConnectionState = 'connecting';
+    updateConnectionUI();
+    connectionCtl = connMod.makeConnectionState({
+      timeoutMs: 10000,
+      onChange: function (s, reason) {
+        state.agentConnectionState = s;
+        updateConnectionUI();
+        if (s === 'unavailable') {
+          try { console.warn('[live-mode] agent connection unavailable:', reason || 'timeout'); } catch (_) {}
+        }
+      },
+    });
+  }
+
+  function onIframeLoad() {
+    // Scripts (crit-agent) run before `load`. If agent-ready already landed
+    // for this document, keep Ready — do not recreate the timer.
+    if (agentReadyForCurrentLoad) {
+      // Consume the latch so the next navigation cannot inherit Ready.
+      agentReadyForCurrentLoad = false;
+      if (connectionCtl) connectionCtl.setReady();
+      state.agentConnectionState = 'ready';
+      updateConnectionUI();
+      return;
+    }
+    // Load finished with no matching agent-ready (blocked injection, or an
+    // in-iframe navigation to a page where the agent could not boot).
+    startConnectionTracking();
+  }
+
   registerInstaller(function installIframe() {
     state.currentRoute = utils.normaliseRoute(state.currentRoute);
-    if (els.iframe) els.iframe.src = proxyURL(state.currentRoute);
+    if (!els.iframe) return;
+    els.iframe.addEventListener('load', onIframeLoad);
+    loadIframe(proxyURL(state.currentRoute));
+    startConnectionTracking();
+  });
+
+  registerInstaller(function installModeHintDismiss() {
+    var dismissBtn = document.getElementById('liveModeHintDismiss');
+    if (!dismissBtn) return;
+    dismissBtn.addEventListener('click', function () {
+      dismissModeHint();
+    });
   });
 
   // ============================================================
@@ -1531,7 +1707,7 @@
     // Skip iframe reassignment if already on this route — otherwise we'd
     // trigger a redundant route-change → request-resolution cycle.
     if (route === state.currentRoute) return;
-    if (els && els.iframe) els.iframe.src = proxyURL(route);
+    if (els && els.iframe) loadIframe(proxyURL(route));
     state.currentRoute = route;
     renderBreadcrumb();
   });
@@ -1544,7 +1720,7 @@
     e.preventDefault();
     var route = utils.normaliseRoute(t.dataset.liveRoute || '/');
     if (route === state.currentRoute) return;
-    if (els && els.iframe) els.iframe.src = proxyURL(route);
+    if (els && els.iframe) loadIframe(proxyURL(route));
     state.currentRoute = route;
     renderBreadcrumb();
   });
@@ -1695,7 +1871,7 @@
       '<button type="button">Retry</button>';
     box.querySelector('button').addEventListener('click', function () {
       box.remove();
-      els.iframe.src = proxyURL(state.currentRoute);
+      loadIframe(proxyURL(state.currentRoute));
     });
     els.frame.appendChild(box);
   }
@@ -2009,16 +2185,12 @@
 
   function handleAgentReady() {
     state.agentReady = true;
+    agentReadyForCurrentLoad = true;
+    state.agentConnectionState = 'ready';
+    if (connectionCtl) connectionCtl.setReady();
     if (_sender) _sender.markReady();
     // Now that the agent is listening, enable the Pin toggle.
-    if (els.modeToggle) {
-      var pinBtn = els.modeToggle.querySelector('.toggle-btn[data-mode="pin"]');
-      if (pinBtn) {
-        pinBtn.removeAttribute('disabled');
-        pinBtn.removeAttribute('aria-disabled');
-        updateModeHint();
-      }
-    }
+    updateConnectionUI();
     // After a round transition the iframe reloads and the new agent starts
     // in navigate mode. If the user was in pin mode, re-sync so the agent
     // honours pin clicks without requiring a manual navigate→pin toggle.
@@ -2087,6 +2259,16 @@
     // don't toast it.
     if (e && e.kind === 'capture-failed') {
       try { console.warn('[live-mode] screenshot capture skipped:', e.message); } catch (_) {}
+      return;
+    }
+    // Bootstrap errors mean the agent itself could not start. Put the chrome
+    // into the unavailable state so the user sees a clear explanation and a
+    // troubleshooting guide link, instead of an endless "Loading…" pin button.
+    var connMod = window.crit && window.crit.live && window.crit.live.connection;
+    if (e && e.kind && connMod && connMod.isBootstrapErrorKind(e.kind)) {
+      state.agentConnectionState = 'unavailable';
+      if (connectionCtl) connectionCtl.setUnavailable(e.kind);
+      updateConnectionUI();
       return;
     }
     showToast(e.kind + ': ' + e.message);
@@ -2406,6 +2588,10 @@
     // against detached frames during teardown.
     reloadIframe: function () {
       if (!els || !els.iframe) return;
+      // Round transition loads a new document — drop any prior ready latch
+      // before reload/src reset so a missing agent times out correctly.
+      agentReadyForCurrentLoad = false;
+      state.agentReady = false;
       try {
         var w = els.iframe.contentWindow;
         if (w && w.location && typeof w.location.reload === 'function') {
@@ -2416,7 +2602,7 @@
       try {
         var url = els.iframe.src || proxyURL(state.currentRoute || '/');
         var sep = url.indexOf('?') >= 0 ? '&' : '?';
-        els.iframe.src = url + sep + '_critRoundReload=' + Date.now();
+        loadIframe(url + sep + '_critRoundReload=' + Date.now());
       } catch (_) { /* noop */ }
     },
   });
@@ -2461,7 +2647,7 @@
     var targetPath = utils.normaliseRoute((pin.dom_anchor && pin.dom_anchor.pathname) || '/');
     if (state.currentRoute !== targetPath) {
       if (els && els.iframe) {
-        try { els.iframe.src = proxyURL(targetPath); } catch (_) { /* noop */ }
+        try { loadIframe(proxyURL(targetPath)); } catch (_) { /* noop */ }
       }
       state.currentRoute = targetPath;
       state.pendingFlashOnLoad = true;
