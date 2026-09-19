@@ -125,6 +125,16 @@
   }
   state.announce = announce;
 
+  function pinShortcutBinding() {
+    var shortcuts = window.crit && window.crit.shortcuts;
+    if (!shortcuts || typeof shortcuts.getBinding !== 'function') return 'P';
+    return shortcuts.getBinding('toggle_pin_mode') || '';
+  }
+
+  function pinShortcutLabel(binding) {
+    return binding.length === 1 && /^[a-z]$/i.test(binding) ? binding.toUpperCase() : binding;
+  }
+
   // Resilient session poll: delegates to the shared base poll, which
   // handles the 503-until-SetSession-completes window. Cap matches the
   // historical 60 * 250ms = 15s budget; the prior implementation used
@@ -180,8 +190,8 @@
       md.id = 'liveModeToggle';
       md.setAttribute('aria-label', 'Interaction mode');
       md.innerHTML =
-        '<button type="button" class="toggle-btn active" data-mode="navigate" aria-pressed="true">Navigate</button>' +
-        '<button type="button" class="toggle-btn" data-mode="pin" disabled title="Pin mode">Pin</button>';
+        '<button type="button" class="toggle-btn active" data-mode="navigate" aria-pressed="true">Browse</button>' +
+        '<button type="button" class="toggle-btn" data-mode="pin" disabled title="Comment mode" aria-label="Comment mode"><kbd id="liveModeShortcut"></kbd><span>Comment</span></button>';
 
       // Round counter: code-review writes its round indicator into
       // #headerNotify (header-left). Reuse that slot so the live-mode
@@ -239,6 +249,10 @@
       pane.className = 'crit-live-iframe-pane';
       pane.id = 'critLivePane';
       pane.innerHTML =
+        '<div class="crit-live-mode-hint" id="liveModeHint" data-mode="navigate" role="status">' +
+        '<strong id="liveModeHintState">Browsing</strong>' +
+        '<span id="liveModeHintText"></span>' +
+        '</div>' +
         '<div class="crit-live-iframe-pane-inner">' +
         '<div class="crit-live-iframe-frame" id="critLiveFrame">' +
         // No `sandbox` attribute by design — see spec security section.
@@ -464,8 +478,10 @@
     var paneRect = els.pane.getBoundingClientRect();
     var w, h;
     if (vp.key === 'fit') {
+      var hintEl = document.getElementById('liveModeHint');
+      var hintH = hintEl ? Math.ceil(hintEl.getBoundingClientRect().height) + 10 : 0;
       w = Math.max(320, paneRect.width - 32);
-      h = Math.max(240, paneRect.height - 32);
+      h = Math.max(240, paneRect.height - 32 - hintH);
     } else {
       w = vp.w;
       h = vp.h;
@@ -530,6 +546,42 @@
     });
   }
 
+  function updateModeHint() {
+    var hint = document.getElementById('liveModeHint');
+    var label = document.getElementById('liveModeHintState');
+    var text = document.getElementById('liveModeHintText');
+    var key = document.getElementById('liveModeShortcut');
+    var binding = pinShortcutBinding();
+    var bindingLabel = pinShortcutLabel(binding);
+    var isPin = state.mode === 'pin';
+    if (hint) hint.dataset.mode = isPin ? 'pin' : 'navigate';
+    if (label) label.textContent = isPin ? 'Commenting' : 'Browsing';
+    if (key) {
+      key.textContent = bindingLabel;
+      key.hidden = !binding;
+    }
+    var commentBtn = els.modeToggle && els.modeToggle.querySelector('.toggle-btn[data-mode="pin"]');
+    // Keep the Loading… title while the pin button is still disabled.
+    if (commentBtn && !commentBtn.hasAttribute('disabled')) {
+      var ariaLabel = binding ? 'Comment mode (' + bindingLabel + ')' : 'Comment mode';
+      commentBtn.setAttribute('aria-label', ariaLabel);
+      commentBtn.setAttribute('title', ariaLabel);
+    }
+    if (!text) return;
+    text.replaceChildren();
+    if (isPin) {
+      text.textContent = 'Click an element in the page to leave a comment.';
+    } else if (binding) {
+      text.append('Press ');
+      var hintKey = document.createElement('kbd');
+      hintKey.textContent = bindingLabel;
+      text.appendChild(hintKey);
+      text.append(' or choose Comment to leave feedback.');
+    } else {
+      text.textContent = 'Choose Comment to leave feedback.';
+    }
+  }
+
   function setMode(value) {
     var next = value === 'pin' ? 'pin' : 'navigate';
     if (state.mode === next) return;
@@ -539,8 +591,9 @@
     // while Pin mode is active.
     postToAgent({ type: 'set-marker-tabindex', value: next === 'pin' ? -1 : 0 });
     setActiveModeButton();
+    updateModeHint();
     // Announce mode change so the user knows it took effect.
-    announce(next === 'pin' ? 'Pin mode' : 'Navigate mode');
+    announce(next === 'pin' ? 'Comment mode enabled. Click an element to leave a comment.' : 'Browse mode enabled.');
   }
   state.setMode = setMode;
 
@@ -562,6 +615,7 @@
       setMode(key);
     });
     setActiveModeButton();
+    updateModeHint();
   });
 
   // ============================================================
@@ -1548,7 +1602,10 @@
         });
       }
       if (panes.renderShortcutsPane) {
-        panes.renderShortcutsPane(overlay.querySelector('#shortcutsPane'), { mode: 'live' });
+        panes.renderShortcutsPane(overlay.querySelector('#shortcutsPane'), {
+          mode: 'live',
+          onChange: updateModeHint,
+        });
       }
       if (panes.renderAboutPane) {
         panes.renderAboutPane(overlay.querySelector('#aboutPane'), cfg, sessionDescriptor);
@@ -1955,7 +2012,7 @@
       if (pinBtn) {
         pinBtn.removeAttribute('disabled');
         pinBtn.removeAttribute('aria-disabled');
-        pinBtn.removeAttribute('title');
+        updateModeHint();
       }
     }
     // After a round transition the iframe reloads and the new agent starts
@@ -2032,6 +2089,13 @@
   }
   function handleFocusState(b) {
     state.focusInInput = !!b;
+  }
+
+  function handleIframeShortcutKey(event) {
+    var shortcuts = window.crit && window.crit.shortcuts;
+    if (!shortcuts || !shortcuts.actionForEvent ||
+        shortcuts.actionForEvent(event, 'live') !== 'toggle_pin_mode') return;
+    setMode(state.mode === 'pin' ? 'navigate' : 'pin');
   }
 
   // ============================================================
@@ -2186,6 +2250,7 @@
       onSelection: handleSelection,
       onRequestAncestorMenu: handleAncestorMenu,
       onFocusState: handleFocusState,
+      onShortcutKey: handleIframeShortcutKey,
       onRouteChange: handleRouteChange,
       onPinClicked: handlePinClicked,
       onPinResolutionResult: handlePinResolutionResult,
