@@ -874,13 +874,15 @@
     if (window.crit && window.crit.shared) window.crit.shared.applyCodeFontFromCookie();
     initSidebarWidths();
 
-    // Measure actual header height and set CSS variable for sticky offsets
+    // Re-measure when round controls or responsive wrapping change the header,
+    // including changes after initial rendering without a window resize.
     function updateHeaderHeight() {
       const h = document.querySelector('.header');
       if (h) document.documentElement.style.setProperty('--header-height', h.getBoundingClientRect().height + 'px');
     }
     updateHeaderHeight();
-    window.addEventListener('resize', updateHeaderHeight);
+    const header = document.querySelector('.header');
+    if (header) new ResizeObserver(updateHeaderHeight).observe(header);
 
     document.getElementById('filesContainer').innerHTML =
       '<div class="loading" style="padding: 40px; text-align: center; color: var(--crit-editor-fg-muted);">Loading...</div>';
@@ -3364,7 +3366,7 @@
   // ===== Document View (Markdown) =====
   function renderDocumentView(file) {
     const container = document.createElement('div');
-    container.className = 'document-wrapper' + (file.fileType === 'code' ? ' code-document' : '');
+    container.className = 'document-wrapper ' + (file.fileType === 'code' ? 'code-document' : 'markdown-document');
     if (!file.lineBlocks) return container;
 
     const { commentsMap, rangeSet: commentRangeSet } = buildCommentIndices(file.comments);

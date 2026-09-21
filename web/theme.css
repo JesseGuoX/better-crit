@@ -15,6 +15,12 @@
   --crit-bg-card:     #171922;
   --crit-bg-elevated: #242835;
 
+  /* Markdown reading surface */
+  --crit-font-document: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --crit-document-bg: #191c25;
+  --crit-document-fg: #d9dfea;
+  --crit-document-muted: #9aa5ba;
+
   /* ---- Brand foreground ---- */
   --crit-fg-primary:   #e8ebf5;
   --crit-fg-secondary: #9ba3bf;
@@ -266,6 +272,12 @@
     --crit-bg-card:     #f6f8fa;
     --crit-bg-elevated: #eff2f5;
 
+    /* Markdown reading surface */
+    --crit-font-document: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --crit-document-bg: #ffffff;
+    --crit-document-fg: #263247;
+    --crit-document-muted: #667085;
+
     /* ---- Brand foreground ---- */
     --crit-fg-primary:   #1a1d23;
     --crit-fg-secondary: #57606a;
@@ -485,6 +497,12 @@
   --crit-bg-card:     #171922;
   --crit-bg-elevated: #242835;
 
+  /* Markdown reading surface */
+  --crit-font-document: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --crit-document-bg: #191c25;
+  --crit-document-fg: #d9dfea;
+  --crit-document-muted: #9aa5ba;
+
   /* ---- Brand foreground ---- */
   --crit-fg-primary:   #e8ebf5;
   --crit-fg-secondary: #9ba3bf;
@@ -702,6 +720,12 @@
   --crit-bg-page:     #ffffff;
   --crit-bg-card:     #f6f8fa;
   --crit-bg-elevated: #eff2f5;
+
+  /* Markdown reading surface */
+  --crit-font-document: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --crit-document-bg: #ffffff;
+  --crit-document-fg: #263247;
+  --crit-document-muted: #667085;
 
   /* ---- Brand foreground ---- */
   --crit-fg-primary:   #1a1d23;

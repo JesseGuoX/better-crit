@@ -918,6 +918,140 @@ body {
   padding: 32px 0 120px 0;
 }
 
+/* Markdown reading surface. Keep this separate from code documents and
+   rendered diffs; both also use line-content and document-wrapper styles. */
+.file-section:has(> .file-body > .markdown-document) {
+  background: var(--crit-document-bg);
+}
+.file-section:has(> .file-body > .markdown-document) > .file-header {
+  background: var(--crit-document-bg);
+  border-color: var(--crit-border);
+}
+.file-section:has(> .file-body > .markdown-document) > .file-header:hover {
+  background: var(--crit-brand-subtle);
+}
+.file-body:has(> .markdown-document) {
+  container-type: inline-size;
+}
+.document-wrapper.markdown-document {
+  padding: 40px clamp(24px, 3cqi, 64px) 120px;
+  color: var(--crit-document-fg);
+  font-family: var(--crit-font-document);
+  font-size: 16px;
+  line-height: 1.8;
+}
+[data-width="wide"] .markdown-document {
+  max-width: 1920px;
+}
+
+/* Prose fills the available line width, following the selected canvas size
+   and the space left by the sidebars. */
+.markdown-document > .line-block > .line-content {
+  padding-right: 0;
+}
+.markdown-document .line-content :is(h1, h2, h3, h4, h5, h6) {
+  color: var(--crit-document-fg);
+  line-height: 1.35;
+  font-weight: 650;
+}
+.markdown-document .line-content h1 {
+  font-size: 30px;
+  padding-bottom: 0;
+  margin-bottom: 12px;
+  border-bottom: none;
+}
+.markdown-document .line-content h2 {
+  font-size: 24px;
+  padding-bottom: 0;
+  margin-bottom: 8px;
+  border-bottom: none;
+}
+.markdown-document .line-content h3 { font-size: 20px; }
+.markdown-document > .line-block:has(> .line-content > :is(h1, h2, h3, h4, h5, h6)) {
+  padding-top: 24px;
+}
+.markdown-document > .line-block:first-child:has(> .line-content > :is(h1, h2, h3, h4, h5, h6)) {
+  padding-top: 0;
+}
+.markdown-document > .line-block:has(> .line-content > p) {
+  padding-top: 6px;
+}
+.markdown-document .line-content > p { margin-bottom: 8px; }
+.markdown-document .line-content.empty-line { min-height: 12px; }
+.markdown-document > .line-block:has(> .line-content.empty-line) { line-height: 16px; }
+.markdown-document .line-content li:not(.crit-list-wrapper) { padding-block: 2px; }
+.markdown-document .line-content blockquote {
+  margin-block: 0;
+  padding: 10px 18px;
+  border-left-width: 2px;
+  border-radius: 0 var(--crit-r-lg) var(--crit-r-lg) 0;
+  color: var(--crit-document-muted);
+}
+.markdown-document .line-gutter { min-width: 44px; color: var(--crit-document-muted); }
+.markdown-document .line-block:is(:hover, :focus-within, .focused, .selected, .form-selected, .has-comment) .line-gutter {
+  color: var(--crit-brand);
+}
+.markdown-document .line-block:focus-within .line-add {
+  opacity: 1;
+}
+.document-wrapper.markdown-document .line-content.code-line {
+  margin-left: 12px;
+  padding-inline: 16px;
+  line-height: 1.65;
+}
+.markdown-document .line-content.code-first {
+  border-top-left-radius: var(--crit-r-lg);
+  border-top-right-radius: var(--crit-r-lg);
+}
+.markdown-document .line-content.code-last {
+  border-bottom-left-radius: var(--crit-r-lg);
+  border-bottom-right-radius: var(--crit-r-lg);
+}
+.markdown-document .native-table-wrapper { margin-block: 16px; }
+.markdown-document .native-table th.line-content {
+  color: var(--crit-document-fg);
+  background: var(--crit-brand-subtle);
+  border-bottom-width: 1px;
+}
+.markdown-document .native-table :is(th, td).line-content { padding: 12px; }
+.markdown-document .native-table-gutter > .line-gutter { padding-top: 12px; }
+.markdown-document .line-content.mermaid-block {
+  margin-left: 12px;
+  overflow-x: auto;
+}
+.markdown-document > :is(.comment-block, .comment-form-wrapper) {
+  margin-left: 56px;
+  max-width: 880px;
+}
+.markdown-document :is(.comment-card, .comment-form) {
+  border-radius: var(--crit-r-lg);
+  border-color: var(--crit-border-strong);
+  background: var(--crit-document-bg);
+}
+.markdown-document .comment-card { margin-block: 12px; }
+.markdown-document .comment-header {
+  padding: 10px 14px;
+  background: var(--crit-brand-subtle);
+}
+.markdown-document .comment-card:focus-within {
+  border-color: var(--crit-brand);
+}
+@media (max-width: 768px) {
+  .document-wrapper.markdown-document { padding: 24px 12px 80px 4px; }
+  .markdown-document > :is(.comment-block, .comment-form-wrapper) { margin-left: 12px; }
+  /* Round status and Toggle Diff can appear after the initial review. Let
+     those controls wrap without pushing Approve outside the viewport. */
+  body:has(.markdown-document) .header { flex-wrap: wrap; gap: 8px; }
+  body:has(.markdown-document) .header-right {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: 100%;
+    gap: 8px;
+    margin-left: auto;
+  }
+  body:has(.markdown-document) :is(.header-notify, .viewed-count) { white-space: nowrap; }
+}
+
 /* ===== Line Blocks ===== */
 .line-block {
   position: relative;
