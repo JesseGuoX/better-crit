@@ -1,10 +1,21 @@
 ---
 name: crit-cli
-description: Use when an agent needs to author or reply to crit inline comments programmatically (including multi-agent workflows commenting on shared code/plans/docs/proposals), publish or unpublish a crit review with crit share, sync a crit review to or from a GitHub PR or GitLab MR, or read/interpret a crit review JSON file. Covers crit comment, crit share, crit unpublish, crit pull, crit push, review file format, and resolution workflow. Not for invoking an interactive review loop — that's the `crit` skill.
+description: Use when an agent needs to author or reply to crit inline comments programmatically (including multi-agent workflows commenting on shared code/plans/docs/proposals), publish or unpublish a crit review with crit share, sync a crit review to or from a GitHub PR or GitLab MR, or read/interpret a crit review JSON file. Covers crit decide results, crit comment, crit share, crit unpublish, crit pull, crit push, review file format, and resolution workflow. Not for invoking an interactive review loop — that's the `crit` skill.
 user-invocable: false
 ---
 
 # Crit CLI Reference
+
+## Structured decisions
+
+For a decision checklist, use the installed `crit-decide` skill and run
+`crit decide --guide` for the current schema. `crit decide <checklist.json>`
+waits for Submit and returns JSON on stdout. Exit 0 may be a partial submission:
+`decided` constrains the work, `revision_requested` needs a revised proposal and
+another confirmation, and `pending` grants no decision. Check `completed`;
+these results do not use review comments or `approved: true`.
+
+The following sections describe inline-review operations.
 
 > If a plan was just written and the user said `/crit` or `crit`, invoke the `/crit` command — do not use this reference skill. This skill covers CLI operations like `crit comment`, `crit pull/push`, and `crit share`.
 

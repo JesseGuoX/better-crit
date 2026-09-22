@@ -1,6 +1,6 @@
 # Crit — Codex CLI Integration
 
-Drop-in configuration files that teach the OpenAI Codex CLI to use Crit for reviewing plans and code changes.
+Drop-in configuration files that teach the OpenAI Codex CLI to use Crit for reviewing plans and code changes and collecting human decisions.
 
 ## What's included
 
@@ -8,6 +8,8 @@ Drop-in configuration files that teach the OpenAI Codex CLI to use Crit for revi
 |------|----------------|---------|
 | `skills/crit/SKILL.md` | `crit install codex` | `$crit` skill — launches the interactive review loop |
 | `skills/crit-cli/SKILL.md` | `crit install codex` | CLI reference — `crit comment`, `crit pull/push`, review file format |
+| `skills/crit-story/SKILL.md` | `crit install codex` | Chaptered diff overview followed by inline review |
+| `skills/crit-decide/SKILL.md` | `crit install codex` | Decision checklist — choices, recommendations, revision feedback, and follow-up rounds |
 | `plugin/crit/.codex-plugin/plugin.json` | `crit install codex-plugin` | Codex plugin manifest (skills + hooks) |
 | `plugin/crit/skills/*` | `crit install codex-plugin` | Plugin-packaged copies of the skills |
 | `plugin/crit/hooks/hooks.json` | `crit install codex-plugin` | `Stop` hook → `crit plan-hook --mode codex` for proposed-plan review |
@@ -34,7 +36,10 @@ The plugin install also:
 2. Enables `crit@local` in `~/.codex/config.toml`
 3. Sets `features.plugins`, `features.hooks`, and `features.plugin_hooks` to `true` in that config
 
-Safe to re-run. Existing files are skipped unless you pass `--force`.
+Safe to re-run. Existing loose skills are skipped unless you pass `--force`;
+plugin files and the activation cache are refreshed on every plugin install.
+Use `crit install codex --force` (or `codex-plugin --force`) to update existing
+skills with decision routing. Start a new Codex session to load the updated skills.
 
 ## Plan mode and in-chat plans
 
@@ -49,5 +54,6 @@ Disable the hook: `export CRIT_PLAN_REVIEW=off`
 Once installed:
 
 - Type `$crit` in Codex chat to review current git changes, a file, PR, or commit range
+- Type `$crit-decide` to turn open questions into a decision page, or supply an existing JSON checklist. The agent reads `crit decide --guide`, waits for your submission, and handles decided, revision-requested, and pending items separately
 - In Plan mode with the plugin, proposed plans are reviewed automatically when the agent tries to finish the turn
 - The `crit-cli` skill teaches the agent about `crit comment`, sharing, and GitHub PR sync without manual invocation

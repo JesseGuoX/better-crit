@@ -1,6 +1,6 @@
 ---
 name: crit
-description: "Review code changes, a plan, a live page (running dev server), or a local HTML file with Crit inline comments and structured human feedback. Use only when the user explicitly invokes /crit or directly asks to use Crit; a generic review request does not count."
+description: "Collect structured decisions or review code changes, a plan, a live page (running dev server), or a local HTML file with Crit inline comments and structured human feedback. Use only when the user explicitly invokes /crit or directly asks to use Crit; a generic review request does not count."
 ---
 
 # Review with Crit
@@ -10,6 +10,14 @@ the user explicitly invokes `/crit` or directly asks to use Crit. A generic
 request to review code, a plan, a diff, a PR, or a page does not count.
 
 Review and revise code changes, plans, live pages (running dev servers, staging URLs), or local HTML files using `crit` for inline comment review.
+
+## Choose the workflow
+
+If the user wants to select proposals, adjudicate questions, or supplies
+`decide` arguments, load the installed `crit-decide` skill. It prepares the
+checklist, runs `crit decide`, and handles partial submissions and revisions.
+Use that workflow through completion; the remaining steps here apply to inline
+review, whose approval rules differ from decision results.
 
 ## Step 1: Pass arguments to `crit`
 

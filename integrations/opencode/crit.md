@@ -5,6 +5,14 @@ agent: build
 
 # Review with Crit
 
+## Choose the workflow
+
+If the user wants to select proposals, adjudicate questions, or supplies
+`decide` arguments, load the installed `crit-decide` skill. It prepares the
+checklist, runs `crit decide`, and handles partial submissions and revisions.
+Use that workflow through completion; the remaining steps here apply to inline
+review, whose approval rules differ from decision results.
+
 Review and revise code changes or a plan using `crit` for inline comment review.
 
 ## Step 1: Determine review mode

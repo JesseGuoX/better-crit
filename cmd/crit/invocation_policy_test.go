@@ -15,7 +15,7 @@ func readIntegrationForPolicyTest(t *testing.T, path string) string {
 }
 
 func TestInteractiveSkillsRequireExplicitCritWording(t *testing.T) {
-	const sharedDescription = "Review code changes, a plan, a live page (running dev server), or a local HTML file with Crit inline comments and structured human feedback. Use only when the user explicitly invokes /crit or directly asks to use Crit; a generic review request does not count."
+	const sharedDescription = "Collect structured decisions or review code changes, a plan, a live page (running dev server), or a local HTML file with Crit inline comments and structured human feedback. Use only when the user explicitly invokes /crit or directly asks to use Crit; a generic review request does not count."
 	paths := []string{
 		"integrations/claude-code/skills/crit/SKILL.md",
 		"integrations/cursor/skills/crit/SKILL.md",

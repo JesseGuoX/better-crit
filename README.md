@@ -25,6 +25,11 @@ Everything runs locally via one single binary.
 
 ## Decision checklists
 
+`crit install <tool>` includes the `crit-decide` skill (or equivalent workflow)
+to teach agents how to prepare and run decision checklists. To update an existing
+installation, use `crit install <tool> --force`. Ask the agent to use Crit for
+decisions, or invoke `$crit-decide` in Codex or `/crit-decide` in Claude Code.
+
 Agents can run `crit decide --guide` for the input schema and a complete example,
 then `crit decide checklist.json` (or pipe JSON to `crit decide -`). The page
 supports single and multiple choices, Markdown context, recommendations,

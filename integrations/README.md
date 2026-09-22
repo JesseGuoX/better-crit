@@ -1,6 +1,6 @@
 # Crit Integrations
 
-Drop-in configuration files that teach your AI coding tool to use Crit for reviewing plans and code changes.
+Drop-in configuration files that teach your AI coding tool to use Crit for reviewing plans and code changes and collecting human decisions.
 
 ## Quick install
 
@@ -15,21 +15,21 @@ Safe to re-run. Existing files are skipped (use `--force` to overwrite).
 
 | Tool | Install command | Project destination | Global destination |
 |------|----------------|---------------------|--------------------|
-| Claude Code | `crit install claude-code` | `.claude/skills/crit/SKILL.md` + `crit-cli` + `crit-story` | `~/.claude/skills/crit{,-cli,-story}/SKILL.md` |
-| Cursor | `crit install cursor` | `.cursor/skills/crit/SKILL.md` + `crit-cli` + `crit-story` | (project only — Cursor has no stable user-level config dir) |
-| GitHub Copilot | `crit install github-copilot` | `.github/skills/crit{,-cli,-story}/SKILL.md` | `~/.agents/skills/crit{,-cli,-story}/SKILL.md` |
-| OpenCode | `crit install opencode` | `.opencode/commands/crit.md` + `crit-story.md` + skills + plugin | `~/.config/opencode/commands/` + `~/.agents/skills/` + plugins |
-| Codex | `crit install codex` | `.agents/skills/crit{,-cli,-story}/SKILL.md` | `~/.agents/skills/crit{,-cli,-story}/SKILL.md` |
-| Codex plugin | `crit install codex-plugin` | loose skills + marketplace + `plugins/crit/` (incl. crit-story) | `~/.agents/` + `~/.codex/plugins/crit/` |
-| Pi | `crit install pi` | `.pi/skills/crit{,-cli,-story}/SKILL.md` | `~/.pi/agent/skills/crit{,-cli,-story}/SKILL.md` |
-| Qwen Code | `crit install qwen` | `.qwen/skills/crit{,-cli,-story}/SKILL.md` | `~/.qwen/skills/crit{,-cli,-story}/SKILL.md` |
-| Hermes | `crit install hermes` | `.hermes/skills/crit{,-cli,-story}/SKILL.md` (add `.hermes/skills` to `external_dirs`) | `~/.hermes/skills/crit{,-cli,-story}/SKILL.md` |
-| Windsurf | `crit install windsurf` | `.windsurf/workflows/crit.md` + `crit-story.md` + skills | `~/.codeium/windsurf/global_workflows/` + skills |
-| Cline | `crit install cline` | `.clinerules/workflows/crit.md` + `crit-story.md` + skills | `~/.cline/data/workflows/` + `~/.cline/skills/` |
+| Claude Code | `crit install claude-code` | `.claude/skills/crit/SKILL.md` + `crit-cli` + `crit-story` + `crit-decide` | `~/.claude/skills/crit{,-cli,-story,-decide}/SKILL.md` |
+| Cursor | `crit install cursor` | `.cursor/skills/crit/SKILL.md` + `crit-cli` + `crit-story` + `crit-decide` | (project only — Cursor has no stable user-level config dir) |
+| GitHub Copilot | `crit install github-copilot` | `.github/skills/crit{,-cli,-story,-decide}/SKILL.md` | `~/.agents/skills/crit{,-cli,-story,-decide}/SKILL.md` |
+| OpenCode | `crit install opencode` | `.opencode/commands/crit.md` + `crit-story.md` + `crit-decide.md` + skills + plugin | `~/.config/opencode/commands/` + `~/.agents/skills/` + plugins |
+| Codex | `crit install codex` | `.agents/skills/crit{,-cli,-story,-decide}/SKILL.md` | `~/.agents/skills/crit{,-cli,-story,-decide}/SKILL.md` |
+| Codex plugin | `crit install codex-plugin` | loose skills + marketplace + `plugins/crit/` (incl. crit-story and crit-decide) | `~/.agents/` + `~/.codex/plugins/crit/` |
+| Pi | `crit install pi` | `.pi/skills/crit{,-cli,-story,-decide}/SKILL.md` | `~/.pi/agent/skills/crit{,-cli,-story,-decide}/SKILL.md` |
+| Qwen Code | `crit install qwen` | `.qwen/skills/crit{,-cli,-story,-decide}/SKILL.md` | `~/.qwen/skills/crit{,-cli,-story,-decide}/SKILL.md` |
+| Hermes | `crit install hermes` | `.hermes/skills/crit{,-cli,-story,-decide}/SKILL.md` (add `.hermes/skills` to `external_dirs`) | `~/.hermes/skills/crit{,-cli,-story,-decide}/SKILL.md` |
+| Windsurf | `crit install windsurf` | `.windsurf/workflows/crit.md` + `crit-story.md` + `crit-decide.md` + skills | `~/.codeium/windsurf/global_workflows/` + skills |
+| Cline | `crit install cline` | `.clinerules/workflows/crit.md` + `crit-story.md` + `crit-decide.md` + skills | `~/.cline/data/workflows/` + `~/.cline/skills/` |
 | Aider | `crit install aider` | `.crit/aider-conventions.md` + adds entry under `read:` in `.aider.conf.yml` | `~/.crit-conventions.md` + adds entry under `read:` in `~/.aider.conf.yml` |
-| Gemini CLI | `crit install gemini` | `crit-cli` + `crit-story` skills + `/crit` + `/crit-story` commands + policy | same under `~/.gemini/` |
-| Grok | `crit install grok` | `.grok/skills/crit{,-cli,-story}/SKILL.md` | `~/.grok/skills/crit{,-cli,-story}/SKILL.md` |
-| Amp | `crit install ampcode` | `.agents/skills/crit{,-cli,-story}/SKILL.md` | `~/.config/agents/skills/crit{,-cli,-story}/SKILL.md` |
+| Gemini CLI | `crit install gemini` | `crit-cli` + `crit-story` + `crit-decide` skills + `/crit` + `/crit-story` + `/crit-decide` commands + policy | same under `~/.gemini/` |
+| Grok | `crit install grok` | `.grok/skills/crit{,-cli,-story,-decide}/SKILL.md` | `~/.grok/skills/crit{,-cli,-story,-decide}/SKILL.md` |
+| Amp | `crit install ampcode` | `.agents/skills/crit{,-cli,-story,-decide}/SKILL.md` | `~/.config/agents/skills/crit{,-cli,-story,-decide}/SKILL.md` |
 
 ## Plugin marketplace (Claude Code)
 
@@ -37,6 +37,7 @@ For the full experience, install via the plugin marketplace. This gives you:
 - A `/crit` slash command for the review loop
 - A model-discoverable `crit-cli` skill for review files, `crit comment`, `crit pull/push`, etc.
 - A wording-gated `/crit-story` skill for chaptered diff overviews that then continues the `/crit` review loop
+- A `/crit-decide` skill for decision checklists, partial submissions, and revision rounds
 
 ```
 claude plugin marketplace add tomasz-tomczyk/crit
@@ -50,11 +51,11 @@ The marketplace manifest lives at the repo root (`.claude-plugin/marketplace.jso
 | | `crit install` | Plugin marketplace |
 |---|---|---|
 | **Scope** | Per-project (committed to repo) | Global (user-wide) |
-| **What's installed** | `/crit` skill only | `/crit` skill + `crit-cli` skill |
+| **What's installed** | `crit`, `crit-cli`, `crit-story`, and `crit-decide` skills or equivalent workflows | The same skills, plus lifecycle hooks |
 | **Good for** | Teams — everyone gets the integration | Individual users — works across all projects |
 | **Setup** | Run once per project | Install once, works everywhere |
 
-Both approaches give you the user-invoked `/crit` review cycle. The plugin marketplace additionally installs the `crit-cli` skill, which can auto-teach the agent about `crit comment`, review file format, `crit pull/push`, and resolution workflow without starting the interactive browser loop.
+Both approaches teach the review cycle, CLI operations, story reviews, and structured decisions. The plugin marketplace also installs lifecycle hooks for plan review.
 
 ## Claude Code plan approval mode
 
@@ -109,6 +110,7 @@ For the full Codex experience, install the plugin. This gives you:
 
 - A `$crit` skill for the review loop (plus loose copies under `.agents/skills/` so bare `$crit` works even outside the plugin)
 - A `crit-cli` skill that auto-activates when working with review files, `crit comment`, `crit pull/push`, etc.
+- `$crit-story` and `$crit-decide` skills for story reviews and structured human decisions
 - A **proposed-plan review hook** — intercepts Codex's `Stop` hook when the agent proposes a plan in Plan mode, writes it to disk, and opens Crit for inline review before the turn ends
 
 ```bash
@@ -125,10 +127,10 @@ Plugin source files live in `integrations/codex/plugin/crit/`. See [`integration
 | | `crit install codex` | `crit install codex-plugin` |
 |---|---|---|
 | **Scope** | Skills only (project or global) | Skills + Codex plugin + plan hook |
-| **What's installed** | `$crit` and `crit-cli` skills under `.agents/skills/` | Same skills, plus `plugins/crit/` (or `~/.codex/plugins/crit/`) with bundled skills and a `Stop` hook |
+| **What's installed** | `crit`, `crit-cli`, `crit-story`, and `crit-decide` skills under `.agents/skills/` | Same skills, plus `plugins/crit/` (or `~/.codex/plugins/crit/`) with bundled skills and a `Stop` hook |
 | **Plan mode** | Agent must write the plan to a file before `$crit` works | Hook captures in-chat proposed plans (`<proposed_plan>`) and reviews them automatically |
 
-Both approaches give you `$crit` and the `crit-cli` skill. Only `codex-plugin` adds the proposed-plan hook — without it, typing `$crit` on an in-chat plan (e.g. after choosing "No and stay in Plan Mode") does nothing useful because there is no file path for `crit` to open.
+Both approaches install all four skills. Only `codex-plugin` adds the proposed-plan hook — without it, typing `$crit` on an in-chat plan (e.g. after choosing "No and stay in Plan Mode") does nothing useful because there is no file path for `crit` to open.
 
 Disable automatic plan review per shell or globally with
 `export CRIT_PLAN_REVIEW=off`. Manual `crit plan` invocations are unaffected.
@@ -151,9 +153,13 @@ directly asks to generate a crit story. After ingest they reconnect with bare
 `crit` and continue the same wait → address → next-round cycle. It does not run
 as part of a normal review request.
 
-The only automatic interactive path is a lifecycle hook immediately after
-planning mode. The Claude Code plugin, Codex plugin, and Gemini CLI integration
-retain their existing plan-exit hooks.
+`crit-decide` is discoverable for structured human choices and revision
+feedback. The existing `crit` entry point also routes decision requests to it.
+It waits for a submitted decision result and does not use inline-review
+approval rules.
+
+The Claude Code plugin, Codex plugin, and Gemini CLI integration retain their
+existing plan-exit hooks for automatic plan review.
 
 ## What these do
 
@@ -170,6 +176,22 @@ Each integration also teaches the agent about:
 - **`crit pull/push`** — sync reviews with GitHub PRs (push supports `--event approve|request-changes|comment`)
 
 ## Structured human decisions
+
+`crit install <tool>` installs `crit-decide` alongside the existing skills.
+OpenCode, Cline, Windsurf, and Gemini also receive a dedicated command or
+workflow; Aider receives the same instructions in its conventions file.
+The agent discovers when to use decisions from the skill description and reads
+`crit decide --guide` at runtime for the schema and examples.
+
+To refresh an existing installation, use `crit install <tool> --force` and
+reload the agent's skills or start a new session. Without `--force`, missing
+files are added but existing loose skills and conventions are preserved.
+Codex plugin files and its activation cache are refreshed on every plugin
+install; `--force` also updates its loose skill copies.
+
+For example, ask “Use Crit to let me choose between these proposals”, invoke
+`$crit-decide` in Codex, or `/crit-decide` in Claude Code. Input is currently
+JSON; Markdown is supported within the context and description strings.
 
 For a checklist of choices, agents can use `crit decide --guide` and then run
 `crit decide checklist.json` (or `crit decide -` for stdin). Wait for the JSON

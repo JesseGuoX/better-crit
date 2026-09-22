@@ -105,15 +105,17 @@ func TestIntegrationMap_SnapshotGlobalRouting(t *testing.T) {
 		kind       globalDestKind
 	}
 	expected := map[string][]want{
-		"claude-code": {{"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}},
-		"cursor":      {{"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}},
-		"codex":       {{"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}},
-		"qwen":        {{"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}},
+		"claude-code": {{"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}},
+		"cursor":      {{"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}},
+		"codex":       {{"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}},
+		"qwen":        {{"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}},
 		"opencode": {
 			{".config/opencode/commands/crit.md", globalDestRelHome},
 			{".agents/skills/crit-cli/SKILL.md", globalDestRelHome},
 			{".config/opencode/commands/crit-story.md", globalDestRelHome},
+			{".config/opencode/commands/crit-decide.md", globalDestRelHome},
 			{".agents/skills/crit-story/SKILL.md", globalDestRelHome},
+			{".agents/skills/crit-decide/SKILL.md", globalDestRelHome},
 			{".config/opencode/plugins/crit.ts", globalDestRelHome},
 			{".config/opencode/plugins/lib/crit-wait-notify.js", globalDestRelHome},
 		},
@@ -121,37 +123,45 @@ func TestIntegrationMap_SnapshotGlobalRouting(t *testing.T) {
 			{".agents/skills/crit/SKILL.md", globalDestRelHome},
 			{".agents/skills/crit-cli/SKILL.md", globalDestRelHome},
 			{".agents/skills/crit-story/SKILL.md", globalDestRelHome},
+			{".agents/skills/crit-decide/SKILL.md", globalDestRelHome},
 		},
 		"windsurf": {
 			{".codeium/windsurf/global_workflows/crit.md", globalDestRelHome},
 			{".codeium/windsurf/skills/crit-cli/SKILL.md", globalDestRelHome},
 			{".codeium/windsurf/global_workflows/crit-story.md", globalDestRelHome},
+			{".codeium/windsurf/global_workflows/crit-decide.md", globalDestRelHome},
 			{".codeium/windsurf/skills/crit-story/SKILL.md", globalDestRelHome},
+			{".codeium/windsurf/skills/crit-decide/SKILL.md", globalDestRelHome},
 		},
 		"cline": {
 			{".cline/data/workflows/crit.md", globalDestRelHome},
 			{".cline/skills/crit-cli/SKILL.md", globalDestRelHome},
 			{".cline/data/workflows/crit-story.md", globalDestRelHome},
+			{".cline/data/workflows/crit-decide.md", globalDestRelHome},
 			{".cline/skills/crit-story/SKILL.md", globalDestRelHome},
+			{".cline/skills/crit-decide/SKILL.md", globalDestRelHome},
 		},
 		"gemini": {
 			{".gemini/skills/crit-cli/SKILL.md", globalDestRelHome},
 			{".gemini/commands/crit.toml", globalDestRelHome},
 			{".gemini/skills/crit-story/SKILL.md", globalDestRelHome},
+			{".gemini/skills/crit-decide/SKILL.md", globalDestRelHome},
 			{".gemini/commands/crit-story.toml", globalDestRelHome},
+			{".gemini/commands/crit-decide.toml", globalDestRelHome},
 			{".gemini/policies/crit.toml", globalDestRelHome},
 		},
-		"grok":    {{"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}},
-		"ampcode": {{".config/agents/skills/crit/SKILL.md", globalDestRelHome}, {".config/agents/skills/crit-cli/SKILL.md", globalDestRelHome}, {".config/agents/skills/crit-story/SKILL.md", globalDestRelHome}},
+		"grok":    {{"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}},
+		"ampcode": {{".config/agents/skills/crit/SKILL.md", globalDestRelHome}, {".config/agents/skills/crit-cli/SKILL.md", globalDestRelHome}, {".config/agents/skills/crit-story/SKILL.md", globalDestRelHome}, {".config/agents/skills/crit-decide/SKILL.md", globalDestRelHome}},
 		"codex-plugin": {
 			{".codex/plugins/crit/.codex-plugin/plugin.json", globalDestRelHome},
 			{".codex/plugins/crit/skills/crit/SKILL.md", globalDestRelHome},
 			{".codex/plugins/crit/skills/crit-cli/SKILL.md", globalDestRelHome},
 			{".codex/plugins/crit/skills/crit-story/SKILL.md", globalDestRelHome},
+			{".codex/plugins/crit/skills/crit-decide/SKILL.md", globalDestRelHome},
 			{".codex/plugins/crit/hooks/hooks.json", globalDestRelHome},
 		},
-		"hermes": {{".hermes/skills/crit/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-cli/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-story/SKILL.md", globalDestRelHome}},
-		"pi":     {{".pi/agent/skills/crit/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-cli/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-story/SKILL.md", globalDestRelHome}},
+		"hermes": {{".hermes/skills/crit/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-cli/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-story/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-decide/SKILL.md", globalDestRelHome}},
+		"pi":     {{".pi/agent/skills/crit/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-cli/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-story/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-decide/SKILL.md", globalDestRelHome}},
 	}
 	for tool, files := range expected {
 		got := integrationMap[tool]
@@ -195,6 +205,72 @@ func TestInstallOneFile_WritesAndSkips(t *testing.T) {
 	got, _ = os.ReadFile(dest)
 	if string(got) == "hand-edited" {
 		t.Errorf("force should overwrite; file still has hand-edited content")
+	}
+}
+
+func TestInstallIntegration_DecideUpgrade(t *testing.T) {
+	for _, mode := range []string{"project", "global"} {
+		t.Run(mode, func(t *testing.T) {
+			home := t.TempDir()
+			testutil.SetHome(t, home)
+			dir := home
+			if mode == "project" {
+				dir = t.TempDir()
+			}
+			t.Chdir(dir)
+
+			// Simulate an older install with locally customized review instructions.
+			const custom = "User-customized review instructions\n"
+			for _, name := range []string{"crit", "crit-cli", "crit-story"} {
+				path := filepath.Join(".agents", "skills", name, "SKILL.md")
+				if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+					t.Fatal(err)
+				}
+				if err := os.WriteFile(path, []byte(custom), 0o644); err != nil {
+					t.Fatal(err)
+				}
+			}
+
+			if err := installIntegration("codex", false); err != nil {
+				t.Fatal(err)
+			}
+			for _, name := range []string{"crit", "crit-cli", "crit-story", "crit-decide"} {
+				path := filepath.Join(".agents", "skills", name, "SKILL.md")
+				got, err := os.ReadFile(path)
+				if err != nil {
+					t.Fatal(err)
+				}
+				want := custom
+				if name == "crit-decide" {
+					data, err := integrationsFS.ReadFile("integrations/codex/skills/crit-decide/SKILL.md")
+					if err != nil {
+						t.Fatal(err)
+					}
+					want = string(data)
+				}
+				if string(got) != want {
+					t.Errorf("%s: non-force install must add decide and preserve existing skills", path)
+				}
+			}
+
+			// --force also refreshes the entry point and CLI reference to teach routing.
+			if err := installIntegration("codex", true); err != nil {
+				t.Fatal(err)
+			}
+			for _, f := range integrationMap["codex"] {
+				got, err := os.ReadFile(f.dest)
+				if err != nil {
+					t.Fatal(err)
+				}
+				want, err := integrationsFS.ReadFile(f.source)
+				if err != nil {
+					t.Fatal(err)
+				}
+				if string(got) != string(want) {
+					t.Errorf("%s: forced install differs from embedded instructions", f.dest)
+				}
+			}
+		})
 	}
 }
 
@@ -476,9 +552,11 @@ func TestInstallIntegration_CodexPluginEndToEnd(t *testing.T) {
 	for _, path := range []string{
 		".agents/skills/crit/SKILL.md",
 		".agents/skills/crit-cli/SKILL.md",
+		".agents/skills/crit-decide/SKILL.md",
 		"plugins/crit/.codex-plugin/plugin.json",
 		"plugins/crit/skills/crit/SKILL.md",
 		"plugins/crit/skills/crit-cli/SKILL.md",
+		"plugins/crit/skills/crit-decide/SKILL.md",
 		"plugins/crit/hooks/hooks.json",
 	} {
 		if _, err := os.Stat(filepath.Join(dir, path)); err != nil {
@@ -504,6 +582,7 @@ func TestInstallIntegration_CodexPluginEndToEnd(t *testing.T) {
 	for _, path := range []string{
 		".codex/plugins/cache/local/crit/local/.codex-plugin/plugin.json",
 		".codex/plugins/cache/local/crit/local/skills/crit/SKILL.md",
+		".codex/plugins/cache/local/crit/local/skills/crit-decide/SKILL.md",
 		".codex/plugins/cache/local/crit/local/hooks/hooks.json",
 	} {
 		if _, err := os.Stat(filepath.Join(home, path)); err != nil {
@@ -531,9 +610,11 @@ func TestInstallIntegration_CodexPluginGlobalEndToEnd(t *testing.T) {
 	for _, path := range []string{
 		".agents/skills/crit/SKILL.md",
 		".agents/skills/crit-cli/SKILL.md",
+		".agents/skills/crit-decide/SKILL.md",
 		".codex/plugins/crit/.codex-plugin/plugin.json",
 		".codex/plugins/crit/skills/crit/SKILL.md",
 		".codex/plugins/crit/skills/crit-cli/SKILL.md",
+		".codex/plugins/crit/skills/crit-decide/SKILL.md",
 		".codex/plugins/crit/hooks/hooks.json",
 	} {
 		if _, err := os.Stat(filepath.Join(home, path)); err != nil {
@@ -547,8 +628,13 @@ func TestInstallIntegration_CodexPluginGlobalEndToEnd(t *testing.T) {
 	}
 	assertCritMarketplacePathExists(t, marketplacePath, home)
 	assertCodexPluginEnabled(t, filepath.Join(home, ".codex", "config.toml"), "crit@local")
-	if _, err := os.Stat(filepath.Join(home, ".codex/plugins/cache/local/crit/local/.codex-plugin/plugin.json")); err != nil {
-		t.Fatalf("expected global cache to be written: %v", err)
+	for _, path := range []string{
+		".codex/plugins/cache/local/crit/local/.codex-plugin/plugin.json",
+		".codex/plugins/cache/local/crit/local/skills/crit-decide/SKILL.md",
+	} {
+		if _, err := os.Stat(filepath.Join(home, path)); err != nil {
+			t.Fatalf("expected global cache file %s to be written: %v", path, err)
+		}
 	}
 }
 

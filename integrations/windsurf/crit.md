@@ -1,5 +1,13 @@
 # Crit - Review Agent Output
 
+## Choose the workflow
+
+If the user wants to select proposals, adjudicate questions, or supplies
+`decide` arguments, load the installed `crit-decide` skill. It prepares the
+checklist, runs `crit decide`, and handles partial submissions and revisions.
+Use that workflow through completion; the remaining steps here apply to inline
+review, whose approval rules differ from decision results.
+
 Before implementing any non-trivial feature, write an implementation plan as a markdown file.
 
 ## Writing plans
