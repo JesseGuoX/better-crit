@@ -1,6 +1,6 @@
 # Roundtrip integration tests
 
-The roundtrip suite exercises `crit-plus pull` and `crit-plus push` against real change requests on both supported forges. Both providers' tests live in `internal/session` and drive the compiled Crit Plus CLI; provider APIs are used only for fixture lifecycle and remote-state assertions.
+The roundtrip suite exercises `crit-plus pull` and `crit-plus push` against real change requests on both supported forges. Both providers' tests live in `internal/session` and drive the compiled crit+ CLI; provider APIs are used only for fixture lifecycle and remote-state assertions.
 
 | Provider | Build tag | Project variable | CLI | Runner |
 | --- | --- | --- | --- | --- |
@@ -19,7 +19,7 @@ Each scenario:
 Use throwaway repositories named `<owner>/crit-roundtrip-sandbox`. The shared defaults are `crit-md/crit-roundtrip-sandbox` on both providers.
 
 - GitHub: export `CRIT_ROUNDTRIP_REPO=<owner>/crit-roundtrip-sandbox` and confirm `gh auth status`. The harness clones over SSH by default; set `CRIT_ROUNDTRIP_CLONE_URL` to override it.
-- GitLab: export `CRIT_GITLAB_ROUNDTRIP_PROJECT=<owner>/crit-roundtrip-sandbox` and confirm `glab auth status`. The authenticated user must be able to push branches, create/close MRs, comment, and resolve discussions. The project must have an initialized default branch. For self-managed GitLab, also set `CRIT_GITLAB_ROUNDTRIP_HOST=gitlab.example.com` and configure Crit Plus's `gitlab_url` for that host.
+- GitLab: export `CRIT_GITLAB_ROUNDTRIP_PROJECT=<owner>/crit-roundtrip-sandbox` and confirm `glab auth status`. The authenticated user must be able to push branches, create/close MRs, comment, and resolve discussions. The project must have an initialized default branch. For self-managed GitLab, also set `CRIT_GITLAB_ROUNDTRIP_HOST=gitlab.example.com` and configure crit+'s `gitlab_url` for that host.
 
 ## Running
 
@@ -35,7 +35,7 @@ make e2e-gitlab-roundtrip
 
 - GitHub scenarios use `roundtrip_integration_test.go` and `roundtrip_helpers_test.go`; start with `e := newRoundtripEnv(t)`.
 - GitLab scenarios use `gitlab_roundtrip_integration_test.go`; start with `e := newGitLabRoundtripEnv(t)`.
-- Keep provider API calls in harness helpers. Exercise Crit Plus behavior through the compiled binary rather than calling provider implementation functions directly.
+- Keep provider API calls in harness helpers. Exercise crit+ behavior through the compiled binary rather than calling provider implementation functions directly.
 - Assert remote IDs, thread/reply structure, resolution, deletion, and repeated pull/push idempotency where applicable.
 
 ## Caveats

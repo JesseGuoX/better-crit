@@ -48,17 +48,22 @@ Safe to re-run. Existing files are skipped (use `--force` to overwrite).
 ## Plugin marketplace (Claude Code)
 
 For the full experience, install via the plugin marketplace. This gives you:
-- A `/crit-plus` slash command for the review loop
-- A model-discoverable `crit-plus-cli` skill for review files, `crit-plus comment`, `crit-plus pull/push`, etc.
-- A wording-gated `/crit-plus-story` skill for chaptered diff overviews that then continues the `/crit-plus` review loop
-- A `/crit-plus-decide` skill for decision checklists, partial submissions, and revision rounds
 
-```
+- A `/crit-plus:crit-plus` slash command for the review loop
+- A model-discoverable `crit-plus-cli` skill for review files, `crit-plus comment`, `crit-plus pull` / `crit-plus push`, etc.
+- A wording-gated `/crit-plus:crit-plus-story` skill for chaptered diff overviews that then continues the review loop
+- A `/crit-plus:crit-plus-decide` skill for decision checklists, partial submissions, and revision rounds
+
+```bash
 claude plugin marketplace add JesseGuoX/crit-plus
 claude plugin install crit-plus@crit-plus
 ```
 
 The marketplace manifest lives at the repo root (`.claude-plugin/marketplace.json`) and points to the plugin files in `integrations/claude-code/`.
+
+Plugin commands include the `crit-plus:` namespace. Loose skills installed by
+`crit-plus install claude-code` use `/crit-plus`, `/crit-plus-story`, and
+`/crit-plus-decide`.
 
 ### `crit-plus install` vs plugin marketplace
 
@@ -123,7 +128,7 @@ otherwise Claude Code treats the update as a no-op.
 For the full Codex experience, install the plugin. This gives you:
 
 - A `$crit-plus` skill for the review loop (plus loose copies under `.agents/skills/` so bare `$crit-plus` works even outside the plugin)
-- A `crit-plus-cli` skill that auto-activates when working with review files, `crit-plus comment`, `crit-plus pull/push`, etc.
+- A `crit-plus-cli` skill that auto-activates when working with review files, `crit-plus comment`, `crit-plus pull` / `crit-plus push`, etc.
 - `$crit-plus-story` and `$crit-plus-decide` skills for story reviews and structured human decisions
 - A **proposed-plan review hook** — intercepts Codex's `Stop` hook when the agent proposes a plan in Plan mode, writes it to disk, and opens crit+ for inline review before the turn ends
 
@@ -187,7 +192,7 @@ All integrations follow the same pattern:
 Each integration also teaches the agent about:
 - **`crit-plus comment`** — leave inline review comments programmatically without opening the browser
 - **review file format** — how to read comments, resolve them with threaded replies
-- **`crit-plus pull/push`** — sync reviews with GitHub PRs (push supports `--event approve|request-changes|comment`)
+- **`crit-plus pull` / `crit-plus push`** — sync reviews with GitHub PRs (push supports `--event approve|request-changes|comment`)
 
 ## Structured human decisions
 
@@ -204,7 +209,8 @@ Codex plugin files and its activation cache are refreshed on every plugin
 install; `--force` also updates its loose skill copies.
 
 For example, ask “Use crit+ to let me choose between these proposals”, invoke
-`$crit-plus-decide` in Codex, or `/crit-plus-decide` in Claude Code. Input is currently
+`$crit-plus-decide` in Codex, or `/crit-plus:crit-plus-decide` with the Claude Code
+plugin (`/crit-plus-decide` for loose skills). Input is currently
 JSON; Markdown is supported within the context and description strings.
 
 For a checklist of choices, agents can use `crit-plus decide --guide` and then run

@@ -12,7 +12,7 @@ features, attribution, and example prompts.
 | Path | Install command | Purpose |
 |------|----------------|---------|
 | `skills/crit-plus/SKILL.md` | `crit-plus install codex` | `$crit-plus` skill — launches the interactive review loop |
-| `skills/crit-plus-cli/SKILL.md` | `crit-plus install codex` | CLI reference — `crit-plus comment`, `crit-plus pull/push`, review file format |
+| `skills/crit-plus-cli/SKILL.md` | `crit-plus install codex` | CLI reference — `crit-plus comment`, `crit-plus pull` / `crit-plus push`, review file format |
 | `skills/crit-plus-story/SKILL.md` | `crit-plus install codex` | Chaptered diff overview followed by inline review |
 | `skills/crit-plus-decide/SKILL.md` | `crit-plus install codex` | Decision checklist — choices, recommendations, revision feedback, and follow-up rounds |
 | `plugin/crit-plus/.codex-plugin/plugin.json` | `crit-plus install codex-plugin` | Codex plugin manifest (skills + hooks) |
