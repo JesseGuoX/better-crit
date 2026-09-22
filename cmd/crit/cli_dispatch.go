@@ -145,6 +145,7 @@ Options:
       --share-url <url>   Share service URL
       --no-open           Do not open a browser
   -q, --quiet             On success, suppress connect/start status, tips, and session summary`},
+	{name: "decide", handler: runDecide, help: decideHelp},
 	{name: "story", handler: runStory, helpFn: printStoryUsage, bareHelp: true},
 	{name: "auth", handler: runAuth, help: `Usage: crit auth <login|logout|whoami|status>
 
@@ -308,6 +309,7 @@ Review:
   crit --mr <iid|url>                        Review a GitLab merge request
   crit --range <base>..<head>                Review a commit range
   crit plan --name <slug> <file>             Review a plan file
+  crit decide <checklist.json|->            Collect structured human decisions
   crit story                                 Generate and review a story-mode diff
   crit --session <id>                        Reconnect to an existing review session
   crit resume [--list | <id>]               Pick a stored review to reopen

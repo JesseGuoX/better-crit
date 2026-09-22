@@ -1,6 +1,6 @@
 export default [
   {
-    files: ["web/app.js"],
+    files: ["web/app.js", "web/decide.js"],
     rules: {
       "no-var": "error",
       "prefer-const": "error",

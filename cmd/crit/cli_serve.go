@@ -104,6 +104,12 @@ func resolveServeReviewPath(outputDir, planDir, sessionKey string) (string, erro
 
 func runServe(args []string) {
 	pipe := openReadyPipe()
+	if len(args) > 0 && args[0] == "--decision-id" {
+		if err := runDecisionServe(args, pipe); err != nil {
+			daemonFatal(pipe, "Error: %v", err)
+		}
+		return
+	}
 
 	sc, err := server.ResolveDaemonCLIConfig(args)
 	if err != nil {

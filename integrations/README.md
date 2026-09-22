@@ -168,3 +168,14 @@ Each integration also teaches the agent about:
 - **`crit comment`** — leave inline review comments programmatically without opening the browser
 - **review file format** — how to read comments, resolve them with threaded replies
 - **`crit pull/push`** — sync reviews with GitHub PRs (push supports `--event approve|request-changes|comment`)
+
+## Structured human decisions
+
+For a checklist of choices, agents can use `crit decide --guide` and then run
+`crit decide checklist.json` (or `crit decide -` for stdin). Wait for the JSON
+result and inspect every item's status: `decided` constrains the work,
+`revision_requested` requires revision and another confirmation, and `pending`
+provides no authorization. Exit 0 may be a partial submission; check `completed`.
+Keep IDs stable across rounds. `crit decide` collects choices and does not run
+review approval hooks. The [decision guide](../internal/decision/guide.md)
+contains the schema, an example, and recovery rules.

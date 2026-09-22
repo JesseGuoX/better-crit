@@ -1,0 +1,82 @@
+{
+  "id": "notes-app-example",
+  "title": "裁定示例：笔记应用首版方案",
+  "context": "这是一个用于体验 Crit 裁定流程的示例。你可以选择方案、展开 **提出修改意见**，或保留部分条目待定后直接提交。推荐项不会自动选中。",
+  "items": [
+    {
+      "id": "storage",
+      "title": "笔记数据应该如何保存？",
+      "context": "假设首版面向个人用户，需要支持离线访问、全文搜索和数据备份。",
+      "type": "single",
+      "options": [
+        {
+          "id": "sqlite",
+          "label": "SQLite 本地数据库",
+          "description": "**优点：** 支持事务和结构化查询，部署简单。\n\n**代价：** 数据需要通过导出功能才能直接在其他工具中编辑。"
+        },
+        {
+          "id": "markdown-files",
+          "label": "Markdown 文件目录",
+          "description": "**优点：** 文件透明，可直接编辑，也方便使用 Git 管理。\n\n**代价：** 搜索索引、附件关联和文件冲突需要额外处理。"
+        },
+        {
+          "id": "postgres",
+          "label": "PostgreSQL 数据库服务",
+          "description": "**优点：** 适合后续多人协作和集中管理。\n\n**代价：** 需要部署服务，离线使用需要额外设计。"
+        }
+      ],
+      "recommended": ["sqlite"],
+      "recommendation_reason": "当前假设是个人离线使用。SQLite 可以兼顾查询能力和部署成本，再通过导出功能保证数据可迁移。"
+    },
+    {
+      "id": "export-formats",
+      "title": "首版需要支持哪些导出格式？",
+      "context": "可以选择多个格式。如果暂时不确定，可以保持待定，或在修改意见中补充其他格式。",
+      "type": "multiple",
+      "options": [
+        {
+          "id": "markdown",
+          "label": "Markdown",
+          "description": "便于阅读和继续编辑，也方便迁移到其他笔记工具。"
+        },
+        {
+          "id": "json",
+          "label": "JSON",
+          "description": "保留标题、正文、标签和时间等结构化信息，便于备份与程序处理。"
+        },
+        {
+          "id": "csv",
+          "label": "CSV",
+          "description": "适合在电子表格中查看笔记清单与元数据，复杂正文的可读性较弱。"
+        }
+      ],
+      "recommended": ["markdown", "json"],
+      "recommendation_reason": "Markdown 方便日常阅读与迁移，JSON 便于保留结构化信息。两者覆盖不同用途。"
+    },
+    {
+      "id": "sync-scope",
+      "title": "首版是否加入跨设备同步？",
+      "context": "这个条目可以用来体验修改反馈，例如：**先支持手动同步，自动同步留到下一版。** 填写修改意见后，即使选择了方案，该条目也会返回「需修改」。",
+      "type": "single",
+      "options": [
+        {
+          "id": "local-first",
+          "label": "首版仅支持本地使用",
+          "description": "先完成记录、搜索、备份和导出，缩小首版范围。"
+        },
+        {
+          "id": "manual-sync",
+          "label": "提供手动同步",
+          "description": "由用户主动触发同步，需要定义同步位置和冲突处理方式。"
+        },
+        {
+          "id": "automatic-sync",
+          "label": "提供自动同步",
+          "description": "跨设备体验更流畅，但需要设计账户、后台同步与冲突合并。"
+        }
+      ],
+      "recommended": ["local-first"],
+      "recommendation_reason": "在这个示例的个人离线使用假设下，先验证记录和检索体验；如果跨设备使用是必需条件，可以选择其他方案或补充修改意见。"
+    }
+  ]
+}

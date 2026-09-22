@@ -117,6 +117,8 @@ if [ $# -eq 0 ]; then
   PW_SHARE=$!
   npx playwright test --project=perf > "$PWLOGS/perf.log" 2>&1 &
   PW_PERF=$!
+  npx playwright test --project=decision-mode > "$PWLOGS/decision.log" 2>&1 &
+  PW_DECISION=$!
 
   # Mobile shares the git-mode fixture (port 3123) and both projects call
   # DELETE /api/comments in beforeEach, so they must not overlap. Wait for
@@ -139,6 +141,7 @@ if [ $# -eq 0 ]; then
   reap live   $PW_LIVE
   reap share  $PW_SHARE
   reap perf   $PW_PERF
+  reap decision $PW_DECISION
   if [ -n "${PW_MOBILE:-}" ]; then
     reap mobile $PW_MOBILE
   fi

@@ -19,8 +19,27 @@ Crit adds a proper interface for each type of output and lets you point at the e
 - `crit` auto-detects git changes and shows syntax-highlighted diffs for local review.
 - `crit http://localhost:3000` proxies your running app and adds a review interface to it
 - `crit landing.html` renders a static HTML artifact to review
+- `crit decide checklist.json` opens a structured decision checklist with choices, recommendations, and revision feedback
 
 Everything runs locally via one single binary.
+
+## Decision checklists
+
+Agents can run `crit decide --guide` for the input schema and a complete example,
+then `crit decide checklist.json` (or pipe JSON to `crit decide -`). The page
+supports single and multiple choices, Markdown context, recommendations,
+autosaved drafts, and modification requests. Recommendations are not preselected.
+
+Users can submit at any time. The command returns one JSON snapshot on stdout,
+with each item marked `decided`, `revision_requested`, or `pending`.
+**Exit 0 means a submission was received; only `completed: true` means all items
+were decided.** Feedback requests revision, even when options are selected.
+
+Keep IDs stable and rerun updated input for another round. Unchanged submitted
+decisions carry forward; changed items reset. Identical input recovers the saved
+result; `--new-round` reopens it. History survives restarts in
+`~/.crit/decisions/<session_id>/state.json`. Decision mode does not execute agent
+commands or review approval hooks. See the [agent guide](internal/decision/guide.md).
 
 ## Quickstart
 

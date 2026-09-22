@@ -47,9 +47,10 @@ export default defineConfig({
   },
 
   projects: [
+    { name: 'decision-mode', testMatch: /\.decidemode\.spec\.ts$/, use: { browserName: 'chromium' } },
     {
       name: 'git-mode',
-      testMatch: /^(?!.*\.(filemode|singlefile|multifile|nogit|rangemode|mobile|livemode|sharetransport|perf)\.).*\.spec\.ts$/,
+      testMatch: /^(?!.*\.(filemode|singlefile|multifile|nogit|rangemode|mobile|livemode|sharetransport|perf|decidemode)\.).*\.spec\.ts$/,
       use: {
         browserName: 'chromium',
         baseURL: `http://localhost:${GIT_PORT}`,
