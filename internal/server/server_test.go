@@ -390,7 +390,7 @@ func TestSecFetchSiteCSRF_AllowsSameOriginAndCLI(t *testing.T) {
 
 	before := len(session.GetComments("test.md"))
 	post(t, "")            // CLI / curl
-	post(t, "same-origin") // Crit UI
+	post(t, "same-origin") // Crit Plus UI
 	if got := len(session.GetComments("test.md")); got != before+2 {
 		t.Fatalf("comment count = %d, want %d", got, before+2)
 	}
@@ -497,7 +497,7 @@ func TestPostFileComment(t *testing.T) {
 }
 
 // TestPostFileComment_NormalizesSide verifies that GitHub-style "RIGHT"/"LEFT"
-// side values on the wire are normalized to crit's internal representation
+// side values on the wire are normalized to crit-plus's internal representation
 // ("" for new, "old" for deletion). Without this normalization the frontend's
 // diff renderer keys comments by "lineNumber:side" and would falsely flag
 // fresh range-mode comments (seeded with side="RIGHT") as "outdated" because
@@ -799,8 +799,8 @@ func TestFinish_IncludesStructuredComments(t *testing.T) {
 		t.Error("finish response should not include legacy copy_prompt field")
 	}
 	nextCmd, _ := resp["next_command"].(string)
-	if nextCmd != "crit --session abcd1234ef01" {
-		t.Errorf("next_command = %q, want crit --session abcd1234ef01", nextCmd)
+	if nextCmd != "crit-plus --session abcd1234ef01" {
+		t.Errorf("next_command = %q, want crit-plus --session abcd1234ef01", nextCmd)
 	}
 }
 
@@ -823,8 +823,8 @@ func TestFinish_PromptApproved(t *testing.T) {
 	if strings.Contains(prompt, "Next review round") {
 		t.Errorf("approved prompt should not mention next review round, got: %s", prompt)
 	}
-	if strings.Contains(prompt, "crit comments") {
-		t.Errorf("approved prompt should not mention crit comments, got: %s", prompt)
+	if strings.Contains(prompt, "crit-plus comments") {
+		t.Errorf("approved prompt should not mention crit-plus comments, got: %s", prompt)
 	}
 }
 
@@ -842,7 +842,7 @@ func TestFinish_PromptIncludesFileArgs(t *testing.T) {
 		t.Fatal(err)
 	}
 	prompt, _ := resp["prompt"].(string)
-	if !strings.Contains(prompt, "crit --session abcd1234ef01") {
+	if !strings.Contains(prompt, "crit-plus --session abcd1234ef01") {
 		t.Errorf("expected prompt to contain session reconnect command, got: %s", prompt)
 	}
 	if !strings.Contains(prompt, "When you're done, run:") {
@@ -866,7 +866,7 @@ func TestFinish_PromptBareGitMode(t *testing.T) {
 		t.Fatal(err)
 	}
 	prompt, _ := resp["prompt"].(string)
-	if !strings.Contains(prompt, "When you're done, run:") || !strings.Contains(prompt, "crit") {
+	if !strings.Contains(prompt, "When you're done, run:") || !strings.Contains(prompt, "crit-plus") {
 		t.Errorf("expected prompt to include bare git reconnect, got: %s", prompt)
 	}
 }
@@ -968,8 +968,8 @@ func TestReviewCycle_NextCommand(t *testing.T) {
 		sessionKey string
 		want       string
 	}{
-		{"with session key", "839f3b4cd5d6", "crit --session 839f3b4cd5d6"},
-		{"empty session key falls back", "", "crit"},
+		{"with session key", "839f3b4cd5d6", "crit-plus --session 839f3b4cd5d6"},
+		{"empty session key falls back", "", "crit-plus"},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -1447,7 +1447,7 @@ func TestGetConfig(t *testing.T) {
 
 func TestCheckForUpdates(t *testing.T) {
 	gh := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/repos/tomasz-tomczyk/crit/releases/latest" {
+		if r.URL.Path != "/repos/JesseGuoX/better-crit/releases/latest" {
 			http.NotFound(w, r)
 			return
 		}
@@ -3660,14 +3660,14 @@ func TestFinish_PlanModeNextCommand(t *testing.T) {
 		t.Fatal(err)
 	}
 	nextCmd, _ := resp["next_command"].(string)
-	if nextCmd != "crit plan --name my-feature" {
-		t.Errorf("next_command = %q, want crit plan --name my-feature", nextCmd)
+	if nextCmd != "crit-plus plan --name my-feature" {
+		t.Errorf("next_command = %q, want crit-plus plan --name my-feature", nextCmd)
 	}
 	prompt, _ := resp["prompt"].(string)
-	if !strings.Contains(prompt, "crit plan --name my-feature") {
+	if !strings.Contains(prompt, "crit-plus plan --name my-feature") {
 		t.Errorf("prompt should include plan reconnect, got: %s", prompt)
 	}
-	if strings.Contains(prompt, "crit --session") {
+	if strings.Contains(prompt, "crit-plus --session") {
 		t.Errorf("prompt should not use --session for plan mode, got: %s", prompt)
 	}
 }
@@ -4188,8 +4188,8 @@ func TestHandleFinish_PlanMode(t *testing.T) {
 	var resp map[string]any
 	json.Unmarshal(w.Body.Bytes(), &resp)
 	prompt, _ := resp["prompt"].(string)
-	if !strings.Contains(prompt, "crit comment --plan") {
-		t.Errorf("plan mode finish should mention crit comment --plan, got: %s", prompt)
+	if !strings.Contains(prompt, "crit-plus comment --plan") {
+		t.Errorf("plan mode finish should mention crit-plus comment --plan, got: %s", prompt)
 	}
 }
 

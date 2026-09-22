@@ -44,10 +44,10 @@ func latestCacheDir(dir string) string {
 
 // location describes where a stale file was found, determining the update advice.
 const (
-	locationProject     = "project"     // ./  (crit install)
-	locationHome        = "home"        // ~/  (crit install from home)
-	locationMarketplace = "marketplace" // ~/.claude/plugins/marketplaces/crit/
-	locationCache       = "cache"       // ~/.claude/plugins/cache/crit/
+	locationProject     = "project"     // ./  (crit-plus install)
+	locationHome        = "home"        // ~/  (crit-plus install from home)
+	locationMarketplace = "marketplace" // ~/.claude/plugins/marketplaces/crit-plus/
+	locationCache       = "cache"       // ~/.claude/plugins/cache/crit-plus/
 )
 
 type staleFile struct {
@@ -59,27 +59,27 @@ type staleFile struct {
 }
 
 // toolDirFromDest extracts the tool config directory from a dest path
-// (e.g. ".claude/skills/crit/SKILL.md" → ".claude").
+// (e.g. ".claude/skills/crit-plus/SKILL.md" → ".claude").
 func toolDirFromDest(dest string) string {
 	return strings.SplitN(dest, "/", 2)[0]
 }
 
 // marketplaceUpdateHint returns tool-specific advice for updating a marketplace plugin.
 var marketplaceUpdateHints = map[string]string{
-	".claude": "claude plugin marketplace update crit\nclaude plugin update crit@crit",
-	".cursor": "Update the crit plugin in Cursor settings",
+	".claude": "claude plugin marketplace update crit-plus\nclaude plugin update crit-plus@crit-plus",
+	".cursor": "Update the crit-plus plugin in Cursor settings",
 }
 
 // updateHint returns location-specific advice for how to fix this stale file.
 func (s staleFile) updateHint() string {
 	switch s.location {
 	case locationProject:
-		return fmt.Sprintf("Run: crit install %s --force", s.agent)
+		return fmt.Sprintf("Run: crit-plus install %s --force", s.agent)
 	case locationHome:
-		return fmt.Sprintf("Run: cd ~ && crit install %s --force", s.agent)
+		return fmt.Sprintf("Run: cd ~ && crit-plus install %s --force", s.agent)
 	case locationMarketplace, locationCache:
 		if s.agent == "codex-plugin" {
-			return "Run: crit install codex-plugin --force"
+			return "Run: crit-plus install codex-plugin --force"
 		}
 		// Find the tool dir from the integration's dest path
 		if files, ok := integrationMap[s.agent]; ok && len(files) > 0 {
@@ -88,9 +88,9 @@ func (s staleFile) updateHint() string {
 				return hint
 			}
 		}
-		return "Update the crit plugin in your editor settings"
+		return "Update the crit-plus plugin in your editor settings"
 	default:
-		return fmt.Sprintf("Run: crit install %s --force", s.agent)
+		return fmt.Sprintf("Run: crit-plus install %s --force", s.agent)
 	}
 }
 
@@ -186,13 +186,13 @@ func buildCandidates(f integration, agent, projectDir, homeDir string) []candida
 	}
 
 	toolDir := toolDirFromDest(f.dest)
-	marketplacePath := filepath.Join(homeDir, toolDir, "plugins", "marketplaces", "crit", f.source)
+	marketplacePath := filepath.Join(homeDir, toolDir, "plugins", "marketplaces", "crit-plus", f.source)
 	candidates = append(candidates, candidate{marketplacePath, locationMarketplace})
 
 	agentPrefix := fmt.Sprintf("integrations/%s/", agent)
 	if strings.HasPrefix(f.source, agentPrefix) {
 		relPath := strings.TrimPrefix(f.source, agentPrefix)
-		cacheBase := filepath.Join(homeDir, toolDir, "plugins", "cache", "crit", "crit")
+		cacheBase := filepath.Join(homeDir, toolDir, "plugins", "cache", "crit-plus", "crit-plus")
 		if latest := latestCacheDir(cacheBase); latest != "" {
 			cachePath := filepath.Join(cacheBase, latest, relPath)
 			candidates = append(candidates, candidate{cachePath, locationCache})
@@ -203,7 +203,7 @@ func buildCandidates(f integration, agent, projectDir, homeDir string) []candida
 }
 
 func codexPluginCacheCandidates(f integration, projectDir, homeDir string) []candidate {
-	const sourcePrefix = "integrations/codex/plugin/crit/"
+	const sourcePrefix = "integrations/codex/plugin/crit-plus/"
 	relPath, ok := strings.CutPrefix(f.source, sourcePrefix)
 	if !ok {
 		return nil
@@ -211,7 +211,7 @@ func codexPluginCacheCandidates(f integration, projectDir, homeDir string) []can
 
 	var candidates []candidate
 	for _, marketplaceName := range codexPluginMarketplaceNames(projectDir, homeDir) {
-		cacheBase := filepath.Join(codexHome(homeDir), "plugins", "cache", marketplaceName, "crit")
+		cacheBase := filepath.Join(codexHome(homeDir), "plugins", "cache", marketplaceName, "crit-plus")
 		latest := latestCacheDir(cacheBase)
 		if latest == "" {
 			continue
@@ -233,10 +233,10 @@ func codexPluginMarketplaceNames(projectDir, homeDir string) []string {
 		names = append(names, name)
 	}
 
-	if name, ok := readCodexPluginMarketplaceName(filepath.Join(projectDir, ".agents", "plugins", "marketplace.json"), "./plugins/crit"); ok {
+	if name, ok := readCodexPluginMarketplaceName(filepath.Join(projectDir, ".agents", "plugins", "marketplace.json"), "./plugins/crit-plus"); ok {
 		add(name)
 	}
-	if name, ok := readCodexPluginMarketplaceName(filepath.Join(homeDir, ".agents", "plugins", "marketplace.json"), "./.codex/plugins/crit"); ok {
+	if name, ok := readCodexPluginMarketplaceName(filepath.Join(homeDir, ".agents", "plugins", "marketplace.json"), "./.codex/plugins/crit-plus"); ok {
 		add(name)
 	}
 	add("local")
@@ -253,7 +253,7 @@ func readCodexPluginMarketplaceName(path, sourcePath string) (string, bool) {
 		return "", false
 	}
 	for _, plugin := range marketplace.Plugins {
-		if plugin.Name == "crit" && plugin.Source.matchesLocalPath(sourcePath) {
+		if plugin.Name == "crit-plus" && plugin.Source.matchesLocalPath(sourcePath) {
 			if marketplace.Name == "" {
 				return "local", true
 			}
@@ -322,15 +322,15 @@ func checkCodexPluginInstallCompleteness(projectDir, homeDir string) []staleFile
 	}
 	roots := []installRoot{
 		{
-			root:            filepath.Join(projectDir, "plugins", "crit"),
+			root:            filepath.Join(projectDir, "plugins", "crit-plus"),
 			marketplacePath: filepath.Join(projectDir, ".agents", "plugins", "marketplace.json"),
-			sourcePath:      "./plugins/crit",
+			sourcePath:      "./plugins/crit-plus",
 			location:        locationProject,
 		},
 		{
-			root:            filepath.Join(homeDir, ".codex", "plugins", "crit"),
+			root:            filepath.Join(homeDir, ".codex", "plugins", "crit-plus"),
 			marketplacePath: filepath.Join(homeDir, ".agents", "plugins", "marketplace.json"),
-			sourcePath:      "./.codex/plugins/crit",
+			sourcePath:      "./.codex/plugins/crit-plus",
 			location:        locationHome,
 		},
 	}
@@ -352,7 +352,7 @@ func checkCodexPluginInstallCompleteness(projectDir, homeDir string) []staleFile
 			marketplaceName = "local"
 		}
 
-		pluginKey := "crit@" + marketplaceName
+		pluginKey := "crit-plus@" + marketplaceName
 		configPath := filepath.Join(codexHome(homeDir), "config.toml")
 		if !codexPluginConfigReady(configPath, pluginKey) {
 			results = append(results, staleFile{
@@ -367,7 +367,7 @@ func checkCodexPluginInstallCompleteness(projectDir, homeDir string) []staleFile
 		if err != nil {
 			continue
 		}
-		cacheManifest := filepath.Join(codexHome(homeDir), "plugins", "cache", marketplaceName, "crit", version, ".codex-plugin", "plugin.json")
+		cacheManifest := filepath.Join(codexHome(homeDir), "plugins", "cache", marketplaceName, "crit-plus", version, ".codex-plugin", "plugin.json")
 		if _, err := os.Stat(cacheManifest); err != nil {
 			results = append(results, staleFile{
 				agent:    "codex-plugin",
@@ -527,7 +527,7 @@ func confirmBinaryVersion(bin, expected string) bool {
 	return strings.Contains(strings.ToLower(string(out)), strings.ToLower(expected))
 }
 
-// installedAgents returns the set of agents that have at least one crit
+// installedAgents returns the set of agents that have at least one crit-plus
 // integration file installed (project-local, home, marketplace, or cache),
 // plus aider if its conventions file exists.
 func installedAgents(projectDir, homeDir string) map[string]bool {
@@ -543,7 +543,7 @@ func installedAgents(projectDir, homeDir string) map[string]bool {
 }
 
 // checkMissingIntegrations returns agents that are present on the system but
-// have no crit integration installed (project-local or home).
+// have no crit-plus integration installed (project-local or home).
 func checkMissingIntegrations(projectDir, homeDir string) []string {
 	present := detectPresentAgents(homeDir)
 	if len(present) == 0 {
@@ -568,18 +568,18 @@ func printMissingHints(missing []string) int {
 		return 0
 	}
 	if len(missing) == 1 {
-		fmt.Fprintf(os.Stderr, "Tip: %s detected but crit integration not installed.\n", missing[0])
-		fmt.Fprintf(os.Stderr, "     Run: crit install %s\n", missing[0])
+		fmt.Fprintf(os.Stderr, "Tip: %s detected but crit-plus integration not installed.\n", missing[0])
+		fmt.Fprintf(os.Stderr, "     Run: crit-plus install %s\n", missing[0])
 	} else {
-		fmt.Fprintf(os.Stderr, "Tip: detected AI tools without crit integration: %s\n", strings.Join(missing, ", "))
-		fmt.Fprintf(os.Stderr, "     Run: crit install all  (or crit install <agent> for a specific one)\n")
+		fmt.Fprintf(os.Stderr, "Tip: detected AI tools without crit-plus integration: %s\n", strings.Join(missing, ", "))
+		fmt.Fprintf(os.Stderr, "     Run: crit-plus install all  (or crit-plus install <agent> for a specific one)\n")
 	}
 	fmt.Fprintf(os.Stderr, "     Disable: CRIT_NO_INTEGRATION_CHECK=1\n")
 	return len(missing)
 }
 
 // hintMissingIntegrations prints a suggestion when AI tools are detected but
-// no crit integration is installed. Skipped when any integration already exists
+// no crit-plus integration is installed. Skipped when any integration already exists
 // or when CRIT_NO_INTEGRATION_CHECK is set.
 func hintMissingIntegrations() {
 	if os.Getenv("CRIT_NO_INTEGRATION_CHECK") != "" {
@@ -605,7 +605,7 @@ func hintMissingIntegrationsFor(cwd, home string) {
 	}
 }
 
-// runCheck implements the "crit check" subcommand.
+// runCheck implements the "crit-plus check" subcommand.
 func runCheck() {
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -618,7 +618,7 @@ func runCheck() {
 		os.Exit(1)
 	}
 
-	fmt.Fprintf(os.Stderr, "crit %s — checking installed integrations...\n\n", version)
+	fmt.Fprintf(os.Stderr, "crit-plus %s — checking installed integrations...\n\n", version)
 
 	stale := checkInstalledIntegrations(cwd, home)
 	missing := checkMissingIntegrations(cwd, home)

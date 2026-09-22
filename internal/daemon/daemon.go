@@ -196,7 +196,7 @@ func LiveSessionKey(cwd, origin string) string {
 	return hex.EncodeToString(h.Sum(nil))[:12]
 }
 
-// ValidSessionKey reports whether key looks like a crit session ID (12 lowercase hex chars).
+// ValidSessionKey reports whether key looks like a crit-plus session ID (12 lowercase hex chars).
 func ValidSessionKey(key string) bool {
 	if len(key) != 12 {
 		return false
@@ -453,8 +453,8 @@ func findSessionForCWDBranch(cwd, branch string) (entry SessionEntry, key string
 }
 
 // listSessionsForRepoRoot returns alive sessions whose CWD is within the given
-// git repository root. This handles the case where `crit` was started from a
-// subdirectory (e.g. repo/api) but `crit comment` is run from a different
+// git repository root. This handles the case where `crit-plus` was started from a
+// subdirectory (e.g. repo/api) but `crit-plus comment` is run from a different
 // subdirectory or the repo root itself.
 func ListSessionsForRepoRoot(repoRoot string) ([]SessionEntry, []string) {
 	dir, err := sessionsDir()
@@ -724,7 +724,7 @@ func handleDaemonPipeError(key string, readErr error, readEnd *os.File, cmd *exe
 	return SessionEntry{}, fmt.Errorf("daemon startup failed: %w", readErr)
 }
 
-// StartDaemon spawns a crit _serve process in the background and waits for it to be ready.
+// StartDaemon spawns a crit-plus _serve process in the background and waits for it to be ready.
 // The key must match what the daemon computes in runServe (sessionKey(cwd, branch, fileArgs)).
 // Raw args (including flags) are passed through to _serve which parses them itself.
 // Uses an OS pipe (FD 3) for the daemon to signal readiness by writing its port number.
@@ -734,7 +734,7 @@ func StartDaemon(key string, args []string) (SessionEntry, error) {
 
 // StartDaemonInDir is StartDaemon with an explicit working directory for the
 // daemon process. An empty dir means "inherit ours", which is what a review
-// started from the current directory wants. `crit resume` passes the directory
+// started from the current directory wants. `crit-plus resume` passes the directory
 // recorded in the review file so a session can be restarted from anywhere.
 func StartDaemonInDir(key string, args []string, dir string) (SessionEntry, error) {
 	lock, err := acquireSessionLock(key)
@@ -917,7 +917,7 @@ func StopDaemon(key string) error {
 		return fmt.Errorf("no session found: %w", err)
 	}
 
-	// Verify this PID is actually our crit daemon (not a reused PID)
+	// Verify this PID is actually our crit-plus daemon (not a reused PID)
 	if !isDaemonAlive(entry) {
 		RemoveSessionFile(key)
 		return nil

@@ -884,14 +884,14 @@ func TestLazyBackfillAuthUserID_DoesNotClearOnWrongServer401(t *testing.T) {
 	}))
 	defer right.Close()
 
-	// Seed the global config as though a prior `crit auth login` against the
+	// Seed the global config as though a prior `crit-plus auth login` against the
 	// selfhosted server happened. Note: AuthUserID is empty so backfill runs.
 	if err := os.WriteFile(filepath.Join(home, ".crit.config.json"),
 		[]byte(`{"auth_token":"self_tok"}`), 0o600); err != nil {
 		t.Fatal(err)
 	}
 
-	// Simulate `crit share --share-url <right>`: the cfg has the env-default
+	// Simulate `crit-plus share --share-url <right>`: the cfg has the env-default
 	// crit.md style URL, but the caller passes the resolved selfhosted URL.
 	cfg := Config{AuthToken: "self_tok", ShareURL: wrong.URL}
 	LazyBackfillAuthUserID(&cfg, right.URL)

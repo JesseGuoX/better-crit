@@ -27,7 +27,7 @@ func buildDriftedGitRepo(t *testing.T) (dir, forkpoint, baseTip, prHead string) 
 
 // TestMergeBaseOf_Git pins the two-arg merge-base: neither side is HEAD, and it
 // returns the fork point, not the (drifted) base tip. This is the git path of
-// the `crit --pr` fix.
+// the `crit-plus --pr` fix.
 func TestMergeBaseOf_Git(t *testing.T) {
 	ClearGitEnvForTest(t) // robust under git hooks that export GIT_DIR
 	dir, forkpoint, baseTip, prHead := buildDriftedGitRepo(t)
@@ -53,7 +53,7 @@ func TestMergeBaseOf_Git(t *testing.T) {
 
 // TestJJVCS_MergeBaseOf covers the two-arg merge-base where neither side is @:
 // two siblings off main must resolve to their common ancestor (the fork point),
-// not the divergent base-branch tip. This is the jj path of the `crit --pr` fix.
+// not the divergent base-branch tip. This is the jj path of the `crit-plus --pr` fix.
 func TestJJVCS_MergeBaseOf(t *testing.T) {
 	dir := initTestJJRepoWithLocalMain(t)
 	j := &JJVCS{}
@@ -84,7 +84,7 @@ func TestJJVCS_MergeBaseOf(t *testing.T) {
 	}
 }
 
-// TestSaplingVCS_MergeBaseOf is the sapling path of the `crit --pr` fix: two
+// TestSaplingVCS_MergeBaseOf is the sapling path of the `crit-plus --pr` fix: two
 // siblings off the seed must resolve to their common ancestor, not the drifted
 // base tip. ancestor() is symmetric, so order does not matter.
 func TestSaplingVCS_MergeBaseOf(t *testing.T) {

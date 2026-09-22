@@ -326,7 +326,7 @@
 
     function shareErrorMessage(err) {
       if (isSharePolicyRejection(err)) {
-        return 'That sharing option is not allowed by this Crit instance. Choose another option and try again.';
+        return 'That sharing option is not allowed by this crit+ instance. Choose another option and try again.';
       }
       return err && err.message ? err.message : String(err || 'unknown error');
     }
@@ -524,7 +524,7 @@
           el.setAttribute('aria-disabled', allowed ? 'false' : 'true');
           if (!allowed) {
             el.setAttribute('tabindex', '-1');
-            el.setAttribute('title', 'Disabled by this Crit instance');
+            el.setAttribute('title', 'Disabled by this crit+ instance');
           } else {
             el.removeAttribute('title');
           }
@@ -764,7 +764,7 @@
               'after that will be attributed to you and listed in your dashboard.</p>' +
             '<div class="share-dialog-cmd">' +
               '<span class="share-dialog-cmd-prompt" aria-hidden="true">$</span>' +
-              '<span class="share-dialog-cmd-text">crit auth login</span>' +
+              '<span class="share-dialog-cmd-text">crit-plus auth login</span>' +
               '<button class="share-dialog-cmd-copy" id="modalCopyCmd" aria-label="Copy command">' +
                 ICON_CLIPBOARD +
               '</button>' +
@@ -881,7 +881,7 @@
       const copyCmdBtn = overlay.querySelector('#modalCopyCmd');
       if (copyCmdBtn) {
         copyCmdBtn.addEventListener('click', function() {
-          navigator.clipboard.writeText('crit auth login').catch(function() { /* best-effort */ });
+          navigator.clipboard.writeText('crit-plus auth login').catch(function() { /* best-effort */ });
           this.innerHTML = ICON_CHECK_SMALL;
           this.setAttribute('aria-label', 'Copied');
           const btn = this;
@@ -912,7 +912,7 @@
     async function handlePullComments() {
       const btn = document.getElementById('modalPullBtn');
       if (!btn) return;
-      if (!shareURL) { showShareError(new Error('originating Crit instance is no longer configured')); return; }
+      if (!shareURL) { showShareError(new Error('originating crit+ instance is no longer configured')); return; }
       btn.disabled = true;
       const origLabel = btn.textContent;
       btn.textContent = 'Pulling…';
@@ -972,7 +972,7 @@
     async function handleReshare() {
       const btn = document.getElementById('modalReshareBtn');
       if (!btn) return;
-      if (!shareURL) { showShareError(new Error('originating Crit instance is no longer configured')); return; }
+      if (!shareURL) { showShareError(new Error('originating crit+ instance is no longer configured')); return; }
       btn.disabled = true;
       const origLabel = btn.textContent;
       btn.textContent = 'Re-sharing…';
@@ -1096,7 +1096,7 @@
     }
 
     async function handleUnpublish() {
-      if (!shareURL) { closeShareModal(); showShareError(new Error('originating Crit instance is no longer configured')); return; }
+      if (!shareURL) { closeShareModal(); showShareError(new Error('originating crit+ instance is no longer configured')); return; }
       const btn = document.getElementById('confirmUnpublishBtn');
       if (btn) { btn.textContent = 'Unpublishing…'; btn.disabled = true; }
 

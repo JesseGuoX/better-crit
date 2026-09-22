@@ -15,7 +15,7 @@ trap 'rm -rf "$DIR" "$BIN_DIR"' EXIT
 cd "$DIR"
 
 # === Init a git repo so the fixture mirrors real usage ===
-# People almost always run `crit file.md` inside a git repo.
+# People almost always run `crit-plus file.md` inside a git repo.
 # File mode means explicit file args, not "no git".
 git init -q
 git config user.email "test@test.com"
@@ -166,14 +166,14 @@ JSFILE
 
 git add -A && git commit -q -m "initial commit"
 
-# Build crit binary outside the fixture dir (skip if CRIT_BIN is set)
+# Build crit-plus binary outside the fixture dir (skip if CRIT_BIN is set)
 if [ -z "${CRIT_BIN:-}" ]; then
   CRIT_BIN="$BIN_DIR/$(e2e_bin_name)"
-  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit)
+  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit-plus)
 fi
 
 # Isolate from user's ~/.crit.config.json (and USERPROFILE on Windows).
 e2e_export_fake_home "$DIR"
 
-# Run crit in file mode (explicit file args, inside a git repo)
+# Run crit-plus in file mode (explicit file args, inside a git repo)
 exec "$CRIT_BIN" _serve --no-open --port "$PORT" plan.md server.go handler.js

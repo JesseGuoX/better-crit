@@ -30,7 +30,7 @@ type serverFlagSet struct {
 }
 
 func parseServerFlags(args []string) serverFlagSet {
-	fs := flag.NewFlagSet("crit", flag.ExitOnError)
+	fs := flag.NewFlagSet("crit-plus", flag.ExitOnError)
 	port := fs.Int("port", 0, "")
 	fs.IntVar(port, "p", 0, "")
 	host := fs.String("host", "", "")

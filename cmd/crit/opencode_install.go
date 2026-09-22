@@ -13,16 +13,16 @@ import (
 // config's `plugin` array. opencode resolves relative paths against the config
 // file's directory, so project and global installs need different entries:
 //
-//	project: ./opencode.jsonc + ./.opencode/plugins/crit.ts → "./.opencode/plugins/crit.ts"
-//	global:  ~/.config/opencode/opencode.jsonc + ~/.config/opencode/plugins/crit.ts → "./plugins/crit.ts"
+//	project: ./opencode.jsonc + ./.opencode/plugins/crit-plus.ts → "./.opencode/plugins/crit-plus.ts"
+//	global:  ~/.config/opencode/opencode.jsonc + ~/.config/opencode/plugins/crit-plus.ts → "./plugins/crit-plus.ts"
 //
 // opencode auto-loads any .ts under its plugin dir, so the registration is
 // informational — but if we write it at all, it has to point at the right file.
 func opencodePluginEntry(global bool) string {
 	if global {
-		return "./plugins/crit.ts"
+		return "./plugins/crit-plus.ts"
 	}
-	return "./.opencode/plugins/crit.ts"
+	return "./.opencode/plugins/crit-plus.ts"
 }
 
 // opencodeConfigPath returns the opencode config file to edit. Project installs
@@ -44,7 +44,7 @@ func opencodeConfigPath(global bool, home string) string {
 	return jsonc
 }
 
-// installOpencodePluginEntry adds crit's plugin path to the `plugin` array in
+// installOpencodePluginEntry adds crit-plus's plugin path to the `plugin` array in
 // the user's opencode config, creating the file if missing. Idempotent: if the
 // entry already exists the file is left untouched.
 //

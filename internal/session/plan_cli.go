@@ -84,7 +84,7 @@ func readPlanContent(pc planConfig) ([]byte, error) {
 	} else if pc.stdinExpected {
 		if !IsStdinPipe() {
 			fmt.Fprintln(os.Stderr, "Error: no file specified and stdin is not a pipe")
-			fmt.Fprintln(os.Stderr, "Usage: crit plan --name <slug> <file>  or  echo \"content\" | crit plan --name <slug>")
+			fmt.Fprintln(os.Stderr, "Usage: crit-plus plan --name <slug> <file>  or  echo \"content\" | crit-plus plan --name <slug>")
 			return nil, clicmd.ExitError{Code: 1, Err: errors.New("exit")}
 		}
 		content, err = io.ReadAll(os.Stdin)
@@ -177,7 +177,7 @@ func resolveHookSlug(sessionID string, content []byte) string {
 		}
 		slug := ResolveSlug(content)
 		if err := SavePlanSlug(sessionID, slug); err != nil {
-			fmt.Fprintf(os.Stderr, "crit plan-hook: warning: could not save slug mapping: %v\n", err)
+			fmt.Fprintf(os.Stderr, "crit-plus plan-hook: warning: could not save slug mapping: %v\n", err)
 		}
 		return slug
 	}
@@ -209,7 +209,7 @@ func emitHookDecision(approved bool, prompt string, toolInput json.RawMessage, p
 			} else {
 				fmt.Fprintf(
 					os.Stderr,
-					"crit plan-hook: warning: ignoring invalid plan_approve_mode %q; expected default, manual, acceptEdits, plan, auto, dontAsk, or bypassPermissions\n",
+					"crit-plus plan-hook: warning: ignoring invalid plan_approve_mode %q; expected default, manual, acceptEdits, plan, auto, dontAsk, or bypassPermissions\n",
 					planApproveMode,
 				)
 			}
@@ -254,11 +254,11 @@ func emitCodexStopDecision(approved bool, prompt string) {
 }
 
 var runCodexPlanReviewHook = func(sessionID string, content []byte) {
-	runPlanReviewHook("crit plan-hook --mode codex", sessionID, content, emitCodexStopDecision)
+	runPlanReviewHook("crit-plus plan-hook --mode codex", sessionID, content, emitCodexStopDecision)
 }
 
 var runClaudePlanReviewHook = func(sessionID string, content []byte, emitDecision func(bool, string)) {
-	runPlanReviewHook("crit plan-hook", sessionID, content, emitDecision)
+	runPlanReviewHook("crit-plus plan-hook", sessionID, content, emitDecision)
 }
 
 func runPlanReviewHook(logPrefix, sessionID string, content []byte, emitDecision func(bool, string)) {
@@ -267,14 +267,14 @@ func runPlanReviewHook(logPrefix, sessionID string, content []byte, emitDecision
 	storageDir, err := PlanStorageDir(slug)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s: error resolving storage dir: %v\n", logPrefix, err)
-		emitDecision(false, fmt.Sprintf("Crit could not prepare plan storage: %v", err))
+		emitDecision(false, fmt.Sprintf("Crit Plus could not prepare plan storage: %v", err))
 		return
 	}
 
 	ver, err := SavePlanVersion(storageDir, content)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s: error saving plan: %v\n", logPrefix, err)
-		emitDecision(false, fmt.Sprintf("Crit could not save the proposed plan: %v", err))
+		emitDecision(false, fmt.Sprintf("Crit Plus could not save the proposed plan: %v", err))
 		return
 	}
 	fmt.Fprintf(os.Stderr, "%s: plan '%s' saved as v%03d\n", logPrefix, slug, ver)
@@ -300,7 +300,7 @@ func runPlanReviewHook(logPrefix, sessionID string, content []byte, emitDecision
 		entry, err = daemon.StartDaemon(key, daemonArgs)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s: error starting daemon: %v\n", logPrefix, err)
-			emitDecision(false, fmt.Sprintf("Crit could not start the review UI: %v", err))
+			emitDecision(false, fmt.Sprintf("Crit Plus could not start the review UI: %v", err))
 			return
 		}
 		fmt.Fprintf(os.Stderr, "%s: started daemon at %s (PID %d)\n", logPrefix, entry.BaseURL(), entry.PID)
@@ -331,8 +331,8 @@ func RunPlanHook() error {
 
 	var event planHookEvent
 	if err := json.NewDecoder(os.Stdin).Decode(&event); err != nil {
-		fmt.Fprintf(os.Stderr, "crit plan-hook: could not parse stdin: %v\n", err)
-		emitHookDecision(false, "Crit could not parse the plan hook input; plan was not reviewed.", nil, "")
+		fmt.Fprintf(os.Stderr, "crit-plus plan-hook: could not parse stdin: %v\n", err)
+		emitHookDecision(false, "Crit Plus could not parse the plan hook input; plan was not reviewed.", nil, "")
 		return nil
 	}
 	if len(event.ToolInput) == 0 {
@@ -343,8 +343,8 @@ func RunPlanHook() error {
 		Plan string `json:"plan"`
 	}
 	if err := json.Unmarshal(event.ToolInput, &toolInput); err != nil {
-		fmt.Fprintf(os.Stderr, "crit plan-hook: could not parse tool input: %v\n", err)
-		emitHookDecision(false, "Crit could not parse the plan hook input; plan was not reviewed.", nil, "")
+		fmt.Fprintf(os.Stderr, "crit-plus plan-hook: could not parse tool input: %v\n", err)
+		emitHookDecision(false, "Crit Plus could not parse the plan hook input; plan was not reviewed.", nil, "")
 		return nil
 	}
 	if strings.TrimSpace(toolInput.Plan) == "" {
@@ -373,8 +373,8 @@ func RunCodexPlanHook() error {
 
 	var event codexStopHookEvent
 	if err := json.NewDecoder(os.Stdin).Decode(&event); err != nil {
-		fmt.Fprintf(os.Stderr, "crit plan-hook --mode codex: could not parse stdin: %v\n", err)
-		emitCodexStopDecision(false, "Crit could not parse the Codex hook input; plan was not reviewed.")
+		fmt.Fprintf(os.Stderr, "crit-plus plan-hook --mode codex: could not parse stdin: %v\n", err)
+		emitCodexStopDecision(false, "Crit Plus could not parse the Codex hook input; plan was not reviewed.")
 		return nil
 	}
 	plan, ok := proposedPlanFromCodexEvent(event)

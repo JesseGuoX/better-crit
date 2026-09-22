@@ -10,7 +10,7 @@ import (
 	"github.com/tomasz-tomczyk/crit/internal/session"
 )
 
-// CommentFocusOverride captures the user's --scope flag for `crit comment`.
+// CommentFocusOverride captures the user's --scope flag for `crit-plus comment`.
 type CommentFocusOverride string
 
 const (
@@ -20,7 +20,7 @@ const (
 	ScopeOverrideWorkingTree CommentFocusOverride = "working-tree"
 )
 
-// CommentScopeOverrideFromFlag normalizes the raw --scope string for crit comment.
+// CommentScopeOverrideFromFlag normalizes the raw --scope string for crit-plus comment.
 func CommentScopeOverrideFromFlag(s string) (CommentFocusOverride, error) {
 	if s == "" {
 		return ScopeOverrideUnset, nil
@@ -73,7 +73,7 @@ func loadCritJSONForPath(critPath string) (session.CritJSON, bool) {
 	return cj, true
 }
 
-// ResolveCommentScope decides which scope tags `crit comment` should stamp,
+// ResolveCommentScope decides which scope tags `crit-plus comment` should stamp,
 // based on the --scope flag, a running daemon's Focus, and the on-disk
 // ActiveDiffScope.
 func ResolveCommentScope(override CommentFocusOverride, outputDir string) (session.InheritedScope, error) {
@@ -95,10 +95,10 @@ func resolveCommentScopeAtPathWithFocus(override CommentFocusOverride, critPath 
 		return session.InheritedScope{}, nil
 	case ScopeOverrideFullStack:
 		return resolveExplicitCommentScope(daemonFocus, critPath, session.DiffScopeFullStack, "full_stack",
-			"--scope=full-stack: no active full-stack focus to attach to (start `crit --pr <n> --scope=full-stack` first)")
+			"--scope=full-stack: no active full-stack focus to attach to (start `crit-plus --pr <n> --scope=full-stack` first)")
 	case ScopeOverrideLayer:
 		return resolveExplicitCommentScope(daemonFocus, critPath, session.DiffScopeLayer, "layer",
-			"--scope=layer: no active layer focus to attach to (start `crit --pr <n>` first)")
+			"--scope=layer: no active layer focus to attach to (start `crit-plus --pr <n>` first)")
 	case ScopeOverrideUnset:
 		return resolveAutoCommentScope(daemonFocus, critPath), nil
 	}

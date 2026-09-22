@@ -10,7 +10,7 @@ import (
 )
 
 // handleStory serves GET/POST/DELETE /api/story (spec §6, §7.1, §9 Phase 5).
-// POST/DELETE run the same story.Ingest validation the `crit story` CLI uses,
+// POST/DELETE run the same story.Ingest validation the `crit-plus story` CLI uses,
 // persist via SyncWriteFiles, and broadcast an SSE story-updated event so the
 // renderer live-updates without a manual refetch.
 func (s *Server) handleStory(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +64,7 @@ func (s *Server) handleStoryPost(w http.ResponseWriter, r *http.Request) {
 		LiveFingerprint: story.Fingerprint(indexed),
 	})
 	if ingestErr != nil {
-		// Body shape matches exactly what `crit story`'s printCoverage prints
+		// Body shape matches exactly what `crit-plus story`'s printCoverage prints
 		// to stdout on rejection: the bare StoryCoverage JSON object. The
 		// rejection reason goes in a header rather than the body so callers
 		// parsing the coverage report don't need to special-case an

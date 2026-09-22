@@ -17,10 +17,10 @@ test.describe('Page Loading', () => {
     await expect(branchName).toHaveText('feat/add-auth');
   });
 
-  test('document title contains "Crit — feat/add-auth"', async ({ page }) => {
+  test('document title contains "crit+ — feat/add-auth"', async ({ page }) => {
     await loadPage(page);
 
-    await expect(page).toHaveTitle(/Crit — feat\/add-auth/);
+    await expect(page).toHaveTitle(/crit\+ — feat\/add-auth/);
   });
 
   test('diff mode toggle is visible in git mode', async ({ page }) => {

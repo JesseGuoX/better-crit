@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "crit plan-hook",
+            "command": "crit-plus plan-hook",
             "timeout": 345600000
           }
         ]

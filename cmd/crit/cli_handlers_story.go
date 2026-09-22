@@ -26,7 +26,7 @@ import (
 	"github.com/tomasz-tomczyk/crit/internal/vcs"
 )
 
-// storyFlags holds parsed `crit story` options. Diff-scope flags (--pr, --mr,
+// storyFlags holds parsed `crit-plus story` options. Diff-scope flags (--pr, --mr,
 // --range, default git) are parsed by server.ResolveDaemonCLIConfig and reach
 // us via the resolved config, so they are not repeated here.
 type storyFlags struct {
@@ -78,20 +78,20 @@ var storyBoolFlags = map[string]func(*storyFlags){
 }
 
 func printStoryUsage() {
-	fmt.Fprintln(os.Stderr, `Usage: crit story [options]
+	fmt.Fprintln(os.Stderr, `Usage: crit-plus story [options]
 
 Generate or load a story-mode chapter view for the current diff.
 
 Examples:
-  crit story                                  Generate a story with agent_cmd and open it
-  crit story --refresh                        Regenerate an existing story
-  crit story --range main..HEAD               Generate for a commit range
-  crit story --pr 123                         Generate for a GitHub PR
-  crit story --mr 123                         Generate for a GitLab MR
-  crit story --prep /tmp/story-prep.txt       Write the full prep file for manual authoring
-  crit story --guide                          Print the story authoring guide and JSON schema
-  crit story --story-file /tmp/story.json     Ingest a pre-authored story JSON
-  crit story --skip-llm                       Create a stub support-only story
+  crit-plus story                                  Generate a story with agent_cmd and open it
+  crit-plus story --refresh                        Regenerate an existing story
+  crit-plus story --range main..HEAD               Generate for a commit range
+  crit-plus story --pr 123                         Generate for a GitHub PR
+  crit-plus story --mr 123                         Generate for a GitLab MR
+  crit-plus story --prep /tmp/story-prep.txt       Write the full prep file for manual authoring
+  crit-plus story --guide                          Print the story authoring guide and JSON schema
+  crit-plus story --story-file /tmp/story.json     Ingest a pre-authored story JSON
+  crit-plus story --skip-llm                       Create a stub support-only story
 
 Story options:
       --story-file <path|->  Ingest story JSON from a file or stdin
@@ -108,7 +108,7 @@ Diff scope options:
       --mr <iid|url>         Generate for a GitLab merge request
       --range <base>..<head> Generate for a commit range
       --base-branch <branch> Override auto-detected base branch
-      --output, -o <dir>     Crit data root for reviews (default: ~/.crit)
+      --output, -o <dir>     Crit Plus data root for reviews (default: ~/.crit)
       --scope <mode>         PR diff scope: layer or full-stack
       --vcs <name>           VCS backend: git, sl, or jj
 
@@ -121,7 +121,7 @@ var scopeValueFlags = map[string]struct{}{
 	"--pr": {}, "--mr": {}, "--range": {}, "--base-branch": {}, "--scope": {}, "--vcs": {}, "--output": {}, "-o": {},
 }
 
-// parseStoryFlags splits `crit story` args into story-only flags and the
+// parseStoryFlags splits `crit-plus story` args into story-only flags and the
 // diff-scope args forwarded to the daemon config resolver. It rejects
 // positional (non-flag) arguments: story is defined over a diff, not files.
 func parseStoryFlags(args []string) (storyFlags, error) {
@@ -169,7 +169,7 @@ func (f *storyFlags) appendScopeArg(args []string, i *int) error {
 	return clicmd.ExitError{Code: 1, Err: errors.New("story requires a diff (git, --pr, --mr, or --range)")}
 }
 
-// RunStory implements `crit story`. Phase 1 surface: --story-file, --prep,
+// RunStory implements `crit-plus story`. Phase 1 surface: --story-file, --prep,
 // --skip-llm, --clear, --guide (+ --refresh/--no-spend semantics against a
 // present story). The default LLM path (exec agent_cmd) is wired in a later
 // task.
@@ -258,8 +258,8 @@ func runStoryNoSpend(f storyFlags, cj review.CritJSON) error {
 }
 
 // resolveStoryReviewPath resolves the review.json path for the current diff
-// scope. The session key is computed identically to `crit review`
-// (daemon.SessionKey + session.FocusKeyArgs) so `crit story` and `crit review`
+// scope. The session key is computed identically to `crit-plus review`
+// (daemon.SessionKey + session.FocusKeyArgs) so `crit-plus story` and `crit-plus review`
 // collide on the same review file for the same scope.
 func resolveStoryReviewPath(scopeArgs []string) (string, error) {
 	reviewCfg, err := storyReviewConfig(scopeArgs)
@@ -288,7 +288,7 @@ func resolveStoryReviewPath(scopeArgs []string) (string, error) {
 }
 
 // storyReviewConfig resolves the diff-scope config from scope args using the
-// same resolver crit review uses, then maps it to the neutral CLIReviewConfig.
+// same resolver crit-plus review uses, then maps it to the neutral CLIReviewConfig.
 func storyReviewConfig(scopeArgs []string) (*session.CLIReviewConfig, error) {
 	if session.ResolveServerConfigFn == nil {
 		return nil, clicmd.ExitError{Code: 1, Err: errors.New("story: config resolver not wired")}
@@ -369,7 +369,7 @@ func runStoryPrep(f storyFlags) error {
 }
 
 // storySchemaJSON is the JSON shape the agent must emit: only prologue,
-// chapters, and support (crit fills version/generated_at/base_sha/head_sha/
+// chapters, and support (crit-plus fills version/generated_at/base_sha/head_sha/
 // scope_fingerprint/coverage after ingest — see internal/session.Story).
 const storySchemaJSON = `{
   "prologue": {
@@ -421,7 +421,7 @@ func resolveStoryGuide(scope session.StoryScope, critPath, prepPath, sessionKey 
 		fmt.Fprintf(os.Stderr, "Warning: evaluating project prompt trust: %v\n", err)
 	}
 	if trust.Untrusted {
-		return "", clicmd.ExitError{Code: 1, Err: errors.New("project prompts are not trusted yet; run crit and choose a trust option, or use --story-file/--skip-llm")}
+		return "", clicmd.ExitError{Code: 1, Err: errors.New("project prompts are not trusted yet; run crit-plus and choose a trust option, or use --story-file/--skip-llm")}
 	}
 
 	diffScopeKind := "workingTree"
@@ -451,7 +451,7 @@ func resolveStoryGuide(scope session.StoryScope, critPath, prepPath, sessionKey 
 	}
 	ctx.MRURL = scope.MRURL
 	if ctx.PrepPath == "" {
-		ctx.PrepPath = "<run `crit story --prep <path>` first, then pass that path here>"
+		ctx.PrepPath = "<run `crit-plus story --prep <path>` first, then pass that path here>"
 	}
 
 	result, err := prompt.RenderHook(globalPrompts, projectPrompts, projectDir, homeDir, trust.UseProject, prompt.HookStoryGenerate, ctx.TemplateData())
@@ -780,7 +780,7 @@ func saveStory(f storyFlags, critPath string, cj review.CritJSON, st *session.St
 const storyURLFragment = "#story"
 
 // storyReviewSessionKey resolves the review session key for the current scope
-// (cwd + branch + focus args), matching how crit review keys its daemon.
+// (cwd + branch + focus args), matching how crit-plus review keys its daemon.
 func storyReviewSessionKey(f storyFlags) (key, cwd string, err error) {
 	reviewCfg, err := storyReviewConfig(f.scopeArgs)
 	if err != nil {
@@ -800,9 +800,9 @@ func storyReviewSessionKey(f storyFlags) (key, cwd string, err error) {
 // postIngest connects the freshly-saved story to a review surface (§4.1). If a
 // daemon for this session key is already running, it POSTs the story so the
 // open page live-updates via the story-updated SSE event. Otherwise it spawns
-// the daemon detached (same path as first-run `crit`) and opens the browser at
+// the daemon detached (same path as first-run `crit-plus`) and opens the browser at
 // the story view, respecting --no-open / config. Any failure is logged, not
-// fatal: the story is already on disk, so the next `crit story`/`crit` picks it
+// fatal: the story is already on disk, so the next `crit-plus story`/`crit-plus` picks it
 // up.
 func postIngest(f storyFlags, st *session.Story) {
 	key, cwd, err := storyReviewSessionKey(f)
@@ -824,8 +824,8 @@ func postIngest(f storyFlags, st *session.Story) {
 }
 
 // resumeStory reopens an existing story review without regenerating it (Task 7
-// user-feedback fix): `crit story` with a story already present re-launches the
-// review just as re-running `crit` reconnects a review. If a daemon is already
+// user-feedback fix): `crit-plus story` with a story already present re-launches the
+// review just as re-running `crit-plus` reconnects a review. If a daemon is already
 // running for this scope it opens a browser tab at the story view; otherwise it
 // spawns the daemon detached and opens the browser. No agent_cmd exec, no
 // re-ingest — the on-disk story is untouched. Never blocks; failures are logged
@@ -853,7 +853,7 @@ func resumeStory(f storyFlags) error {
 }
 
 // spawnStoryDaemonAndOpen spawns the review daemon detached (same args flow as
-// `crit review`) and opens the browser at the story view, honoring --no-open /
+// `crit-plus review`) and opens the browser at the story view, honoring --no-open /
 // config. Failures are logged, not fatal.
 func spawnStoryDaemonAndOpen(f storyFlags, key, cwd string) {
 	entry, err := storyStartDaemon(key, storyDaemonArgs(f.scopeArgs))
@@ -861,7 +861,7 @@ func spawnStoryDaemonAndOpen(f storyFlags, key, cwd string) {
 		fmt.Fprintf(os.Stderr, "note: could not start the review daemon: %v\n", err)
 		return
 	}
-	fmt.Fprintf(os.Stderr, "Started crit daemon at %s (session %s, PID %d)\n", entry.BaseURL(), key, entry.PID)
+	fmt.Fprintf(os.Stderr, "Started crit-plus daemon at %s (session %s, PID %d)\n", entry.BaseURL(), key, entry.PID)
 	if !storyNoOpen(f, cwd) && !storyDaemonHasBrowser(entry) {
 		openBrowser(entry.BaseURL()+storyURLFragment, config.LoadConfig(cwd).OpenCmd)
 	}
@@ -951,7 +951,7 @@ func storyDaemonArgs(scopeArgs []string) []string {
 }
 
 // storyNoOpen reports whether the browser must NOT be opened: the CLI/config
-// no_open setting. Mirrors how crit review resolves NoOpen from config.
+// no_open setting. Mirrors how crit-plus review resolves NoOpen from config.
 func storyNoOpen(f storyFlags, cwd string) bool {
 	if f.noOpen {
 		return true

@@ -300,10 +300,10 @@ func TestGitHubSyncGuard(t *testing.T) {
 		op        string
 		wantError bool
 	}{
-		{"live review pull", CritJSON{ReviewType: "live", Origin: "http://localhost:3000"}, "crit pull", true},
-		{"live review push", CritJSON{ReviewType: "live", Origin: "http://localhost:3000"}, "crit push", true},
-		{"code review pull", CritJSON{ReviewRound: 1}, "crit pull", false},
-		{"code review push", CritJSON{ReviewRound: 1}, "crit push", false},
+		{"live review pull", CritJSON{ReviewType: "live", Origin: "http://localhost:3000"}, "crit-plus pull", true},
+		{"live review push", CritJSON{ReviewType: "live", Origin: "http://localhost:3000"}, "crit-plus push", true},
+		{"code review pull", CritJSON{ReviewRound: 1}, "crit-plus pull", false},
+		{"code review push", CritJSON{ReviewRound: 1}, "crit-plus push", false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -349,7 +349,7 @@ func TestCommentCLIGuard_CodeReview_Allowed(t *testing.T) {
 		t.Fatalf("saveCritJSON: %v", err)
 	}
 	if err := checkCommentCLIAllowed(critPath); err != nil {
-		t.Errorf("code review should allow crit comment: %v", err)
+		t.Errorf("code review should allow crit-plus comment: %v", err)
 	}
 }
 
@@ -1089,7 +1089,7 @@ func TestCreateLiveSession_HonorsRoundWhenCommentsPresent(t *testing.T) {
 }
 
 // TestLiveSession_ExternalReplyEmitsCommentsChanged guards Bug 4: when
-// `crit comment --reply-to` writes a reply to a live pin via a separate
+// `crit-plus comment --reply-to` writes a reply to a live pin via a separate
 // process, the running live daemon must detect the on-disk change and fan
 // out a `comments-changed` SSE event so subscribed clients can refresh
 // without a full page reload. Code-review mode already does this through
@@ -1152,7 +1152,7 @@ func TestLiveSession_ExternalReplyEmitsCommentsChanged(t *testing.T) {
 	sub := s.Subscribe()
 	defer s.Unsubscribe(sub)
 
-	// Simulate `crit comment --reply-to pin1 "looking better"` from a separate
+	// Simulate `crit-plus comment --reply-to pin1 "looking better"` from a separate
 	// process: load, append reply, save through the same writer the CLI uses.
 	loaded, err := loadCritJSON(identity)
 	if err != nil {

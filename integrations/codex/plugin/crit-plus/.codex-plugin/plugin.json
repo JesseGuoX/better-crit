@@ -1,0 +1,32 @@
+{
+  "name": "crit-plus",
+  "description": "Crit Plus: an enhanced fork of Crit by Tomasz Tomczyk, with inline review and structured human decisions.",
+  "keywords": [
+    "code-review",
+    "diff",
+    "inline-comments",
+    "plan-review",
+    "decisions"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "Crit Plus",
+    "shortDescription": "Code review and human decisions for Codex",
+    "longDescription": "Crit Plus: an enhanced fork of Crit by Tomasz Tomczyk, with inline review and structured human decisions.",
+    "developerName": "JesseGuoX; based on Crit by Tomasz Tomczyk",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Code Review",
+      "Plan Review",
+      "Hooks",
+      "Decisions"
+    ],
+    "defaultPrompt": [
+      "Use $crit-plus to review my current code changes.",
+      "Use $crit-plus to review this PR.",
+      "Use $crit-plus-decide to collect my choices on these proposals."
+    ]
+  },
+  "homepage": "https://github.com/JesseGuoX/better-crit"
+}

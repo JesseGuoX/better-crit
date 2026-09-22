@@ -217,24 +217,26 @@ test('renderAboutPane: keeps update guidance out of About', () => {
   assert.doesNotMatch(pane.innerHTML, /Latest version/);
 });
 
-test('renderUpdatesPane: groups Crit releases and integration work', () => {
+test('renderUpdatesPane: groups Crit Plus releases and integration work', () => {
   const sp = loadShared();
   const pane = makePane();
   sp.renderUpdatesPane(pane, {
     version: '1.0.0',
     latest_version: '1.1.0',
     installation_source: 'homebrew',
-    stale_integrations: [{ agent: 'claude-code', hash: 'new-hash', hint: 'Run: crit install claude-code' }],
+    stale_integrations: [{ agent: 'claude-code', hash: 'new-hash', hint: 'Run: crit-plus install claude-code' }],
     missing_integrations: ['cursor'],
   }, {});
   assert.match(pane.innerHTML, /Release notes and downloads/);
   assert.match(pane.innerHTML, /class="updates-release-notes"/);
-  assert.match(pane.innerHTML, /brew upgrade crit/);
+  assert.match(pane.innerHTML, /data-copy="make build"/);
+  assert.match(pane.innerHTML, /github\.com\/JesseGuoX\/better-crit\/releases/);
+  assert.doesNotMatch(pane.innerHTML, /brew upgrade crit|go install github\.com\/tomasz-tomczyk/);
   assert.match(pane.innerHTML, /v1\.0\.0/);
   assert.match(pane.innerHTML, /Claude Code/);
-  assert.match(pane.innerHTML, /crit install claude-code/);
+  assert.match(pane.innerHTML, /crit-plus install claude-code/);
   assert.match(pane.innerHTML, /Cursor/);
-  assert.match(pane.innerHTML, /crit install cursor/);
+  assert.match(pane.innerHTML, /crit-plus install cursor/);
   assert.match(pane.innerHTML, /updates-command-copy/);
   assert.match(pane.innerHTML, /images\/integrations\/claude-code-dark\.svg/);
   assert.match(pane.innerHTML, />Stale</);
@@ -247,7 +249,7 @@ test('renderUpdatesPane: uses brand icons for all agents with SVG assets', () =>
   const pane = makePane();
   const agents = ['aider', 'cline', 'hermes', 'windsurf', 'claude-code', 'pi'];
   sp.renderUpdatesPane(pane, {
-    stale_integrations: agents.map((agent) => ({ agent, hash: 'h', hint: 'crit install ' + agent })),
+    stale_integrations: agents.map((agent) => ({ agent, hash: 'h', hint: 'crit-plus install ' + agent })),
   }, {});
   for (const agent of agents) {
     assert.match(pane.innerHTML, new RegExp('images/integrations/' + agent + '-dark\\.svg'));
@@ -255,7 +257,7 @@ test('renderUpdatesPane: uses brand icons for all agents with SVG assets', () =>
   assert.doesNotMatch(pane.innerHTML, /updates-agent-icon--fallback/);
 });
 
-test('renderUpdatesPane: current Crit still shows its version and release notes', () => {
+test('renderUpdatesPane: current Crit Plus still shows its version and release notes', () => {
   const sp = loadShared();
   const pane = makePane();
   sp.renderUpdatesPane(pane, { version: '0.20.2' }, {});
@@ -271,8 +273,8 @@ test('renderUpdatesPane: shows muted integrations before uninstalled integration
   const pane = makePane();
   sp.renderUpdatesPane(pane, {
     stale_integrations: [
-      { agent: 'cursor', hash: 'current', hint: 'crit install cursor' },
-      { agent: 'claude-code', hash: 'old', hint: 'crit install claude-code' },
+      { agent: 'cursor', hash: 'current', hint: 'crit-plus install cursor' },
+      { agent: 'claude-code', hash: 'old', hint: 'crit-plus install claude-code' },
     ],
     missing_integrations: ['gemini', 'opencode'],
   }, {});
@@ -325,7 +327,7 @@ test('renderSettingsTab: omits the integration installer when nothing is install
     hooks: { applyTheme: () => {}, getHideResolved: () => false, setHideResolved: () => {} },
   });
   assert.doesNotMatch(pane.innerHTML, /AI Integration/);
-  assert.doesNotMatch(pane.innerHTML, /crit install claude-code/);
+  assert.doesNotMatch(pane.innerHTML, /crit-plus install claude-code/);
 });
 
 test('renderSettingsTab: leaves updates to the Updates tab', () => {
@@ -334,13 +336,13 @@ test('renderSettingsTab: leaves updates to the Updates tab', () => {
   sp.renderSettingsTab(pane, {
     mode: 'code-review',
     cfg: {
-      integrations: [{ agent: 'claude-code', status: 'stale', hash: 'new-hash', hint: 'Run: crit install claude-code' }],
+      integrations: [{ agent: 'claude-code', status: 'stale', hash: 'new-hash', hint: 'Run: crit-plus install claude-code' }],
       any_integration_installed: true,
     },
     hooks: { applyTheme: () => {}, applyWidth: () => {}, getHideResolved: () => false, setHideResolved: () => {} },
   });
   assert.doesNotMatch(pane.innerHTML, /AI Integration/);
-  assert.doesNotMatch(pane.innerHTML, /crit install claude-code/);
+  assert.doesNotMatch(pane.innerHTML, /crit-plus install claude-code/);
 });
 
 test('renderSettingsTab: leaves missing integrations to the Updates tab', () => {
@@ -352,7 +354,7 @@ test('renderSettingsTab: leaves missing integrations to the Updates tab', () => 
     hooks: { applyTheme: () => {}, applyWidth: () => {}, getHideResolved: () => false, setHideResolved: () => {} },
   });
   assert.doesNotMatch(pane.innerHTML, /Integration Available/);
-  assert.doesNotMatch(pane.innerHTML, /crit install cursor/);
+  assert.doesNotMatch(pane.innerHTML, /crit-plus install cursor/);
 });
 
 test('renderSettingsTab: share card disabled when no share_url', () => {

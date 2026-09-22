@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # fake-agent.sh — a canned `agent_cmd` for story-mode tests and E2E.
 #
-# Usable as crit's `agent_cmd`: crit pipes the story prompt on stdin (or via a
+# Usable as crit-plus's `agent_cmd`: crit-plus pipes the story prompt on stdin (or via a
 # {prompt} arg). This script ignores the prompt and prints a fixed story JSON
 # to stdout, so tests can exercise the exec + JSON-extraction + ingest path
 # without a real LLM. Later tasks (agent_cmd exec + JSON extraction) consume it.

@@ -27,11 +27,11 @@ func RunConfig(args []string) error {
 	return nil
 }
 
-// PrintConfigHelp is the single help text for `crit config`. The command
-// registry wires it as the command's helpFn, so `crit config --help`,
-// `crit config help`, and `crit help config` all reach this one copy.
+// PrintConfigHelp is the single help text for `crit-plus config`. The command
+// registry wires it as the command's helpFn, so `crit-plus config --help`,
+// `crit-plus config help`, and `crit-plus help config` all reach this one copy.
 func PrintConfigHelp() {
-	fmt.Fprint(os.Stderr, `Usage: crit config [--generate|-g|--migrate]
+	fmt.Fprint(os.Stderr, `Usage: crit-plus config [--generate|-g|--migrate]
 
 Show the configuration merged from ~/.crit.config.json and the project
 .crit.config.json as JSON, or print a template with every key and its default
@@ -43,7 +43,7 @@ share_targets while preserving unknown configuration keys.
 
 Keys worth knowing:
   output <dir>
-      Crit data root for reviews. Reviews live in <dir>/reviews/<key>/, keyed
+      Crit Plus data root for reviews. Reviews live in <dir>/reviews/<key>/, keyed
       per working directory and branch, the same layout as the default
       ~/.crit.
 
@@ -60,6 +60,6 @@ Keys worth knowing:
       Auto-close the review tab this many milliseconds after an Approve.
       Global-only. Omit it, or use a negative value, to keep the tab open.
 
-Run 'crit config --generate' for the full key list with default values.
+Run 'crit-plus config --generate' for the full key list with default values.
 `)
 }

@@ -145,7 +145,7 @@ func TestSession_DeleteComment_NotFound(t *testing.T) {
 
 // TestSession_DeleteComment_WithGitHubID_QueuesPendingDelete verifies that
 // deleting a pushed comment splices it out AND records its GitHub ID so the
-// next `crit push` can issue DELETE upstream.
+// next `crit-plus push` can issue DELETE upstream.
 func TestSession_DeleteComment_WithGitHubID_QueuesPendingDelete(t *testing.T) {
 	s := newTestSession(t)
 	c, _ := s.AddComment("plan.md", 1, 1, "", "pushed", "", "", "")
@@ -303,7 +303,7 @@ func TestSession_DeleteReply_WithGitLabID_QueuesPendingDelete(t *testing.T) {
 }
 
 // TestSession_PendingGHDeletes_NotResurrectedAfterPushDrain regresses the
-// daemon-vs-push race for issue #449: a separate `crit push` process drains
+// daemon-vs-push race for issue #449: a separate `crit-plus push` process drains
 // queued GitHub-delete IDs by writing review.json with an empty
 // PendingGitHubDeletes. A subsequent in-memory write from the daemon must NOT
 // resurrect those IDs.
@@ -347,7 +347,7 @@ func TestSession_PendingGHDeletes_NotResurrectedAfterPushDrain(t *testing.T) {
 		t.Fatalf("setup: PendingRemoteDeletes = %v, want GitHub comment 12345", cj.PendingRemoteDeletes)
 	}
 
-	// 3. Simulate `crit push` draining the queue: rewrite review.json with
+	// 3. Simulate `crit-plus push` draining the queue: rewrite review.json with
 	//    PendingGitHubDeletes cleared. Other state is preserved.
 	ReplaceRemoteDeletes(&cj, "github", nil)
 	out, err := json.MarshalIndent(cj, "", "  ")
@@ -673,7 +673,7 @@ func TestSession_LoadCritJSON_NoHash(t *testing.T) {
 func TestSession_WriteFiles_PreservesNonSessionFiles(t *testing.T) {
 	s := newTestSession(t)
 
-	// Simulate `crit comment` having written a comment on a file not in the session
+	// Simulate `crit-plus comment` having written a comment on a file not in the session
 	cj := `{
 		"branch": "test",
 		"base_ref": "",
@@ -1277,7 +1277,7 @@ func TestSession_GlobalCommentIDs(t *testing.T) {
 }
 
 // TestNewSessionFromGit_SubdirectoryCwd verifies that diff hunks are correctly
-// populated when crit's working directory is a subdirectory of the git repo.
+// populated when crit-plus's working directory is a subdirectory of the git repo.
 //
 // This reproduces GitHub issue #24: `git diff --name-status` returns paths
 // relative to the repo root (e.g. "src/main.go"), but `git diff HEAD -- src/main.go`
@@ -1299,7 +1299,7 @@ func TestNewSessionFromGit_SubdirectoryCwd(t *testing.T) {
 	writeFile(t, filepath.Join(dir, "src", "main.go"), "package main\n\nfunc main() {}\n")
 
 	// Change process cwd to the subdirectory — this is the key trigger.
-	// Claude Code or other tools may run crit from a subdirectory of the repo.
+	// Claude Code or other tools may run crit-plus from a subdirectory of the repo.
 	origDir, _ := os.Getwd()
 	os.Chdir(filepath.Join(dir, "src"))
 	defer os.Chdir(origDir)
@@ -1727,7 +1727,7 @@ func TestParseUnifiedDiff_WithANSIColors(t *testing.T) {
 func TestSession_CarryForward_PreservesAuthor(t *testing.T) {
 	s := newTestSession(t)
 
-	// Write a .crit.json with a comment that has an author set (e.g. from crit pull)
+	// Write a .crit.json with a comment that has an author set (e.g. from crit-plus pull)
 	cj := CritJSON{
 		Files: map[string]CritJSONFile{
 			"main.go": {
@@ -2174,7 +2174,7 @@ func TestSession_MergeExternalCritJSON_ClearDetected(t *testing.T) {
 		subscribers: make(map[chan SSEEvent]struct{}),
 	}
 
-	// Write .crit.json with no comments (simulating crit comment --clear)
+	// Write .crit.json with no comments (simulating crit-plus comment --clear)
 	cj := CritJSON{Branch: "main", ReviewRound: 1, Files: map[string]CritJSONFile{}}
 	data, _ := json.MarshalIndent(cj, "", "  ")
 	os.WriteFile(mustMkdirAll(filepath.Join(dir, ".crit", "review.json")), data, 0644)
@@ -2250,7 +2250,7 @@ func TestLoadCritJSON_RestoresMatchingShareState(t *testing.T) {
 	}
 }
 
-// TestSession_LoadCritJSON_RestoresReviewRound verifies that when crit restarts
+// TestSession_LoadCritJSON_RestoresReviewRound verifies that when crit-plus restarts
 // with an existing .crit.json, the ReviewRound is restored from the file.
 // Without this, the session starts at round 1 while comments claim higher rounds,
 // causing mismatches between the UI header and comment badges.
@@ -4751,7 +4751,7 @@ func TestHandleCritJSONDeleted(t *testing.T) {
 }
 
 // TestHandleCritJSONDeleted_ResetsReviewRound: when the review file is wiped
-// out from under a long-lived daemon (`crit cleanup`, manual `rm`, hosted-side
+// out from under a long-lived daemon (`crit-plus cleanup`, manual `rm`, hosted-side
 // unpublish), the next pin authored against a fresh review must land on round
 // 1 — not on whatever round the daemon's in-memory state still remembered.
 func TestHandleCritJSONDeleted_ResetsReviewRound(t *testing.T) {

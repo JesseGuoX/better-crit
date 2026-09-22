@@ -11,7 +11,7 @@ import "syscall"
 // We deliberately do NOT set DETACHED_PROCESS: combining DETACHED_PROCESS
 // with handle inheritance (ExtraFiles for the readiness pipe) is fragile —
 // the child often fails to inherit FD 3, breaking the port handshake.
-// CREATE_NEW_PROCESS_GROUP alone is enough Ctrl+C isolation for crit's
+// CREATE_NEW_PROCESS_GROUP alone is enough Ctrl+C isolation for crit-plus's
 // daemon model; on Windows the daemon shares the parent console briefly
 // while it starts, then keeps running after the parent exits.
 //

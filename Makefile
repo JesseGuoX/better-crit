@@ -4,7 +4,7 @@ DATE ?= $(shell date -u +%Y-%m-%d)
 LDFLAGS := -s -w -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.date=$(DATE)
 
 build: generate
-	go build -ldflags "$(LDFLAGS)" -o crit ./cmd/crit
+	go build -ldflags "$(LDFLAGS)" -o crit-plus ./cmd/crit
 
 generate:
 	go generate ./...
@@ -15,12 +15,13 @@ verify-generate:
 
 build-all:
 	mkdir -p dist
-	GOOS=darwin GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o dist/crit-darwin-arm64 ./cmd/crit
-	GOOS=darwin GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o dist/crit-darwin-amd64 ./cmd/crit
-	GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o dist/crit-linux-amd64 ./cmd/crit
-	GOOS=linux GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o dist/crit-linux-arm64 ./cmd/crit
-	GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o dist/crit-windows-amd64.exe ./cmd/crit
-	GOOS=windows GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o dist/crit-windows-arm64.exe ./cmd/crit
+	cp LICENSE NOTICE dist/
+	GOOS=darwin GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o dist/crit-plus-darwin-arm64 ./cmd/crit
+	GOOS=darwin GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o dist/crit-plus-darwin-amd64 ./cmd/crit
+	GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o dist/crit-plus-linux-amd64 ./cmd/crit
+	GOOS=linux GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o dist/crit-plus-linux-arm64 ./cmd/crit
+	GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o dist/crit-plus-windows-amd64.exe ./cmd/crit
+	GOOS=windows GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o dist/crit-plus-windows-arm64.exe ./cmd/crit
 
 update-deps:
 	npm install --ignore-scripts
@@ -80,7 +81,7 @@ test-plan-daemon:
 	./test/shell/test-plan-daemon.sh
 
 clean:
-	rm -f crit
+	rm -f crit-plus
 	rm -rf dist
 
 e2e:
@@ -97,6 +98,6 @@ e2e-live-utils:
 
 test-preview: build
 	@echo "Starting preview mode with sample page..."
-	./crit preview test/preview-sample/index.html
+	./crit-plus preview test/preview-sample/index.html
 
 .PHONY: build build-all generate verify-generate update-deps test test-frontend verify-assets setup-hooks clean test-diff test-share-sync test-share-sync-selfhosted test-live-cdp e2e-share e2e-roundtrip e2e-gitlab-roundtrip test-daemon test-plan-daemon e2e e2e-failed e2e-report e2e-live-utils test-preview

@@ -74,11 +74,11 @@ func parsePushFlags(args []string) (pushFlags, error) {
 
 func setPushSpec(f *pushFlags, arg string) error {
 	if f.spec != "" {
-		fmt.Fprintf(os.Stderr, "Usage: crit push [--session <id>] [--dry-run] [--event <type>] [--message <msg>] [--output <dir>] [number|url]\n")
+		fmt.Fprintf(os.Stderr, "Usage: crit-plus push [--session <id>] [--dry-run] [--event <type>] [--message <msg>] [--output <dir>] [number|url]\n")
 		return clicmd.ExitError{Code: 1, Err: errors.New("exit")}
 	}
 	if _, err := ParsePRSpec(arg); err != nil {
-		fmt.Fprintf(os.Stderr, "Usage: crit push [--session <id>] [--dry-run] [--event <type>] [--message <msg>] [--output <dir>] [number|url]\n")
+		fmt.Fprintf(os.Stderr, "Usage: crit-plus push [--session <id>] [--dry-run] [--event <type>] [--message <msg>] [--output <dir>] [number|url]\n")
 		return clicmd.ExitError{Code: 1, Err: errors.New("exit")}
 	}
 	f.spec = arg
@@ -208,7 +208,7 @@ func loadPushReview(f pushFlags, id forge.ChangeID) (string, session.CritJSON, e
 	// Redirect when the user passed an explicit PR number/URL and the cwd-resolved
 	// review file is for a different branch (or is missing) — pushing the wrong
 	// comments to a PR is destructive, so honor the explicit intent first. Same
-	// pattern as PR #424's findReviewFileByCommentID fallback for `crit comment`.
+	// pattern as PR #424's findReviewFileByCommentID fallback for `crit-plus comment`.
 	pinned := f.sessionID != "" || f.outputDir != "" || f.configuredOutput != ""
 	if shouldRedirectReviewForPR(f.spec != "", pinned) {
 		if altPath, altCJ, ok := review.RedirectReviewPathForPR(id.Number, cj.Branch, critPath); ok {
@@ -219,7 +219,7 @@ func loadPushReview(f pushFlags, id forge.ChangeID) (string, session.CritJSON, e
 	}
 
 	if !cwdFileExists {
-		return "", session.CritJSON{}, fmt.Errorf("no review file found. Run a crit review first")
+		return "", session.CritJSON{}, fmt.Errorf("no review file found. Run a crit-plus review first")
 	}
 	return critPath, cj, nil
 }
@@ -230,7 +230,7 @@ func runPushDryRun(ctx pushContext, b PushBuckets) {
 	fmt.Println(SummarizeBuckets(ctx.prNumber, b))
 	fmt.Println()
 	fmt.Print(DetailedDryRun(b))
-	fmt.Printf("Use `crit push --pr %d` to confirm.\n", ctx.prNumber)
+	fmt.Printf("Use `crit-plus push --pr %d` to confirm.\n", ctx.prNumber)
 }
 
 // runPushLive performs the actual push: writes the orphan export (if any
@@ -284,7 +284,7 @@ func RunPushLive(ctx pushContext, b PushBuckets) int { //nolint:gocyclo // CLI p
 		k := posted + postedReplies + patched + deleted
 		n := postable + totalReplies + totalEdits + totalDeletes
 		fmt.Fprintf(os.Stderr,
-			"Pushed %d of %d comments before auth failed. Run 'gh auth refresh' then re-run 'crit push' to post the rest.\n",
+			"Pushed %d of %d comments before auth failed. Run 'gh auth refresh' then re-run 'crit-plus push' to post the rest.\n",
 			k, n)
 		return 1
 	}
@@ -348,7 +348,7 @@ func countNewReplies(cj session.CritJSON) int {
 	return n
 }
 
-// pushShouldExitFailure encodes the exit-code policy for `crit push`. The
+// pushShouldExitFailure encodes the exit-code policy for `crit-plus push`. The
 // process should fail (exit 1) only when nothing meaningful landed and at
 // least one operation failed. Failed per-ID deletes stay in
 // the GitHub entries in the neutral remote-delete queue for the next push,
@@ -454,14 +454,14 @@ func pushDeletedComments(ctx pushContext) (int, bool, bool) {
 }
 
 // fullStackPushGateMessage is the user-facing error string emitted when
-// `crit push` is invoked while the active diff scope is the cumulative
+// `crit-plus push` is invoked while the active diff scope is the cumulative
 // stack range. Comments authored under that scope carry line numbers that
 // don't correspond to the PR's head diff, so the entire push is refused.
 // The exact wording is asserted by test/shell/test-diff.sh Instance 6.
 const fullStackPushGateMessage = "Switch to Layer diff before posting a platform review"
 
 // pushBlockedByFullStackScope reports whether the on-disk active diff scope
-// requires `crit push` to abort with the gate message.
+// requires `crit-plus push` to abort with the gate message.
 func pushBlockedByFullStackScope(activeScope string) bool {
 	return activeScope == string(session.DiffScopeFullStack)
 }
@@ -472,7 +472,7 @@ func RunPush(args []string) error {
 		return err
 	}
 
-	if err := share.CheckGitHubSyncAllowed(ctx.cj, "crit push"); err != nil {
+	if err := share.CheckGitHubSyncAllowed(ctx.cj, "crit-plus push"); err != nil {
 		return err
 	}
 

@@ -25,12 +25,12 @@ ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$ROOT"
 
 PORT="${1:-3001}"
-BINARY="./crit"
+BINARY="./crit-plus"
 FILE="test/shell/test-plan-copy.md"
 
 if [ ! -f "$BINARY" ]; then
   echo "Binary not found — building..."
-  go build -o crit ./cmd/crit
+  go build -o crit-plus ./cmd/crit
 fi
 
 # Kill any stale processes on test ports
@@ -42,7 +42,7 @@ done
 cp test/shell/notification-plan.md "$FILE"
 rm -f .crit.json
 
-echo "Starting crit on $FILE (port $PORT)..."
+echo "Starting crit-plus on $FILE (port $PORT)..."
 "$BINARY" --port "$PORT" --no-open "$FILE" &
 CRIT_PID=$!
 
@@ -260,7 +260,7 @@ func main() {
 }
 GOEOF
 # server.go v2 is left as an uncommitted working-tree change (like the other files)
-# so crit shows it in the diff view with spacer gaps between hunks.
+# so crit-plus shows it in the diff view with spacer gaps between hunks.
 
 # Modify the file to produce good word-level diff pairs
 cat > "$WORD_DIFF_DIR/main.go" << 'GOEOF'
@@ -347,7 +347,7 @@ end
 EXEOF
 
 echo ""
-echo "Starting git-mode crit for word-level diff on port $WORD_DIFF_PORT..."
+echo "Starting git-mode crit-plus for word-level diff on port $WORD_DIFF_PORT..."
 (cd "$WORD_DIFF_DIR" && "$ROOT/$BINARY" --port "$WORD_DIFF_PORT" --no-open) &
 WORD_DIFF_PID=$!
 
@@ -413,7 +413,7 @@ echo "gamma" > "$RANGE_DIR/c.txt"
 git -C "$RANGE_DIR" add c.txt
 git -C "$RANGE_DIR" -c user.email=t@t -c user.name=t commit -q -m "C: add c.txt"
 
-echo "Starting range-mode crit on port $RANGE_PORT (--range A..B)..."
+echo "Starting range-mode crit-plus on port $RANGE_PORT (--range A..B)..."
 (cd "$RANGE_DIR" && "$ROOT/$BINARY" --port "$RANGE_PORT" --no-open --range "$RANGE_A_SHA..$RANGE_B_SHA") &
 RANGE_PID=$!
 
@@ -441,7 +441,7 @@ git -C "$TOGGLE_DIR" add b.txt
 git -C "$TOGGLE_DIR" -c user.email=t@t -c user.name=t commit -q -m "B: add b.txt"
 TOGGLE_B_SHA=$(git -C "$TOGGLE_DIR" rev-parse HEAD)
 
-echo "Starting stacked-toggle crit on port $TOGGLE_PORT (--range A..B)..."
+echo "Starting stacked-toggle crit-plus on port $TOGGLE_PORT (--range A..B)..."
 (cd "$TOGGLE_DIR" && "$ROOT/$BINARY" --port "$TOGGLE_PORT" --no-open --range "$TOGGLE_A_SHA..$TOGGLE_B_SHA") &
 TOGGLE_PID=$!
 
@@ -645,7 +645,7 @@ print(path if path.endswith('review.json') else os.path.join(path, 'review.json'
 
 # --- Seed GitHub-synced comments (issue #370) ---
 # The POST API has no `github_id` field (synced comments normally arrive via
-# `crit pull`), so we inject them directly into the review file. The daemon's
+# `crit-plus pull`), so we inject them directly into the review file. The daemon's
 # file watcher (mergeExternalCritJSON, ~1s tick) appends brand-new comments
 # wholesale — preserving GitHubID — and appends synced replies onto existing
 # comments, so both render with the `.github-badge` pill the PR adds. This
@@ -955,18 +955,18 @@ curl -sf -X POST "http://127.0.0.1:$TOGGLE_PORT/api/file/comments?path=a.txt" \
     "author": "tester"
   }' > /dev/null
 
-# Push-gate assertion: while ActiveDiffScope=full_stack on disk, `crit push`
+# Push-gate assertion: while ActiveDiffScope=full_stack on disk, `crit-plus push`
 # must refuse with the gate-1 message. Wait for the 200ms scheduleWrite to
 # flush ActiveDiffScope to disk.
 sleep 1
 PUSH_OUT=$(cd "$TOGGLE_DIR" && "$ROOT/$BINARY" push --dry-run 999 2>&1 || true)
 if echo "$PUSH_OUT" | grep -q "Switch to Layer diff before posting a platform review"; then
-  echo "[Instance 6] PASS: crit push refuses from full_stack scope (gate 1)"
+  echo "[Instance 6] PASS: crit-plus push refuses from full_stack scope (gate 1)"
 elif echo "$PUSH_OUT" | grep -qE "gh CLI not found|gh is not authenticated"; then
-  echo "[Instance 6] SKIP: crit push gate not exercised (gh unavailable). Output:"
+  echo "[Instance 6] SKIP: crit-plus push gate not exercised (gh unavailable). Output:"
   echo "$PUSH_OUT" | sed 's/^/    /'
 else
-  echo "[Instance 6] FAIL: crit push did NOT refuse from full_stack scope. Output:"
+  echo "[Instance 6] FAIL: crit-plus push did NOT refuse from full_stack scope. Output:"
   echo "$PUSH_OUT" | sed 's/^/    /'
 fi
 
@@ -1028,7 +1028,7 @@ echo "  - Toggle to full-stack: only 'FULL_STACK ONLY' visible; file list"
 echo "    expands to include a.txt as well"
 echo "  - Both comments persist on disk regardless of toggle"
 echo "  - The push-gate check above ran while in full_stack scope and asserted"
-echo "    that 'crit push --dry-run 999' refuses with the gate-1 message"
+echo "    that 'crit-plus push --dry-run 999' refuses with the gate-1 message"
 echo ""
 echo "Press Enter to simulate agent edits (swap v2 content + round-complete on instances 1-4)."
 read -r
@@ -1102,7 +1102,7 @@ func FormatBytes(bytes int64) string {
 GOEOF
 git -C "$WORD_DIFF_DIR" add helpers.go && git -C "$WORD_DIFF_DIR" commit -q -m "add helpers"
 
-# Signal round-complete so crit picks up the new file
+# Signal round-complete so crit-plus picks up the new file
 curl -sf -X POST "http://127.0.0.1:$WORD_DIFF_PORT/api/round-complete" > /dev/null
 sleep 1
 

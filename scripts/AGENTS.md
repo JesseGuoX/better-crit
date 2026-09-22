@@ -2,18 +2,18 @@
 
 ## e2e-share.sh
 
-End-to-end integration tests for the crit CLI to crit-web share flow. Tests the full round-trip: sharing reviews, fetching web comments, re-sharing without duplicates, and unpublishing.
+End-to-end integration tests for the crit-plus CLI to crit-web share flow. Tests the full round-trip: sharing reviews, fetching web comments, re-sharing without duplicates, and unpublishing.
 
 ### Prerequisites
 
-- A local crit-web checkout as a sibling directory (`../crit-web` relative to the crit repo root, or set `CRIT_WEB_DIR`)
+- A local crit-web checkout as a sibling directory (`../crit-web` relative to the crit-plus repo root, or set `CRIT_WEB_DIR`)
 - PostgreSQL running locally (the script creates a `crit_e2e` database)
 - mise (for Go and Elixir toolchain management)
 
 ### Usage
 
 ```bash
-# Full run: build crit, start crit-web on :4001, run tests, tear down
+# Full run: build crit-plus, start crit-web on :4001, run tests, tear down
 make e2e-share
 # or directly:
 ./scripts/e2e-share.sh
@@ -38,7 +38,7 @@ make e2e-share
 
 ### What the script does
 
-1. Builds crit via `make build`
+1. Builds crit-plus via `make build`
 2. Creates/resets the `crit_e2e` database
 3. Starts crit-web with `SELFHOSTED=true` on the test port (no OAuth)
 4. Waits for `GET /health` to return 200

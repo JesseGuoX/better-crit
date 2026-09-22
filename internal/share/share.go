@@ -41,12 +41,12 @@ func checkShareAllowed(critPath string) error {
 		return nil //nolint:nilerr // malformed review file: do not block share
 	}
 	if cj.ReviewType == "live" {
-		return fmt.Errorf("crit share is not supported for live reviews in v1")
+		return fmt.Errorf("crit-plus share is not supported for live reviews in v1")
 	}
 	return nil
 }
 
-// checkGitHubSyncAllowed gates `crit pull` and `crit push` from running on
+// checkGitHubSyncAllowed gates `crit-plus pull` and `crit-plus push` from running on
 // live reviews. Live pins have no line anchors and cannot round-trip
 // through GitHub PR review comments.
 func checkGitHubSyncAllowed(cj session.CritJSON, op string) error {
@@ -101,7 +101,7 @@ type ShareFile = session.ShareFile
 // (zero when the reply originated locally). crit-web uses a non-zero value
 // as the signal that the reply was imported from GitHub and renders an
 // inline marker so re-sharers can tell synced replies apart from native
-// crit replies. Encoded with `omitempty` so locally-authored replies stay
+// crit-plus replies. Encoded with `omitempty` so locally-authored replies stay
 // indistinguishable on the wire (issue #370).
 type ShareReply struct {
 	Body       string `json:"body"`
@@ -120,7 +120,7 @@ type ShareReply struct {
 // produce identical wire output to before this field landed (issue #370).
 //
 // A non-zero github_id already discriminates GitHub-synced entries from
-// native crit comments, so a separate `source` field would be redundant.
+// native crit-plus comments, so a separate `source` field would be redundant.
 // If we add other sync sources (GitLab, Gerrit) later, we can introduce a
 // `source` enum at that point.
 type ShareComment struct {
@@ -241,7 +241,7 @@ func remapPreviewCommentFiles(comments []ShareComment) {
 }
 
 // shareReviewFiles loads comments + cli_args from the review file at critPath
-// and POSTs the files to crit-web. Used by both the CLI (`crit share`) and the
+// and POSTs the files to crit-web. Used by both the CLI (`crit-plus share`) and the
 // server's POST /api/share endpoint so payload wiring stays in one place.
 func ShareReviewFiles(critPath string, files []ShareFile, filePaths []string, svcURL, authToken, fallbackAuthor, org, visibility, reviewType string) (ShareReviewFilesResult, error) {
 	return ShareReviewFilesWithCLIArgs(
@@ -392,7 +392,7 @@ func decodeJSONOrHTMLHint(resp *http.Response, v any) error {
 	trimmed := bytes.TrimLeft(raw, " \t\r\n")
 	if bytes.HasPrefix(trimmed, []byte("<")) {
 		return fmt.Errorf("crit-web returned an HTML page instead of JSON — likely behind an SSO reverse proxy. " +
-			"Set 'proxy_auth': true in your crit config and use the browser UI to share")
+			"Set 'proxy_auth': true in your crit-plus config and use the browser UI to share")
 	}
 	if err := json.Unmarshal(raw, v); err != nil {
 		return fmt.Errorf("decode share response: %w", err)
@@ -1038,7 +1038,7 @@ func checkProxyAuthCLIAllowed(command string) error {
 	}
 	return fmt.Errorf(`%s is unavailable with proxy_auth enabled
 
-Your crit-web instance is behind an SSO reverse proxy. Terminal commands cannot authenticate there — use Crit's browser interface instead
+Your crit-web instance is behind an SSO reverse proxy. Terminal commands cannot authenticate there — use Crit Plus's browser interface instead
 
 proxy_auth is set in ~/.crit.config.json (global config only)`, command)
 }

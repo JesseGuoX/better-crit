@@ -74,76 +74,81 @@ jobs:
 
       - name: Generate checksums
         working-directory: dist
-        run: sha256sum crit-* > checksums.txt
+        run: sha256sum crit-plus-* > checksums.txt
 
       - name: Create release
         uses: softprops/action-gh-release@v3
         with:
           generate_release_notes: true
           files: |
-            dist/crit-*
+            dist/crit-plus-*
             dist/checksums.txt
+            LICENSE
+            NOTICE
 
       - name: Update Homebrew formula
+        if: ${{ vars.HOMEBREW_TAP_REPOSITORY != '' }}
         env:
           TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
           TAG: ${{ github.ref_name }}
+          TAP_REPOSITORY: ${{ vars.HOMEBREW_TAP_REPOSITORY }}
+          RELEASE_REPOSITORY: ${{ github.repository }}
         run: |
           VERSION="${TAG#v}"
 
-          SHA_DARWIN_ARM64=$(sha256sum dist/crit-darwin-arm64 | cut -d' ' -f1)
-          SHA_DARWIN_AMD64=$(sha256sum dist/crit-darwin-amd64 | cut -d' ' -f1)
-          SHA_LINUX_AMD64=$(sha256sum dist/crit-linux-amd64 | cut -d' ' -f1)
-          SHA_LINUX_ARM64=$(sha256sum dist/crit-linux-arm64 | cut -d' ' -f1)
+          SHA_DARWIN_ARM64=$(sha256sum dist/crit-plus-darwin-arm64 | cut -d' ' -f1)
+          SHA_DARWIN_AMD64=$(sha256sum dist/crit-plus-darwin-amd64 | cut -d' ' -f1)
+          SHA_LINUX_AMD64=$(sha256sum dist/crit-plus-linux-amd64 | cut -d' ' -f1)
+          SHA_LINUX_ARM64=$(sha256sum dist/crit-plus-linux-arm64 | cut -d' ' -f1)
 
-          BASE_URL="https://github.com/tomasz-tomczyk/crit/releases/download/${TAG}"
+          BASE_URL="https://github.com/${RELEASE_REPOSITORY}/releases/download/${TAG}"
 
-          git clone "https://x-access-token:${TAP_TOKEN}@github.com/tomasz-tomczyk/homebrew-tap.git" homebrew-tap
+          git clone "https://x-access-token:${TAP_TOKEN}@github.com/${TAP_REPOSITORY}.git" homebrew-tap
           mkdir -p homebrew-tap/Formula
 
-          cat > homebrew-tap/Formula/crit.rb <<FORMULA
-          class Crit < Formula
-            desc "Browser-based markdown review tool with inline commenting"
-            homepage "https://github.com/tomasz-tomczyk/crit"
+          cat > homebrew-tap/Formula/crit-plus.rb <<FORMULA
+          class CritPlus < Formula
+            desc "Enhanced fork of Crit by Tomasz Tomczyk with review and decisions"
+            homepage "https://github.com/${RELEASE_REPOSITORY}"
             version "${VERSION}"
             license "MIT"
 
             on_macos do
               on_arm do
-                url "${BASE_URL}/crit-darwin-arm64"
+                url "${BASE_URL}/crit-plus-darwin-arm64"
                 sha256 "${SHA_DARWIN_ARM64}"
               end
               on_intel do
-                url "${BASE_URL}/crit-darwin-amd64"
+                url "${BASE_URL}/crit-plus-darwin-amd64"
                 sha256 "${SHA_DARWIN_AMD64}"
               end
             end
 
             on_linux do
               on_arm do
-                url "${BASE_URL}/crit-linux-arm64"
+                url "${BASE_URL}/crit-plus-linux-arm64"
                 sha256 "${SHA_LINUX_ARM64}"
               end
               on_intel do
-                url "${BASE_URL}/crit-linux-amd64"
+                url "${BASE_URL}/crit-plus-linux-amd64"
                 sha256 "${SHA_LINUX_AMD64}"
               end
             end
 
             def install
-              binary = Dir["crit-*"].first || "crit"
-              bin.install binary => "crit"
+              binary = Dir["crit-plus-*"].first || "crit-plus"
+              bin.install binary => "crit-plus"
             end
 
             test do
-              assert_match "${VERSION}", shell_output("#{bin}/crit --version").strip
+              assert_match "${VERSION}", shell_output("#{bin}/crit-plus --version").strip
             end
           end
           FORMULA
 
           cd homebrew-tap
-          git add Formula/crit.rb
+          git add Formula/crit-plus.rb
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -m "Update crit to ${TAG}"
+          git commit -m "Update crit-plus to ${TAG}"
           git push origin main

@@ -89,7 +89,7 @@ var serveAbsPath = filepath.Abs
 func resolveServeReviewPath(outputDir, planDir, sessionKey string) (string, error) {
 	switch {
 	case outputDir != "":
-		// --output / config output is a crit data root (like ~/.crit).
+		// --output / config output is a crit-plus data root (like ~/.crit).
 		return reviewpath.Identity(outputDir, sessionKey)
 	case planDir != "":
 		abs, err := serveAbsPath(planDir)
@@ -133,7 +133,7 @@ func runServe(args []string) {
 	srv.SetListenHost(sc.Host)
 	srv.SetPublicURL(sc.PublicURL)
 	if sc.AllowUnauthenticatedNetwork {
-		fmt.Fprintln(os.Stderr, "crit: WARNING: unauthenticated network exposure enabled. Anyone who can reach this port can read review files and write comments.")
+		fmt.Fprintln(os.Stderr, "crit-plus: WARNING: unauthenticated network exposure enabled. Anyone who can reach this port can read review files and write comments.")
 	}
 
 	cwd, _ := resolvedCWD()

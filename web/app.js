@@ -146,7 +146,7 @@
   // rewrites at its own publish boundary; in the local UI that means
   // pointing the browser at /api/attachments/<uuid>.<ext>. External URLs
   // (https/http/data/absolute paths) pass through untouched so historical
-  // GitHub raw URLs or external image hosts still render after `crit pull`.
+  // GitHub raw URLs or external image hosts still render after `crit-plus pull`.
   commentMd.renderer.rules.image = function(tokens, idx, options, _env, self) {
     const token = tokens[idx];
     const srcIdx = token.attrIndex('src');
@@ -380,7 +380,7 @@
   let pendingUpdatesVersion = '';
 
   // Returns true if at least one pending update entry has not been dismissed.
-  // Crit update dismiss is keyed by version; integration dismiss is keyed per-agent
+  // crit+ update dismiss is keyed by version; integration dismiss is keyed per-agent
   // by content hash (so re-prompts when we ship a new template).
   function hasActivePendingUpdates() {
     if (!pendingUpdates.length) return false;
@@ -957,14 +957,14 @@
     };
     window.crit.shared.applyProjectPromptTrustUI(promptTrustConfig, document.getElementById('finishBtn'));
 
-    // Update notifications (Crit release + stale integrations)
+    // Update notifications (crit+ release + stale integrations)
     pendingUpdates = [];
     const hasCritUpdate = !configRes.no_update_check && configRes.latest_version && configRes.version && configRes.latest_version !== configRes.version;
     if (hasCritUpdate) {
       pendingUpdates.push({
         kind: 'crit-update',
         version: configRes.latest_version,
-        label: 'Crit ' + configRes.latest_version + ' available',
+        label: 'crit+ ' + configRes.latest_version + ' available',
         labelUrl: 'https://github.com/tomasz-tomczyk/crit/releases/tag/v' + configRes.latest_version,
         hint: 'Open Updates for release-specific update instructions'
       });
@@ -989,7 +989,7 @@
           kind: 'missing-integration',
           agent: agent,
           label: name + ' detected — install integration',
-          hint: 'crit install ' + agent
+          hint: 'crit-plus install ' + agent
         });
       });
     }
@@ -1111,8 +1111,8 @@
 
     updateHeaderRound();
     setDocumentTitle(session.mode === 'git'
-      ? 'Crit — ' + (session.branch || 'review')
-      : 'Crit — ' + (session.files || []).map(f => f.path).join(', '));
+      ? 'crit+ — ' + (session.branch || 'review')
+      : 'crit+ — ' + (session.files || []).map(f => f.path).join(', '));
 
     files = await loadAllFileData(session.files || [], currentFileDataScope());
     hiddenUnresolved = session.hidden_unresolved || 0;
@@ -7740,7 +7740,7 @@
       extra.push('Set <kbd>agent_cmd</kbd> in your config to send comments directly to your AI agent for immediate feedback.');
     }
     if (shareURL && !authUserName) {
-      extra.push('Run <kbd>crit auth login</kbd> to link shared reviews with your account.');
+      extra.push('Run <kbd>crit-plus auth login</kbd> to link shared reviews with your account.');
     }
     if (shareURL) {
       extra.push('Create a team on <kbd>' + shareURL.replace(/^https?:\/\//, '') + '</kbd> to group and secure your shared reviews.');
@@ -9826,7 +9826,7 @@
     const pane = document.getElementById('settingsPane');
     const shared = window.crit && window.crit.settingsPanes;
     if (!shared || typeof shared.renderSettingsTab !== 'function') {
-      console.error('Crit settings panes failed to load.');
+      console.error('crit+ settings panes failed to load.');
       return;
     }
     const isGit = session.mode === 'git';
@@ -11755,7 +11755,7 @@
   // fix): it does NOT delete the story. It flips into the flat file layout for
   // this page session and surfaces a "Show story view" re-entry affordance. The
   // story stays on disk and in session.story; a reload restores the story view.
-  // Real removal is `crit story --clear` / DELETE /api/story.
+  // Real removal is `crit-plus story --clear` / DELETE /api/story.
   async function hideStoryView() {
     storyHidden = true;
     applyStoryPresence();

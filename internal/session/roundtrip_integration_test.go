@@ -581,7 +581,7 @@ func TestRoundtrip_EditForeignComment_DoesNotPropagate(t *testing.T) {
 	e := newRoundtripEnv(t)
 
 	// Reviewer (current user, but pretend they're "someone else") posts a
-	// comment via gh api. From the local crit's POV after pull, this comment
+	// comment via gh api. From the local crit-plus's POV after pull, this comment
 	// has a github_id but we are not the author — except in this sandbox the
 	// gh user IS us, so GitHub will accept the PATCH. To make this test
 	// meaningful regardless of author identity, we instead validate the
@@ -832,7 +832,7 @@ func TestRoundtrip_AnchorLineDeleted_Outdated(t *testing.T) {
 
 	// Wait for GitHub to recompute the PR head sha after the force-push
 	// before issuing more API calls (see issue #456): otherwise the next
-	// `crit push` can race and post against a stale commit_id, getting
+	// `crit-plus push` can race and post against a stale commit_id, getting
 	// rejected with HTTP 422.
 	headSHA := strings.TrimSpace(mustOutput(t, e.workDir, "git", "rev-parse", "HEAD"))
 	e.waitForPRHeadSHA(headSHA)

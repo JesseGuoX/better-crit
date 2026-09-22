@@ -7,7 +7,7 @@ import (
 
 // resolveAtPrefixedArgs normalizes file references that agent file pickers
 // insert with a leading "@". Claude Code's "@" autocomplete (and similar
-// pickers) produce `crit @path/to/file.md`, but the literal "@path/to/file.md"
+// pickers) produce `crit-plus @path/to/file.md`, but the literal "@path/to/file.md"
 // is not a real file, so review-mode detection and daemon keying break — the
 // daemon spawns, fails session init on the bogus path, and the client can't
 // connect (issue #656).

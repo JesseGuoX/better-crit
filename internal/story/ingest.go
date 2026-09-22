@@ -1,5 +1,5 @@
 // Package story implements the ingest, coverage, and prep-text logic for
-// crit's opt-in "story" review mode: an LLM-authored grouping of diff hunks
+// crit-plus's opt-in "story" review mode: an LLM-authored grouping of diff hunks
 // into chapters. This package is the trust boundary — it validates and
 // (per policy) repairs the editorial JSON before it is ever persisted.
 package story
@@ -85,7 +85,7 @@ type Result struct {
 var (
 	ErrInvalidPrologue  = errors.New("story prologue must include title, overview, key_changes, and risks")
 	ErrInvalidChapterID = errors.New("story chapter IDs must be unique URL-safe names and cannot be overview or support")
-	ErrDrift            = errors.New("diff changed since prep — re-run `crit story --prep` and re-author")
+	ErrDrift            = errors.New("diff changed since prep — re-run `crit-plus story --prep` and re-author")
 	ErrDuplicate        = errors.New("story places the same hunk in more than one chapter/support entry")
 	ErrBelowFloor       = errors.New("story places fewer than half of the diff's hunks")
 )

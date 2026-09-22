@@ -1,11 +1,13 @@
-# Crit — Development Guide
+# Crit Plus — Development Guide
+
+Crit Plus (`crit-plus`) is an enhanced fork of [Crit](https://github.com/tomasz-tomczyk/crit), originally created by **Tomasz Tomczyk**. The upstream MIT license and copyright are preserved.
 
 Single-binary Go CLI that opens a browser-based UI for reviewing code changes and markdown files with GitHub PR-style inline commenting. Multi-file review with git diff rendering and structured review file output for AI coding agents.
 
 ## Project map
 
 ```
-crit/
+crit-plus/
 ├── cmd/crit/            # package main — thin CLI (main.go, cli_*.go, wire.go)
 ├── internal/            # Core logic packages (daemon, server, session, github, share, vcs, …)
 ├── web/                 # Embedded frontend assets (Go package webassets; embed.go)
@@ -35,9 +37,9 @@ crit/
 7. **Comments reference source line numbers** — stored in `~/.crit/reviews/<key>.json` with per-file sections
 8. **Real-time output** — review file written on every comment change (200ms debounce)
 9. **File watching** — git mode polls `git status --porcelain`; files mode polls mtimes; reloads via SSE
-10. **Localhost by default** — server binds to `127.0.0.1` (no CORS headers needed). Non-loopback `--host` / `CRIT_HOST` / global `host`, or any `public_url`, require `--allow-unauthenticated-network` / `CRIT_ALLOW_UNAUTHENTICATED_NETWORK=1` (Crit has no network auth).
+10. **Localhost by default** — server binds to `127.0.0.1` (no CORS headers needed). Non-loopback `--host` / `CRIT_HOST` / global `host`, or any `public_url`, require `--allow-unauthenticated-network` / `CRIT_ALLOW_UNAUTHENTICATED_NETWORK=1` (Crit Plus has no network auth).
 11. **Two-level config** — `~/.crit.config.json` (global) merged with `.crit.config.json` (project), CLI flags override both. `agent_cmd`, `auth_token`, `share_url`, and `plan_approve_mode` are global-only (prevents malicious repos from hijacking agent commands, redirecting share requests, or weakening Claude Code permissions)
-12. **Headless CLI comment** — `crit comment` writes directly to the review file without starting the server; SSE notifies any running server
+12. **Headless CLI comment** — `crit-plus comment` writes directly to the review file without starting the server; SSE notifies any running server
 13. **Comment threading** — comments support nested replies and a `resolved` boolean. Review file schema nests replies inside each comment's `replies` array.
 14. **Centralized review storage** — `~/.crit/reviews/<key>.json` keyed by cwd + branch (git mode) or cwd + args (file mode)
 15. **VCS abstraction** — `vcs.go` defines a backend interface; `git_vcs.go`, `sapling.go`, and `jj.go` are the implementations. Auto-detected, overridable via `--vcs` flag or `vcs` config key. Subcommands not yet threaded through (see TODO at `main.go:1826`).
@@ -47,52 +49,52 @@ crit/
 Do not commit plan files to the repo — keep them as untracked local files (or in `/tmp`). This includes `*-plan.md`, `*-proposal.md`, and other AI-generated design docs. Repo history should contain implementation, not planning artifacts. Exception: test fixtures under `test/` that a test explicitly reads.
 </important>
 
-<important if="you need to build, test, lint, or run crit">
+<important if="you need to build, test, lint, or run crit-plus">
 
 ```bash
-go build -o crit ./cmd/crit                           # Build
+go build -o crit-plus ./cmd/crit                           # Build
 go test ./...                                         # Run all tests
 gofmt -l .                                            # Check formatting (should be clean)
 golangci-lint run ./...                               # Lint (should be clean)
 make build-all                                        # Cross-compile to dist/
-./crit                                                # Git mode (auto-detect changed files)
-./crit test-plan.md                                   # Review specific file(s)
-./crit --no-open --port 3000 test-plan.md             # Headless on fixed port
+./crit-plus                                                # Git mode (auto-detect changed files)
+./crit-plus test-plan.md                                   # Review specific file(s)
+./crit-plus --no-open --port 3000 test-plan.md             # Headless on fixed port
 ```
 </important>
 
-<important if="you need to know what crit subcommands do or are adding/modifying a CLI subcommand">
+<important if="you need to know what crit-plus subcommands do or are adding/modifying a CLI subcommand">
 
 Subcommands are dispatched via `commandDispatch` in `main.go`. Anything not in the table falls through to `runReview`.
 
 ```
-crit                          # Review git changes (starts daemon, blocks for feedback)
-crit <file|dir> [...]         # Review specific files or directories (falls through to runReview)
-crit review [...]             # Explicit review invocation (same as default)
-crit live <url>               # Review a running web app in live mode (also: crit <url>)
-crit preview <file.html>      # Review a local HTML file in preview mode (also: crit <file.html>)
-crit stop [--all]             # Stop daemon for current directory; --all stops every daemon
-crit status [--json]          # Show review file path, daemon status, comment stats
-crit resume [--list | <id>]   # Pick a stored review to reopen (interactive list of ~/.crit/reviews)
-crit cleanup [--days N] [--force]  # Delete stale review files from ~/.crit/reviews/
-crit pull [pr-number]         # Fetch GitHub PR comments into the review file
-crit push [--dry-run] [--event <type>] [-m <msg>] [pr]  # Post review comments as a GitHub PR review
-crit pr <num|url>             # Thin shim — forwards to `crit review --pr <n>`
-crit fetch ...                # Fetch remote artefacts (see runFetch)
-crit comment <path>:<line[-end]> <body>         # Add a comment (no server needed)
-crit comment --reply-to <id> [--resolve] <body> # Reply to a comment
-crit comment --json [--file <path>] [--author <name>]  # Bulk add comments from JSON (stdin or --file; - = stdin)
-crit share <file> [file...]   # Share files to crit-web, print URL
-crit unpublish                # Remove shared review from crit-web
-crit config [--generate]      # Print resolved config (or starter template)
-crit install <agent>          # Install integration config for an AI tool
-crit auth ...                 # Auth flow for hosted crit-web (login/logout)
-crit plan [...]               # Plan-file workflow
-crit plan-hook [--mode claude|codex]  # Internal hook used by agent plan flows
-crit check                    # Self-check (env, git, gh availability)
-crit _serve                   # Internal: foreground server (used by daemon spawn)
-crit --version | -v           # Version
-crit help | --help | -h       # Show help
+crit-plus                          # Review git changes (starts daemon, blocks for feedback)
+crit-plus <file|dir> [...]         # Review specific files or directories (falls through to runReview)
+crit-plus review [...]             # Explicit review invocation (same as default)
+crit-plus live <url>               # Review a running web app in live mode (also: crit-plus <url>)
+crit-plus preview <file.html>      # Review a local HTML file in preview mode (also: crit-plus <file.html>)
+crit-plus stop [--all]             # Stop daemon for current directory; --all stops every daemon
+crit-plus status [--json]          # Show review file path, daemon status, comment stats
+crit-plus resume [--list | <id>]   # Pick a stored review to reopen (interactive list of ~/.crit/reviews)
+crit-plus cleanup [--days N] [--force]  # Delete stale review files from ~/.crit/reviews/
+crit-plus pull [pr-number]         # Fetch GitHub PR comments into the review file
+crit-plus push [--dry-run] [--event <type>] [-m <msg>] [pr]  # Post review comments as a GitHub PR review
+crit-plus pr <num|url>             # Thin shim — forwards to `crit-plus review --pr <n>`
+crit-plus fetch ...                # Fetch remote artefacts (see runFetch)
+crit-plus comment <path>:<line[-end]> <body>         # Add a comment (no server needed)
+crit-plus comment --reply-to <id> [--resolve] <body> # Reply to a comment
+crit-plus comment --json [--file <path>] [--author <name>]  # Bulk add comments from JSON (stdin or --file; - = stdin)
+crit-plus share <file> [file...]   # Share files to crit-web, print URL
+crit-plus unpublish                # Remove shared review from crit-web
+crit-plus config [--generate]      # Print resolved config (or starter template)
+crit-plus install <agent>          # Install integration config for an AI tool
+crit-plus auth ...                 # Auth flow for hosted crit-web (login/logout)
+crit-plus plan [...]               # Plan-file workflow
+crit-plus plan-hook [--mode claude|codex]  # Internal hook used by agent plan flows
+crit-plus check                    # Self-check (env, git, gh availability)
+crit-plus _serve                   # Internal: foreground server (used by daemon spawn)
+crit-plus --version | -v           # Version
+crit-plus help | --help | -h       # Show help
 ```
 </important>
 
@@ -105,11 +107,11 @@ Two-level JSON config files, merged (project overrides global):
 
 Config keys: `port`, `host`, `no_open`, `share_url`, `quiet`, `output`, `author`, `base_branch`, `ignore_patterns`, `auto_viewed_patterns`, `default_markdown_view`, `agent_cmd`, `auth_token`, `auth_user_name`, `auth_user_email`, `auth_user_id`, `plan_approve_mode`, `cleanup_on_approve`, `notify_on_round_ready`, `disable_stats`, `no_update_check`, `no_integration_check`, `vcs`, `proxy_auth`, `live_cookie`, `live_cookie_file`, `live_cdp_url`, `close_on_approve_after_ms`.
 
-- `base_branch` overrides auto-detected default branch (used as diff base in git mode, and by `crit pull`/`crit push`/`crit comment`)
+- `base_branch` overrides auto-detected default branch (used as diff base in git mode, and by `crit-plus pull`/`crit-plus push`/`crit-plus comment`)
 - `author` falls back to the configured VCS user name if not set
 - `agent_cmd`, `auth_token`, `share_url`, `proxy_auth`, `plan_approve_mode`, and `close_on_approve_after_ms` are **global config only**; project-level config cannot override (security — prevents malicious repos from hijacking the agent command, redirecting share requests to an attacker-controlled host, weakening Claude Code permissions, or forcing a reviewer's tab to auto-close)
-- `close_on_approve_after_ms` (default: unset/disabled) — auto-close the review tab N ms after Approve with no unresolved comments; negative values are treated as unset. Not included in `crit config --generate` scaffolding.
-- `proxy_auth` (default: `false`) — when `true`, terminal `crit share` / `crit fetch` / `crit unpublish` are blocked (SSO proxy); the browser UI uses a popup relay instead. Global-only for security. See proxy-auth transport rules.
+- `close_on_approve_after_ms` (default: unset/disabled) — auto-close the review tab N ms after Approve with no unresolved comments; negative values are treated as unset. Not included in `crit-plus config --generate` scaffolding.
+- `proxy_auth` (default: `false`) — when `true`, terminal `crit-plus share` / `crit-plus fetch` / `crit-plus unpublish` are blocked (SSO proxy); the browser UI uses a popup relay instead. Global-only for security. See proxy-auth transport rules.
 - `cleanup_on_approve` (default: `true`) — auto-delete review file when reviewer approves with no unresolved comments
 - `notify_on_round_ready` (default: `false`) — opt in to a desktop notification when a review round becomes ready for the human. On macOS, install `terminal-notifier` so the notification's click action opens the review URL; without it, clicking falls back to AppleScript `display notification`, which macOS attributes to Script Editor instead of the browser
 - `disable_stats` (default: `false`) — disable session stats recording to `~/.crit/stats.json`
@@ -117,9 +119,9 @@ Config keys: `port`, `host`, `no_open`, `share_url`, `quiet`, `output`, `author`
 - `auto_viewed_patterns` are unioned (global + project both apply); matched client-side against file paths and applied once per launch to auto-mark matching files viewed (collapsed). No runtime default (empty). Plumbed through `/api/config` only — Go does no glob matching.
 - `default_markdown_view` (`"diff"` | `"document"`, default unset = diff in git mode) — initial view for markdown files (Document/Diff toggle) in git mode. Project **overrides** global (scalar, not unioned). Invalid values are ignored with a stderr warning. No CLI flag. Plumbed through `/api/config` only.
 - `vcs` selects backend: `"git"` (default), `"sl"` (sapling), or `"jj"` (Jujutsu)
-- `auth_*` keys hold cached hosted-crit-web credentials (set by `crit auth`); treat as secrets
-- `live_cookie` / `live_cookie_file` forward session cookies to the upstream app in live mode (global or project; prefer gitignored `live_cookie_file` e.g. `.crit/live-cookies.txt`). CLI: `crit live --cookie`, `--cookie-file`
-- `live_cdp_url` reuses cookies from a local Chrome DevTools endpoint (global or project). CLI: `crit live --cdp-url`. Explicit `--cookie` values override CDP cookies with the same name.
+- `auth_*` keys hold cached hosted-crit-web credentials (set by `crit-plus auth`); treat as secrets
+- `live_cookie` / `live_cookie_file` forward session cookies to the upstream app in live mode (global or project; prefer gitignored `live_cookie_file` e.g. `.crit/live-cookies.txt`). CLI: `crit-plus live --cookie`, `--cookie-file`
+- `live_cdp_url` reuses cookies from a local Chrome DevTools endpoint (global or project). CLI: `crit-plus live --cdp-url`. Explicit `--cookie` values override CDP cookies with the same name.
 - CLI flags override config file values
 </important>
 
@@ -127,30 +129,30 @@ Config keys: `port`, `host`, `no_open`, `share_url`, `quiet`, `output`, `author`
 
 Self-hosted crit-web behind an SSO reverse proxy cannot be reached from the terminal. When `proxy_auth: true` in global config:
 
-1. **Terminal subcommands** must call `checkProxyAuthCLIAllowed("crit <cmd>")` at the top of the `Run*` entrypoint (`internal/share/cli.go` pattern). Fail fast with the shared message — do not HTTP-call crit-web and get an HTML login page.
+1. **Terminal subcommands** must call `checkProxyAuthCLIAllowed("crit-plus <cmd>")` at the top of the `Run*` entrypoint (`internal/share/cli.go` pattern). Fail fast with the shared message — do not HTTP-call crit-web and get an HTML login page.
 2. **Browser UI** must implement both transports: direct Go HTTP when `proxy_auth` is false; popup relay via `web/crit-share.js` + crit-web `assets/js/share_receiver/handlers.js` when true. See `.claude/rules/proxy-auth-transport.md`.
 3. **New crit-web endpoints**: add a popup handler in crit-web `share_receiver/handlers.js` (same-origin fetch proxy to the existing `/api/...` endpoint — no relay-specific API). Add the relay branch in `web/crit-share.js` / `web/app.js`.
-4. **Integration tests** that exec the `crit` binary must use an isolated temp `HOME` (`runCritCmd` in `share_integration_test.go`) so a developer's `proxy_auth` setting doesn't skew results.
+4. **Integration tests** that exec the `crit-plus` binary must use an isolated temp `HOME` (`runCritCmd` in `share_integration_test.go`) so a developer's `proxy_auth` setting doesn't skew results.
 
 Full rules: `.cursor/rules/proxy-auth-transport.mdc` / `.claude/rules/proxy-auth-transport.md`.
 </important>
 
-<important if="you are working with crit pull, crit push, or GitHub PR sync">
+<important if="you are working with crit-plus pull, crit-plus push, or GitHub PR sync">
 
 Requires `gh` CLI installed and authenticated.
 
-- `crit pull` fetches PR review comments (RIGHT-side only) and merges them into the review file, deduplicating by author+lines+body
-- `crit push` reads the review file and posts unresolved comments as a GitHub PR review
-- `crit push --dry-run` shows what would be posted without creating the review
-- `crit push --event approve` submits an approval; `--event request-changes` requests changes (default: `comment`)
-- `crit push -m 'message'` adds a review-level body message
-- PR number auto-detected from current branch, or pass explicitly: `crit pull 42`
+- `crit-plus pull` fetches PR review comments (RIGHT-side only) and merges them into the review file, deduplicating by author+lines+body
+- `crit-plus push` reads the review file and posts unresolved comments as a GitHub PR review
+- `crit-plus push --dry-run` shows what would be posted without creating the review
+- `crit-plus push --event approve` submits an approval; `--event request-changes` requests changes (default: `comment`)
+- `crit-plus push -m 'message'` adds a review-level body message
+- PR number auto-detected from current branch, or pass explicitly: `crit-plus pull 42`
 - Any code path that imports comments from an external source (GitHub PR, crit-web) into the local review file MUST dedup against local state first: `buildLocalIDSet` + `buildLocalFingerprintIndex` + `dropDuplicateWebComment`. This applies to direct HTTP paths AND browser relay paths. Calling `mergeWebComments` without pre-filtering causes duplicate comments on repeated pull.
 </important>
 
 <important if="you are writing, running, or modifying Playwright E2E tests in test/e2e/">
 
-The `test/e2e/` directory contains Playwright tests against a real compiled `crit` binary — no mocking.
+The `test/e2e/` directory contains Playwright tests against a real compiled `crit-plus` binary — no mocking.
 
 ### Running
 
@@ -175,7 +177,7 @@ Nine Playwright projects. Test naming convention determines which project runs w
 | `no-git-mode` | 3126 | `setup-fixtures-nogit.sh` (file mode without git) | `*.nogit.spec.ts` |
 | `multi-file-mode` | 3127 | `setup-fixtures-multifile.sh` (code + markdown files) | `*.multifile.spec.ts` |
 | `range-mode` | 3128 | `setup-fixtures-range-mode.sh` (`--range A..B` stacked git) | `*.rangemode.spec.ts` |
-| `live-mode` | 3129 | `setup-fixtures-livemode.sh` (Go upstream + crit live) | `*.livemode.spec.ts` |
+| `live-mode` | 3129 | `setup-fixtures-livemode.sh` (Go upstream + crit-plus live) | `*.livemode.spec.ts` |
 | `share-transport` | 3132 (stub crit-web on 3133) | `setup-fixtures-sharetransport.sh` (file mode + stub crit-web) | `*.sharetransport.spec.ts` |
 
 The `mobile` project shares the git-mode fixture port. In `run.sh` it runs strictly after `git-mode` finishes so the two don't race on shared comment state (both projects `DELETE /api/comments` in `beforeEach`).
@@ -196,7 +198,7 @@ CI runs E2E on PRs via `.github/workflows/test.yml`; a separate `coverage.yml` u
 
 <important if="you are running or modifying share integration tests (build tag: integration)">
 
-`share_integration_test.go` exercises the crit ↔ crit-web share flow. When modifying share logic, the share payload, comment sync, or any crit-web interaction:
+`share_integration_test.go` exercises the crit-plus ↔ crit-web share flow. When modifying share logic, the share payload, comment sync, or any crit-web interaction:
 
 1. Run: `make e2e-share` (or `./scripts/e2e-share.sh`)
 2. Add new test cases for new share functionality — name them `TestShareSync*`
@@ -205,9 +207,9 @@ CI runs E2E on PRs via `.github/workflows/test.yml`; a separate `coverage.yml` u
 Requires a local crit-web checkout at `../crit-web` and PostgreSQL. See `scripts/AGENTS.md` for full details.
 </important>
 
-<important if="you are modifying crit pull, crit push, GitHub PR comment sync, the review-file ↔ GitHub roundtrip, or anything in `github.go` / `pr_cache.go` / `pr_fetch_test.go` / `push_buckets.go` / `comment_cli.go` reply handling">
+<important if="you are modifying crit-plus pull, crit-plus push, GitHub PR comment sync, the review-file ↔ GitHub roundtrip, or anything in `github.go` / `pr_cache.go` / `pr_fetch_test.go` / `push_buckets.go` / `comment_cli.go` reply handling">
 
-`roundtrip_integration_test.go` (build tag `e2e_github`) exercises the crit ↔ GitHub PR roundtrip against a real sandbox PR. When modifying pull/push, GitHub-comment-bucket logic, reply posting, or `mergeGHComments*` dedup:
+`roundtrip_integration_test.go` (build tag `e2e_github`) exercises the crit-plus ↔ GitHub PR roundtrip against a real sandbox PR. When modifying pull/push, GitHub-comment-bucket logic, reply posting, or `mergeGHComments*` dedup:
 
 1. Run: `make e2e-roundtrip` (or `./scripts/e2e-roundtrip.sh -run <TestName> -v` for one scenario)
 2. Add new `TestRoundtrip_<Name>` scenarios for new state transitions — see `test/roundtrip/README.md` for authoring notes
@@ -231,7 +233,7 @@ Session-scoped:
 - `POST /api/share-url` / `DELETE /api/share-url` — persist or unpublish shared URL
 - `POST /api/finish` — write review file, return prompt for agent
 - `GET  /api/events` — SSE stream (file-changed, edit-detected, server-shutdown)
-- `GET  /api/wait-for-event` — long-poll until finish (used by `crit` daemon mode)
+- `GET  /api/wait-for-event` — long-poll until finish (used by `crit-plus` daemon mode)
 - `POST /api/round-complete` — agent signals all edits done; triggers new round
 - `…/api/focus` — set/clear focus (file or range scope)
 - `…/api/picker` — file-picker UI backend
@@ -299,14 +301,14 @@ Hunk headers (`@@ -27,6 +31,23 @@`), dual gutters, colored backgrounds for addit
 
 <important if="you are changing any agent-*.js, crit-agent.js, or agent-marker.css in web/">
 
-These files are the scripts crit injects into live/preview iframes — the canonical set + order is `agentScriptFiles` in `server.go`, plus `agent-marker.css` (served at `/agent-marker.css`). **crit-web vendors them verbatim** into `crit-web/priv/static/preview-agent/` so DOM anchoring stays byte-identical across both renderers.
+These files are the scripts crit-plus injects into live/preview iframes — the canonical set + order is `agentScriptFiles` in `server.go`, plus `agent-marker.css` (served at `/agent-marker.css`). **crit-web vendors them verbatim** into `crit-web/priv/static/preview-agent/` so DOM anchoring stays byte-identical across both renderers.
 
 When you change any of these files here:
 
-1. Re-sync into crit-web: run `crit-web/scripts/sync-preview-agent.sh` (copies the 8 files from `../crit/web/`).
+1. Re-sync into crit-web: run `crit-web/scripts/sync-preview-agent.sh` (copies the 8 files from `../crit-plus/web/`).
 2. Commit the change in **both** repos.
 
-crit-web's drift-guard test `test/crit_web/preview_agent_sync_test.exs` fails loudly if the vendored copies diverge (and skips when the sibling `crit/` checkout is absent, e.g. CI). Don't hand-edit `crit-web/priv/static/preview-agent/*` — always re-sync from here.
+crit-web's drift-guard test `test/crit_web/preview_agent_sync_test.exs` fails loudly if the vendored copies diverge (and skips when the sibling `crit-plus/` checkout is absent, e.g. CI). Don't hand-edit `crit-web/priv/static/preview-agent/*` — always re-sync from here.
 </important>
 
 <important if="you are adding CSS variables or modifying theme.css">
@@ -320,7 +322,7 @@ Header has a 3-button theme pill (System / Light / Dark):
 - Use CSS custom properties from `theme.css` for all colors. Never hardcode hex values.
 </important>
 
-<important if="you are modifying share, unpublish, or share-button UI in crit/">
+<important if="you are modifying share, unpublish, or share-button UI in crit-plus/">
 
 Sharing is opt-in. When `--share-url` (or `CRIT_SHARE_URL` env var, or `share_url` in config file) is set:
 
@@ -333,7 +335,7 @@ Sharing is opt-in. When `--share-url` (or `CRIT_SHARE_URL` env var, or `share_ur
 
 <important if="you are modifying multi-round logic, round-complete, or finish handling">
 
-When the agent runs `crit` again (or calls `POST /api/round-complete`):
+When the agent runs `crit-plus` again (or calls `POST /api/round-complete`):
 
 - **Markdown files**: snapshot content, carry forward unresolved comments, re-read from disk
 - **Code files**: re-run git diff against base ref to get updated hunks
@@ -344,14 +346,14 @@ When the agent runs `crit` again (or calls `POST /api/round-complete`):
 
 <important if="you are modifying daemon spawning, session lookup, or ~/.crit/sessions/">
 
-`crit` manages a background daemon for seamless multi-round reviews:
+`crit-plus` manages a background daemon for seamless multi-round reviews:
 
-1. **First `crit`**: starts background daemon (`crit _serve`), opens browser, blocks for feedback
-2. **Subsequent `crit`**: connects to existing daemon (same cwd + args), signals round-complete, blocks
-3. **`crit plan.md`**: looks up daemon by hash(cwd + "plan.md") — reuses if alive, starts new if dead
+1. **First `crit-plus`**: starts background daemon (`crit-plus _serve`), opens browser, blocks for feedback
+2. **Subsequent `crit-plus`**: connects to existing daemon (same cwd + args), signals round-complete, blocks
+3. **`crit-plus plan.md`**: looks up daemon by hash(cwd + "plan.md") — reuses if alive, starts new if dead
 4. **Ctrl+C**: kills the daemon the client started
-5. **`crit stop`**: kills daemon for current cwd; `crit stop --all` kills every daemon
-6. **Lifetime**: daemon runs until killed (Ctrl+C, `crit stop`, or SIGINT/SIGTERM/SIGHUP). No idle timeout — walking away from a review session is fine.
+5. **`crit-plus stop`**: kills daemon for current cwd; `crit-plus stop --all` kills every daemon
+6. **Lifetime**: daemon runs until killed (Ctrl+C, `crit-plus stop`, or SIGINT/SIGTERM/SIGHUP). No idle timeout — walking away from a review session is fine.
 
 ### Deferred initialization & readiness
 
@@ -367,11 +369,11 @@ Daemon state in `~/.crit/sessions/`, one file per session.
 
 Session file: `{"pid", "port", "cwd", "args", "branch", "review_path", "started_at"}`. Review data lives at `~/.crit/reviews/<key>.json` (same key).
 
-`crit _serve` runs the server in foreground (used by daemon spawning, not user-facing).
+`crit-plus _serve` runs the server in foreground (used by daemon spawning, not user-facing).
 
 ### Resuming a dead session
 
-The session file is deleted as soon as its daemon dies, so a stopped session can only be found through its review folder. `review.json` therefore records `cwd` alongside `cli_args`: the session key is a hash of the cwd, so the directory cannot be recovered from the key. `crit resume` lists the folders under `~/.crit/reviews/` and hands the chosen key to `crit --session <id>`, which rebuilds the `_serve` argv (`daemonArgsForReconnect`) and respawns the daemon in the recorded directory via `StartDaemonInDir`. Reviews written before the `cwd` field existed resume in the current directory, as they always did.
+The session file is deleted as soon as its daemon dies, so a stopped session can only be found through its review folder. `review.json` therefore records `cwd` alongside `cli_args`: the session key is a hash of the cwd, so the directory cannot be recovered from the key. `crit-plus resume` lists the folders under `~/.crit/reviews/` and hands the chosen key to `crit-plus --session <id>`, which rebuilds the `_serve` argv (`daemonArgsForReconnect`) and respawns the daemon in the recorded directory via `StartDaemonInDir`. Reviews written before the `cwd` field existed resume in the current directory, as they always did.
 </important>
 
 <important if="you are reviewing code or evaluating audit findings for this project">
@@ -422,7 +424,7 @@ These issues recur in AI-generated code for this project. Only items NOT caught 
 
 Always preserve:
 - The list of files modified in this session
-- Any unresolved review comments or crit feedback
+- Any unresolved review comments or crit-plus feedback
 - The current phase of any multi-phase workflow (review, ship, audit)
 - Which worktree you're working in
 </important>

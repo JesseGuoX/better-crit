@@ -45,37 +45,37 @@ func TestDestFor_GlobalMode(t *testing.T) {
 		want    string
 	}{
 		// No globalDest → raw relative dest, written cwd-relative (cwd == $HOME).
-		{"claude-code", 0, ".claude/skills/crit/SKILL.md"},
-		{"claude-code", 1, ".claude/skills/crit-cli/SKILL.md"},
-		{"codex", 0, ".agents/skills/crit/SKILL.md"},
-		{"codex", 1, ".agents/skills/crit-cli/SKILL.md"},
-		{"qwen", 0, ".qwen/skills/crit/SKILL.md"},
-		{"qwen", 1, ".qwen/skills/crit-cli/SKILL.md"},
-		{"cursor", 0, ".cursor/skills/crit/SKILL.md"},
-		{"cursor", 1, ".cursor/skills/crit-cli/SKILL.md"},
+		{"claude-code", 0, ".claude/skills/crit-plus/SKILL.md"},
+		{"claude-code", 1, ".claude/skills/crit-plus-cli/SKILL.md"},
+		{"codex", 0, ".agents/skills/crit-plus/SKILL.md"},
+		{"codex", 1, ".agents/skills/crit-plus-cli/SKILL.md"},
+		{"qwen", 0, ".qwen/skills/crit-plus/SKILL.md"},
+		{"qwen", 1, ".qwen/skills/crit-plus-cli/SKILL.md"},
+		{"cursor", 0, ".cursor/skills/crit-plus/SKILL.md"},
+		{"cursor", 1, ".cursor/skills/crit-plus-cli/SKILL.md"},
 		// grok: same-shape .grok/skills/ project-locally and ~/.grok/skills/ globally (no globalDest redirect needed).
-		{"grok", 0, ".grok/skills/crit/SKILL.md"},
-		{"grok", 1, ".grok/skills/crit-cli/SKILL.md"},
-		{"ampcode", 0, filepath.Join(home, ".config/agents/skills/crit/SKILL.md")},
-		{"ampcode", 1, filepath.Join(home, ".config/agents/skills/crit-cli/SKILL.md")},
+		{"grok", 0, ".grok/skills/crit-plus/SKILL.md"},
+		{"grok", 1, ".grok/skills/crit-plus-cli/SKILL.md"},
+		{"ampcode", 0, filepath.Join(home, ".config/agents/skills/crit-plus/SKILL.md")},
+		{"ampcode", 1, filepath.Join(home, ".config/agents/skills/crit-plus-cli/SKILL.md")},
 		// opencode: command redirects to ~/.config/opencode/commands/; skill redirects to ~/.agents/skills/.
-		{"opencode", 0, filepath.Join(home, ".config/opencode/commands/crit.md")},
-		{"opencode", 1, filepath.Join(home, ".agents/skills/crit-cli/SKILL.md")},
+		{"opencode", 0, filepath.Join(home, ".config/opencode/commands/crit-plus.md")},
+		{"opencode", 1, filepath.Join(home, ".agents/skills/crit-plus-cli/SKILL.md")},
 		// github-copilot: both skills redirect to ~/.agents/skills/.
-		{"github-copilot", 0, filepath.Join(home, ".agents/skills/crit/SKILL.md")},
-		{"github-copilot", 1, filepath.Join(home, ".agents/skills/crit-cli/SKILL.md")},
+		{"github-copilot", 0, filepath.Join(home, ".agents/skills/crit-plus/SKILL.md")},
+		{"github-copilot", 1, filepath.Join(home, ".agents/skills/crit-plus-cli/SKILL.md")},
 		// hermes: both skills redirect to ~/.hermes/skills/.
-		{"hermes", 0, filepath.Join(home, ".hermes/skills/crit/SKILL.md")},
-		{"hermes", 1, filepath.Join(home, ".hermes/skills/crit-cli/SKILL.md")},
+		{"hermes", 0, filepath.Join(home, ".hermes/skills/crit-plus/SKILL.md")},
+		{"hermes", 1, filepath.Join(home, ".hermes/skills/crit-plus-cli/SKILL.md")},
 		// pi: both skills redirect to ~/.pi/agent/skills/.
-		{"pi", 0, filepath.Join(home, ".pi/agent/skills/crit/SKILL.md")},
-		{"pi", 1, filepath.Join(home, ".pi/agent/skills/crit-cli/SKILL.md")},
+		{"pi", 0, filepath.Join(home, ".pi/agent/skills/crit-plus/SKILL.md")},
+		{"pi", 1, filepath.Join(home, ".pi/agent/skills/crit-plus-cli/SKILL.md")},
 		// Cline: manual workflow and model-discoverable CLI reference.
-		{"cline", 0, filepath.Join(home, ".cline/data/workflows/crit.md")},
-		{"cline", 1, filepath.Join(home, ".cline/skills/crit-cli/SKILL.md")},
+		{"cline", 0, filepath.Join(home, ".cline/data/workflows/crit-plus.md")},
+		{"cline", 1, filepath.Join(home, ".cline/skills/crit-plus-cli/SKILL.md")},
 		// Windsurf: manual workflow and model-discoverable CLI reference.
-		{"windsurf", 0, filepath.Join(home, ".codeium/windsurf/global_workflows/crit.md")},
-		{"windsurf", 1, filepath.Join(home, ".codeium/windsurf/skills/crit-cli/SKILL.md")},
+		{"windsurf", 0, filepath.Join(home, ".codeium/windsurf/global_workflows/crit-plus.md")},
+		{"windsurf", 1, filepath.Join(home, ".codeium/windsurf/skills/crit-plus-cli/SKILL.md")},
 	}
 	for _, tc := range cases {
 		f := integrationMap[tc.tool][tc.fileIdx]
@@ -90,7 +90,7 @@ func TestDestFor_ClineGlobalUsesPrimaryConfigDirectory(t *testing.T) {
 	home := "/home/me"
 	f := integrationMap["cline"][0]
 	got := destFor(f, true, home, "cline")
-	want := filepath.Join(home, ".cline/data/workflows/crit.md")
+	want := filepath.Join(home, ".cline/data/workflows/crit-plus.md")
 	if got != want {
 		t.Errorf("cline global: got %q, want %q", got, want)
 	}
@@ -110,58 +110,58 @@ func TestIntegrationMap_SnapshotGlobalRouting(t *testing.T) {
 		"codex":       {{"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}},
 		"qwen":        {{"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}},
 		"opencode": {
-			{".config/opencode/commands/crit.md", globalDestRelHome},
-			{".agents/skills/crit-cli/SKILL.md", globalDestRelHome},
-			{".config/opencode/commands/crit-story.md", globalDestRelHome},
-			{".config/opencode/commands/crit-decide.md", globalDestRelHome},
-			{".agents/skills/crit-story/SKILL.md", globalDestRelHome},
-			{".agents/skills/crit-decide/SKILL.md", globalDestRelHome},
-			{".config/opencode/plugins/crit.ts", globalDestRelHome},
-			{".config/opencode/plugins/lib/crit-wait-notify.js", globalDestRelHome},
+			{".config/opencode/commands/crit-plus.md", globalDestRelHome},
+			{".agents/skills/crit-plus-cli/SKILL.md", globalDestRelHome},
+			{".config/opencode/commands/crit-plus-story.md", globalDestRelHome},
+			{".config/opencode/commands/crit-plus-decide.md", globalDestRelHome},
+			{".agents/skills/crit-plus-story/SKILL.md", globalDestRelHome},
+			{".agents/skills/crit-plus-decide/SKILL.md", globalDestRelHome},
+			{".config/opencode/plugins/crit-plus.ts", globalDestRelHome},
+			{".config/opencode/plugins/lib/crit-plus-wait-notify.js", globalDestRelHome},
 		},
 		"github-copilot": {
-			{".agents/skills/crit/SKILL.md", globalDestRelHome},
-			{".agents/skills/crit-cli/SKILL.md", globalDestRelHome},
-			{".agents/skills/crit-story/SKILL.md", globalDestRelHome},
-			{".agents/skills/crit-decide/SKILL.md", globalDestRelHome},
+			{".agents/skills/crit-plus/SKILL.md", globalDestRelHome},
+			{".agents/skills/crit-plus-cli/SKILL.md", globalDestRelHome},
+			{".agents/skills/crit-plus-story/SKILL.md", globalDestRelHome},
+			{".agents/skills/crit-plus-decide/SKILL.md", globalDestRelHome},
 		},
 		"windsurf": {
-			{".codeium/windsurf/global_workflows/crit.md", globalDestRelHome},
-			{".codeium/windsurf/skills/crit-cli/SKILL.md", globalDestRelHome},
-			{".codeium/windsurf/global_workflows/crit-story.md", globalDestRelHome},
-			{".codeium/windsurf/global_workflows/crit-decide.md", globalDestRelHome},
-			{".codeium/windsurf/skills/crit-story/SKILL.md", globalDestRelHome},
-			{".codeium/windsurf/skills/crit-decide/SKILL.md", globalDestRelHome},
+			{".codeium/windsurf/global_workflows/crit-plus.md", globalDestRelHome},
+			{".codeium/windsurf/skills/crit-plus-cli/SKILL.md", globalDestRelHome},
+			{".codeium/windsurf/global_workflows/crit-plus-story.md", globalDestRelHome},
+			{".codeium/windsurf/global_workflows/crit-plus-decide.md", globalDestRelHome},
+			{".codeium/windsurf/skills/crit-plus-story/SKILL.md", globalDestRelHome},
+			{".codeium/windsurf/skills/crit-plus-decide/SKILL.md", globalDestRelHome},
 		},
 		"cline": {
-			{".cline/data/workflows/crit.md", globalDestRelHome},
-			{".cline/skills/crit-cli/SKILL.md", globalDestRelHome},
-			{".cline/data/workflows/crit-story.md", globalDestRelHome},
-			{".cline/data/workflows/crit-decide.md", globalDestRelHome},
-			{".cline/skills/crit-story/SKILL.md", globalDestRelHome},
-			{".cline/skills/crit-decide/SKILL.md", globalDestRelHome},
+			{".cline/data/workflows/crit-plus.md", globalDestRelHome},
+			{".cline/skills/crit-plus-cli/SKILL.md", globalDestRelHome},
+			{".cline/data/workflows/crit-plus-story.md", globalDestRelHome},
+			{".cline/data/workflows/crit-plus-decide.md", globalDestRelHome},
+			{".cline/skills/crit-plus-story/SKILL.md", globalDestRelHome},
+			{".cline/skills/crit-plus-decide/SKILL.md", globalDestRelHome},
 		},
 		"gemini": {
-			{".gemini/skills/crit-cli/SKILL.md", globalDestRelHome},
-			{".gemini/commands/crit.toml", globalDestRelHome},
-			{".gemini/skills/crit-story/SKILL.md", globalDestRelHome},
-			{".gemini/skills/crit-decide/SKILL.md", globalDestRelHome},
-			{".gemini/commands/crit-story.toml", globalDestRelHome},
-			{".gemini/commands/crit-decide.toml", globalDestRelHome},
-			{".gemini/policies/crit.toml", globalDestRelHome},
+			{".gemini/skills/crit-plus-cli/SKILL.md", globalDestRelHome},
+			{".gemini/commands/crit-plus.toml", globalDestRelHome},
+			{".gemini/skills/crit-plus-story/SKILL.md", globalDestRelHome},
+			{".gemini/skills/crit-plus-decide/SKILL.md", globalDestRelHome},
+			{".gemini/commands/crit-plus-story.toml", globalDestRelHome},
+			{".gemini/commands/crit-plus-decide.toml", globalDestRelHome},
+			{".gemini/policies/crit-plus.toml", globalDestRelHome},
 		},
 		"grok":    {{"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}, {"", globalDestNone}},
-		"ampcode": {{".config/agents/skills/crit/SKILL.md", globalDestRelHome}, {".config/agents/skills/crit-cli/SKILL.md", globalDestRelHome}, {".config/agents/skills/crit-story/SKILL.md", globalDestRelHome}, {".config/agents/skills/crit-decide/SKILL.md", globalDestRelHome}},
+		"ampcode": {{".config/agents/skills/crit-plus/SKILL.md", globalDestRelHome}, {".config/agents/skills/crit-plus-cli/SKILL.md", globalDestRelHome}, {".config/agents/skills/crit-plus-story/SKILL.md", globalDestRelHome}, {".config/agents/skills/crit-plus-decide/SKILL.md", globalDestRelHome}},
 		"codex-plugin": {
-			{".codex/plugins/crit/.codex-plugin/plugin.json", globalDestRelHome},
-			{".codex/plugins/crit/skills/crit/SKILL.md", globalDestRelHome},
-			{".codex/plugins/crit/skills/crit-cli/SKILL.md", globalDestRelHome},
-			{".codex/plugins/crit/skills/crit-story/SKILL.md", globalDestRelHome},
-			{".codex/plugins/crit/skills/crit-decide/SKILL.md", globalDestRelHome},
-			{".codex/plugins/crit/hooks/hooks.json", globalDestRelHome},
+			{".codex/plugins/crit-plus/.codex-plugin/plugin.json", globalDestRelHome},
+			{".codex/plugins/crit-plus/skills/crit-plus/SKILL.md", globalDestRelHome},
+			{".codex/plugins/crit-plus/skills/crit-plus-cli/SKILL.md", globalDestRelHome},
+			{".codex/plugins/crit-plus/skills/crit-plus-story/SKILL.md", globalDestRelHome},
+			{".codex/plugins/crit-plus/skills/crit-plus-decide/SKILL.md", globalDestRelHome},
+			{".codex/plugins/crit-plus/hooks/hooks.json", globalDestRelHome},
 		},
-		"hermes": {{".hermes/skills/crit/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-cli/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-story/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-decide/SKILL.md", globalDestRelHome}},
-		"pi":     {{".pi/agent/skills/crit/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-cli/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-story/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-decide/SKILL.md", globalDestRelHome}},
+		"hermes": {{".hermes/skills/crit-plus/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-plus-cli/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-plus-story/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-plus-decide/SKILL.md", globalDestRelHome}},
+		"pi":     {{".pi/agent/skills/crit-plus/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-plus-cli/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-plus-story/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-plus-decide/SKILL.md", globalDestRelHome}},
 	}
 	for tool, files := range expected {
 		got := integrationMap[tool]
@@ -181,7 +181,7 @@ func TestIntegrationMap_SnapshotGlobalRouting(t *testing.T) {
 func TestInstallOneFile_WritesAndSkips(t *testing.T) {
 	dir := t.TempDir()
 	dest := filepath.Join(dir, "subdir", "out.md")
-	f := integration{source: "integrations/cline/crit.md", dest: dest}
+	f := integration{source: "integrations/cline/crit-plus.md", dest: dest}
 
 	// First install: file written.
 	installOneFile(f, dest, false)
@@ -221,7 +221,7 @@ func TestInstallIntegration_DecideUpgrade(t *testing.T) {
 
 			// Simulate an older install with locally customized review instructions.
 			const custom = "User-customized review instructions\n"
-			for _, name := range []string{"crit", "crit-cli", "crit-story"} {
+			for _, name := range []string{"crit-plus", "crit-plus-cli", "crit-plus-story"} {
 				path := filepath.Join(".agents", "skills", name, "SKILL.md")
 				if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 					t.Fatal(err)
@@ -234,15 +234,15 @@ func TestInstallIntegration_DecideUpgrade(t *testing.T) {
 			if err := installIntegration("codex", false); err != nil {
 				t.Fatal(err)
 			}
-			for _, name := range []string{"crit", "crit-cli", "crit-story", "crit-decide"} {
+			for _, name := range []string{"crit-plus", "crit-plus-cli", "crit-plus-story", "crit-plus-decide"} {
 				path := filepath.Join(".agents", "skills", name, "SKILL.md")
 				got, err := os.ReadFile(path)
 				if err != nil {
 					t.Fatal(err)
 				}
 				want := custom
-				if name == "crit-decide" {
-					data, err := integrationsFS.ReadFile("integrations/codex/skills/crit-decide/SKILL.md")
+				if name == "crit-plus-decide" {
+					data, err := integrationsFS.ReadFile("integrations/codex/skills/crit-plus-decide/SKILL.md")
 					if err != nil {
 						t.Fatal(err)
 					}
@@ -284,25 +284,25 @@ func TestCleanupLegacyIntegrationFiles_RemovesOnlyKnownContent(t *testing.T) {
 	t.Cleanup(func() { legacyIntegrationFiles = old })
 	legacyIntegrationFiles = map[string][]legacyIntegrationFile{
 		"test-known": {
-			{dest: "old/crit.md", hash: computeFileHash(known)},
+			{dest: "old/crit-plus.md", hash: computeFileHash(known)},
 		},
 		"test-modified": {
-			{dest: "modified/crit.md", hash: computeFileHash(known)},
+			{dest: "modified/crit-plus.md", hash: computeFileHash(known)},
 		},
 		"test-missing": {
-			{dest: "missing/crit.md", hash: computeFileHash(known)},
+			{dest: "missing/crit-plus.md", hash: computeFileHash(known)},
 		},
 		"test-global": {
 			{
-				dest:           "project/crit.md",
-				globalDest:     ".agents/legacy/crit.md",
+				dest:           "project/crit-plus.md",
+				globalDest:     ".agents/legacy/crit-plus.md",
 				globalDestKind: globalDestRelHome,
 				hash:           computeFileHash(known),
 			},
 		},
 		"test-global-empty": {
 			{
-				dest: ".windsurf/rules/crit.md",
+				dest: ".windsurf/rules/crit-plus.md",
 				hash: computeFileHash(known),
 			},
 		},
@@ -311,22 +311,22 @@ func TestCleanupLegacyIntegrationFiles_RemovesOnlyKnownContent(t *testing.T) {
 	if err := os.MkdirAll("old", 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile("old/crit.md", known, 0o644); err != nil {
+	if err := os.WriteFile("old/crit-plus.md", known, 0o644); err != nil {
 		t.Fatal(err)
 	}
 	cleanupLegacyIntegrationFiles("test-known", false, dir)
-	if _, err := os.Stat("old/crit.md"); !errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat("old/crit-plus.md"); !errors.Is(err, os.ErrNotExist) {
 		t.Fatalf("known legacy file should be removed, stat error = %v", err)
 	}
 
 	if err := os.MkdirAll("modified", 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile("modified/crit.md", modified, 0o644); err != nil {
+	if err := os.WriteFile("modified/crit-plus.md", modified, 0o644); err != nil {
 		t.Fatal(err)
 	}
 	cleanupLegacyIntegrationFiles("test-modified", false, dir)
-	got, err := os.ReadFile("modified/crit.md")
+	got, err := os.ReadFile("modified/crit-plus.md")
 	if err != nil {
 		t.Fatalf("modified legacy file should be preserved: %v", err)
 	}
@@ -337,7 +337,7 @@ func TestCleanupLegacyIntegrationFiles_RemovesOnlyKnownContent(t *testing.T) {
 	cleanupLegacyIntegrationFiles("test-missing", false, dir) // missing dest is a no-op
 
 	home := t.TempDir()
-	globalPath := filepath.Join(home, ".agents", "legacy", "crit.md")
+	globalPath := filepath.Join(home, ".agents", "legacy", "crit-plus.md")
 	if err := os.MkdirAll(filepath.Dir(globalPath), 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -353,11 +353,11 @@ func TestCleanupLegacyIntegrationFiles_RemovesOnlyKnownContent(t *testing.T) {
 	if err := os.MkdirAll(".windsurf/rules", 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(".windsurf/rules/crit.md", known, 0o644); err != nil {
+	if err := os.WriteFile(".windsurf/rules/crit-plus.md", known, 0o644); err != nil {
 		t.Fatal(err)
 	}
 	cleanupLegacyIntegrationFiles("test-global-empty", true, home)
-	if _, err := os.Stat(".windsurf/rules/crit.md"); err != nil {
+	if _, err := os.Stat(".windsurf/rules/crit-plus.md"); err != nil {
 		t.Fatalf("project-only legacy file must remain during global cleanup: %v", err)
 	}
 }
@@ -381,21 +381,21 @@ func TestInstallIntegration_ClineAndWindsurfManualWorkflows(t *testing.T) {
 	t.Cleanup(func() { legacyIntegrationFiles = old })
 	legacyIntegrationFiles = map[string][]legacyIntegrationFile{
 		"cline": {
-			{dest: ".clinerules/crit.md", hash: computeFileHash(knownCline)},
+			{dest: ".clinerules/crit-plus.md", hash: computeFileHash(knownCline)},
 		},
 		"windsurf": {
-			{dest: ".windsurf/rules/crit.md", hash: computeFileHash(knownWindsurf)},
+			{dest: ".windsurf/rules/crit-plus.md", hash: computeFileHash(knownWindsurf)},
 		},
 	}
-	for _, path := range []string{".clinerules/crit.md", ".windsurf/rules/crit.md"} {
+	for _, path := range []string{".clinerules/crit-plus.md", ".windsurf/rules/crit-plus.md"} {
 		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 			t.Fatal(err)
 		}
 	}
-	if err := os.WriteFile(".clinerules/crit.md", knownCline, 0o644); err != nil {
+	if err := os.WriteFile(".clinerules/crit-plus.md", knownCline, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(".windsurf/rules/crit.md", knownWindsurf, 0o644); err != nil {
+	if err := os.WriteFile(".windsurf/rules/crit-plus.md", knownWindsurf, 0o644); err != nil {
 		t.Fatal(err)
 	}
 
@@ -407,16 +407,16 @@ func TestInstallIntegration_ClineAndWindsurfManualWorkflows(t *testing.T) {
 	}
 
 	for _, path := range []string{
-		".clinerules/workflows/crit.md",
-		".cline/skills/crit-cli/SKILL.md",
-		".windsurf/workflows/crit.md",
-		".windsurf/skills/crit-cli/SKILL.md",
+		".clinerules/workflows/crit-plus.md",
+		".cline/skills/crit-plus-cli/SKILL.md",
+		".windsurf/workflows/crit-plus.md",
+		".windsurf/skills/crit-plus-cli/SKILL.md",
 	} {
 		if _, err := os.Stat(path); err != nil {
 			t.Fatalf("expected %s: %v", path, err)
 		}
 	}
-	for _, path := range []string{".clinerules/crit.md", ".windsurf/rules/crit.md"} {
+	for _, path := range []string{".clinerules/crit-plus.md", ".windsurf/rules/crit-plus.md"} {
 		if _, err := os.Stat(path); !errors.Is(err, os.ErrNotExist) {
 			t.Fatalf("obsolete %s should be removed, stat error = %v", path, err)
 		}
@@ -443,7 +443,7 @@ func TestInstallIntegration_CodexRemovesObsoleteImplicitInvocationPolicy(t *test
 		testutil.SetHome(t, home)
 		t.Chdir(dir)
 
-		legacyPath := ".agents/skills/crit/agents/openai.yaml"
+		legacyPath := ".agents/skills/crit-plus/agents/openai.yaml"
 		if err := os.MkdirAll(filepath.Dir(legacyPath), 0o755); err != nil {
 			t.Fatal(err)
 		}
@@ -463,7 +463,7 @@ func TestInstallIntegration_CodexRemovesObsoleteImplicitInvocationPolicy(t *test
 		testutil.SetHome(t, home)
 		t.Chdir(home)
 
-		legacyPath := filepath.Join(home, ".agents/skills/crit/agents/openai.yaml")
+		legacyPath := filepath.Join(home, ".agents/skills/crit-plus/agents/openai.yaml")
 		if err := os.MkdirAll(filepath.Dir(legacyPath), 0o755); err != nil {
 			t.Fatal(err)
 		}
@@ -483,8 +483,8 @@ func TestInstallIntegration_CodexRemovesObsoleteImplicitInvocationPolicy(t *test
 		testutil.SetHome(t, home)
 		t.Chdir(home)
 
-		loosePath := filepath.Join(home, ".agents/skills/crit/agents/openai.yaml")
-		pluginPath := filepath.Join(home, ".codex/plugins/crit/skills/crit/agents/openai.yaml")
+		loosePath := filepath.Join(home, ".agents/skills/crit-plus/agents/openai.yaml")
+		pluginPath := filepath.Join(home, ".codex/plugins/crit-plus/skills/crit-plus/agents/openai.yaml")
 		for _, path := range []string{loosePath, pluginPath} {
 			if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 				t.Fatal(err)
@@ -550,40 +550,40 @@ func TestInstallIntegration_CodexPluginEndToEnd(t *testing.T) {
 	}
 
 	for _, path := range []string{
-		".agents/skills/crit/SKILL.md",
-		".agents/skills/crit-cli/SKILL.md",
-		".agents/skills/crit-decide/SKILL.md",
-		"plugins/crit/.codex-plugin/plugin.json",
-		"plugins/crit/skills/crit/SKILL.md",
-		"plugins/crit/skills/crit-cli/SKILL.md",
-		"plugins/crit/skills/crit-decide/SKILL.md",
-		"plugins/crit/hooks/hooks.json",
+		".agents/skills/crit-plus/SKILL.md",
+		".agents/skills/crit-plus-cli/SKILL.md",
+		".agents/skills/crit-plus-decide/SKILL.md",
+		"plugins/crit-plus/.codex-plugin/plugin.json",
+		"plugins/crit-plus/skills/crit-plus/SKILL.md",
+		"plugins/crit-plus/skills/crit-plus-cli/SKILL.md",
+		"plugins/crit-plus/skills/crit-plus-decide/SKILL.md",
+		"plugins/crit-plus/hooks/hooks.json",
 	} {
 		if _, err := os.Stat(filepath.Join(dir, path)); err != nil {
 			t.Fatalf("expected %s to be written: %v", path, err)
 		}
 	}
 
-	hookPath := filepath.Join(dir, "plugins/crit/hooks/hooks.json")
+	hookPath := filepath.Join(dir, "plugins/crit-plus/hooks/hooks.json")
 	hookData, err := os.ReadFile(hookPath)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(hookData), "crit plan-hook --mode codex") {
-		t.Fatalf("plugin hook should invoke crit plan-hook --mode codex:\n%s", hookData)
+	if !strings.Contains(string(hookData), "crit-plus plan-hook --mode codex") {
+		t.Fatalf("plugin hook should invoke crit-plus plan-hook --mode codex:\n%s", hookData)
 	}
 
 	marketplacePath := filepath.Join(dir, ".agents/plugins/marketplace.json")
-	if got := countCritMarketplaceEntries(t, marketplacePath, "./plugins/crit"); got != 1 {
-		t.Fatalf("expected one Crit marketplace entry after first install, got %d", got)
+	if got := countCritMarketplaceEntries(t, marketplacePath, "./plugins/crit-plus"); got != 1 {
+		t.Fatalf("expected one Crit Plus marketplace entry after first install, got %d", got)
 	}
 	assertCritMarketplacePathExists(t, marketplacePath, dir)
-	assertCodexPluginEnabled(t, filepath.Join(home, ".codex", "config.toml"), "crit@local")
+	assertCodexPluginEnabled(t, filepath.Join(home, ".codex", "config.toml"), "crit-plus@local")
 	for _, path := range []string{
-		".codex/plugins/cache/local/crit/local/.codex-plugin/plugin.json",
-		".codex/plugins/cache/local/crit/local/skills/crit/SKILL.md",
-		".codex/plugins/cache/local/crit/local/skills/crit-decide/SKILL.md",
-		".codex/plugins/cache/local/crit/local/hooks/hooks.json",
+		".codex/plugins/cache/local/crit-plus/local/.codex-plugin/plugin.json",
+		".codex/plugins/cache/local/crit-plus/local/skills/crit-plus/SKILL.md",
+		".codex/plugins/cache/local/crit-plus/local/skills/crit-plus-decide/SKILL.md",
+		".codex/plugins/cache/local/crit-plus/local/hooks/hooks.json",
 	} {
 		if _, err := os.Stat(filepath.Join(home, path)); err != nil {
 			t.Fatalf("expected cache file %s to be written: %v", path, err)
@@ -593,7 +593,7 @@ func TestInstallIntegration_CodexPluginEndToEnd(t *testing.T) {
 	if err := installIntegration("codex-plugin", false); err != nil {
 		t.Fatalf("second installIntegration: %v", err)
 	}
-	if got := countCritMarketplaceEntries(t, marketplacePath, "./plugins/crit"); got != 1 {
+	if got := countCritMarketplaceEntries(t, marketplacePath, "./plugins/crit-plus"); got != 1 {
 		t.Fatalf("expected idempotent marketplace registration, got %d entries", got)
 	}
 }
@@ -608,14 +608,14 @@ func TestInstallIntegration_CodexPluginGlobalEndToEnd(t *testing.T) {
 	}
 
 	for _, path := range []string{
-		".agents/skills/crit/SKILL.md",
-		".agents/skills/crit-cli/SKILL.md",
-		".agents/skills/crit-decide/SKILL.md",
-		".codex/plugins/crit/.codex-plugin/plugin.json",
-		".codex/plugins/crit/skills/crit/SKILL.md",
-		".codex/plugins/crit/skills/crit-cli/SKILL.md",
-		".codex/plugins/crit/skills/crit-decide/SKILL.md",
-		".codex/plugins/crit/hooks/hooks.json",
+		".agents/skills/crit-plus/SKILL.md",
+		".agents/skills/crit-plus-cli/SKILL.md",
+		".agents/skills/crit-plus-decide/SKILL.md",
+		".codex/plugins/crit-plus/.codex-plugin/plugin.json",
+		".codex/plugins/crit-plus/skills/crit-plus/SKILL.md",
+		".codex/plugins/crit-plus/skills/crit-plus-cli/SKILL.md",
+		".codex/plugins/crit-plus/skills/crit-plus-decide/SKILL.md",
+		".codex/plugins/crit-plus/hooks/hooks.json",
 	} {
 		if _, err := os.Stat(filepath.Join(home, path)); err != nil {
 			t.Fatalf("expected %s to be written: %v", path, err)
@@ -623,14 +623,14 @@ func TestInstallIntegration_CodexPluginGlobalEndToEnd(t *testing.T) {
 	}
 
 	marketplacePath := filepath.Join(home, ".agents/plugins/marketplace.json")
-	if got := countCritMarketplaceEntries(t, marketplacePath, "./.codex/plugins/crit"); got != 1 {
-		t.Fatalf("expected one Crit marketplace entry after global install, got %d", got)
+	if got := countCritMarketplaceEntries(t, marketplacePath, "./.codex/plugins/crit-plus"); got != 1 {
+		t.Fatalf("expected one Crit Plus marketplace entry after global install, got %d", got)
 	}
 	assertCritMarketplacePathExists(t, marketplacePath, home)
-	assertCodexPluginEnabled(t, filepath.Join(home, ".codex", "config.toml"), "crit@local")
+	assertCodexPluginEnabled(t, filepath.Join(home, ".codex", "config.toml"), "crit-plus@local")
 	for _, path := range []string{
-		".codex/plugins/cache/local/crit/local/.codex-plugin/plugin.json",
-		".codex/plugins/cache/local/crit/local/skills/crit-decide/SKILL.md",
+		".codex/plugins/cache/local/crit-plus/local/.codex-plugin/plugin.json",
+		".codex/plugins/cache/local/crit-plus/local/skills/crit-plus-decide/SKILL.md",
 	} {
 		if _, err := os.Stat(filepath.Join(home, path)); err != nil {
 			t.Fatalf("expected global cache file %s to be written: %v", path, err)
@@ -642,10 +642,10 @@ func TestInstallIntegration_CodexPluginDoesNotActivateExistingProjectFiles(t *te
 	root := t.TempDir()
 	dir := filepath.Join(root, "project")
 	home := filepath.Join(root, "home")
-	if err := os.MkdirAll(filepath.Join(dir, "plugins/crit/hooks"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(dir, "plugins/crit-plus/hooks"), 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.MkdirAll(filepath.Join(dir, "plugins/crit/.codex-plugin"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(dir, "plugins/crit-plus/.codex-plugin"), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	if err := os.MkdirAll(home, 0o755); err != nil {
@@ -654,11 +654,11 @@ func TestInstallIntegration_CodexPluginDoesNotActivateExistingProjectFiles(t *te
 	testutil.SetHome(t, home)
 	t.Chdir(dir)
 
-	staleHookPath := filepath.Join(dir, "plugins/crit/hooks/hooks.json")
+	staleHookPath := filepath.Join(dir, "plugins/crit-plus/hooks/hooks.json")
 	if err := os.WriteFile(staleHookPath, []byte(`{"hooks":{"Stop":[{"hooks":[{"type":"command","command":"stale-command"}]}]}}`), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, "plugins/crit/.codex-plugin/plugin.json"), []byte(`{"name":"crit","hooks":"./hooks/hooks.json"}`), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "plugins/crit-plus/.codex-plugin/plugin.json"), []byte(`{"name":"crit-plus","hooks":"./hooks/hooks.json"}`), 0o644); err != nil {
 		t.Fatal(err)
 	}
 
@@ -666,20 +666,20 @@ func TestInstallIntegration_CodexPluginDoesNotActivateExistingProjectFiles(t *te
 		t.Fatalf("installIntegration: %v", err)
 	}
 
-	embeddedHook, err := integrationsFS.ReadFile("integrations/codex/plugin/crit/hooks/hooks.json")
+	embeddedHook, err := integrationsFS.ReadFile("integrations/codex/plugin/crit-plus/hooks/hooks.json")
 	if err != nil {
 		t.Fatalf("reading embedded hook: %v", err)
 	}
 	for _, path := range []string{
 		staleHookPath,
-		filepath.Join(home, ".codex/plugins/cache/local/crit/local/hooks/hooks.json"),
+		filepath.Join(home, ".codex/plugins/cache/local/crit-plus/local/hooks/hooks.json"),
 	} {
 		data, err := os.ReadFile(path)
 		if err != nil {
 			t.Fatalf("read %s: %v", path, err)
 		}
 		if string(data) != string(embeddedHook) {
-			t.Fatalf("%s did not use embedded Crit hook:\n%s", path, data)
+			t.Fatalf("%s did not use embedded Crit Plus hook:\n%s", path, data)
 		}
 	}
 }
@@ -690,12 +690,12 @@ func TestInstallCodexPluginMarketplaceForceOverwritesInvalidJSON(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := installCodexPluginMarketplace(path, "./plugins/crit", true); err != nil {
+	if _, err := installCodexPluginMarketplace(path, "./plugins/crit-plus", true); err != nil {
 		t.Fatalf("installCodexPluginMarketplace: %v", err)
 	}
 
-	if got := countCritMarketplaceEntries(t, path, "./plugins/crit"); got != 1 {
-		t.Fatalf("expected one Crit marketplace entry, got %d", got)
+	if got := countCritMarketplaceEntries(t, path, "./plugins/crit-plus"); got != 1 {
+		t.Fatalf("expected one Crit Plus marketplace entry, got %d", got)
 	}
 }
 
@@ -705,12 +705,12 @@ func TestInstallCodexPluginMarketplaceForceOverwritesMalformedPlugins(t *testing
 		t.Fatal(err)
 	}
 
-	if _, err := installCodexPluginMarketplace(path, "./plugins/crit", true); err != nil {
+	if _, err := installCodexPluginMarketplace(path, "./plugins/crit-plus", true); err != nil {
 		t.Fatalf("installCodexPluginMarketplace: %v", err)
 	}
 
-	if got := countCritMarketplaceEntries(t, path, "./plugins/crit"); got != 1 {
-		t.Fatalf("expected one Crit marketplace entry, got %d", got)
+	if got := countCritMarketplaceEntries(t, path, "./plugins/crit-plus"); got != 1 {
+		t.Fatalf("expected one Crit Plus marketplace entry, got %d", got)
 	}
 }
 
@@ -720,7 +720,7 @@ func TestInstallCodexPluginMarketplaceInvalidJSONReturnsErrorWithoutForce(t *tes
 		t.Fatal(err)
 	}
 
-	if _, err := installCodexPluginMarketplace(path, "./plugins/crit", false); err == nil {
+	if _, err := installCodexPluginMarketplace(path, "./plugins/crit-plus", false); err == nil {
 		t.Fatal("expected invalid marketplace JSON to return an error")
 	}
 }
@@ -731,7 +731,7 @@ func TestInstallCodexPluginMarketplaceMalformedPluginsReturnsErrorWithoutForce(t
 		t.Fatal(err)
 	}
 
-	if _, err := installCodexPluginMarketplace(path, "./plugins/crit", false); err == nil {
+	if _, err := installCodexPluginMarketplace(path, "./plugins/crit-plus", false); err == nil {
 		t.Fatal("expected malformed plugins field to return an error")
 	}
 }
@@ -743,14 +743,14 @@ func TestInstallCodexPluginMarketplaceRejectsWhitespaceNameWithoutForce(t *testi
 			existing := fmt.Sprintf(`{
   "name": %q,
   "plugins": [
-    {"name": "crit", "source": {"source": "local", "path": "./plugins/crit"}}
+    {"name": "crit-plus", "source": {"source": "local", "path": "./plugins/crit-plus"}}
   ]
 }`, name)
 			if err := os.WriteFile(path, []byte(existing), 0o644); err != nil {
 				t.Fatal(err)
 			}
 
-			if _, err := installCodexPluginMarketplace(path, "./plugins/crit", false); err == nil {
+			if _, err := installCodexPluginMarketplace(path, "./plugins/crit-plus", false); err == nil {
 				t.Fatal("expected whitespace marketplace name to be rejected without force")
 			}
 		})
@@ -763,8 +763,8 @@ func TestInstallCodexPluginMarketplaceRepairsStaleSourcePath(t *testing.T) {
   "name": "local",
   "plugins": [
     {
-      "name": "crit",
-      "source": {"source": "local", "path": "./plugins/crit"},
+      "name": "crit-plus",
+      "source": {"source": "local", "path": "./plugins/crit-plus"},
       "policy": {"installation": "INSTALLED_BY_DEFAULT", "authentication": "ON_INSTALL"},
       "category": "Developer Tools"
     }
@@ -774,12 +774,12 @@ func TestInstallCodexPluginMarketplaceRepairsStaleSourcePath(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := installCodexPluginMarketplace(path, "./.codex/plugins/crit", false); err != nil {
+	if _, err := installCodexPluginMarketplace(path, "./.codex/plugins/crit-plus", false); err != nil {
 		t.Fatalf("installCodexPluginMarketplace: %v", err)
 	}
 
-	if got := countCritMarketplaceEntries(t, path, "./.codex/plugins/crit"); got != 1 {
-		t.Fatalf("expected stale Crit marketplace entry to be replaced, got %d", got)
+	if got := countCritMarketplaceEntries(t, path, "./.codex/plugins/crit-plus"); got != 1 {
+		t.Fatalf("expected stale Crit Plus marketplace entry to be replaced, got %d", got)
 	}
 }
 
@@ -789,14 +789,14 @@ func TestInstallCodexPluginMarketplaceRepairsStalePolicyAndDedupes(t *testing.T)
   "name": "local",
   "plugins": [
     {
-      "name": "crit",
-      "source": {"source": "local", "path": "./plugins/crit"},
+      "name": "crit-plus",
+      "source": {"source": "local", "path": "./plugins/crit-plus"},
       "policy": {"installation": "AVAILABLE", "authentication": "ON_USE"},
       "category": "Old Category"
     },
     {
-      "name": "crit",
-      "source": {"source": "local", "path": "./plugins/crit"},
+      "name": "crit-plus",
+      "source": {"source": "local", "path": "./plugins/crit-plus"},
       "policy": {"installation": "INSTALLED_BY_DEFAULT", "authentication": "ON_INSTALL"},
       "category": "Developer Tools"
     }
@@ -806,12 +806,12 @@ func TestInstallCodexPluginMarketplaceRepairsStalePolicyAndDedupes(t *testing.T)
 		t.Fatal(err)
 	}
 
-	if _, err := installCodexPluginMarketplace(path, "./plugins/crit", false); err != nil {
+	if _, err := installCodexPluginMarketplace(path, "./plugins/crit-plus", false); err != nil {
 		t.Fatalf("installCodexPluginMarketplace: %v", err)
 	}
 
-	if got := countCritMarketplaceEntries(t, path, "./plugins/crit"); got != 1 {
-		t.Fatalf("expected one repaired Crit marketplace entry, got %d", got)
+	if got := countCritMarketplaceEntries(t, path, "./plugins/crit-plus"); got != 1 {
+		t.Fatalf("expected one repaired Crit Plus marketplace entry, got %d", got)
 	}
 }
 
@@ -835,7 +835,7 @@ func TestInstallCodexPluginMarketplacePreservesOtherTypedFields(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := installCodexPluginMarketplace(path, "./plugins/crit", false); err != nil {
+	if _, err := installCodexPluginMarketplace(path, "./plugins/crit-plus", false); err != nil {
 		t.Fatalf("installCodexPluginMarketplace: %v", err)
 	}
 
@@ -886,7 +886,7 @@ func TestInstallCodexPluginMarketplacePreservesShorthandSource(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if _, err := installCodexPluginMarketplace(path, "./plugins/crit", false); err != nil {
+	if _, err := installCodexPluginMarketplace(path, "./plugins/crit-plus", false); err != nil {
 		t.Fatalf("installCodexPluginMarketplace: %v", err)
 	}
 
@@ -919,33 +919,33 @@ func TestUpsertCodexPluginConfig(t *testing.T) {
 	}{
 		{
 			name: "creates plugin table",
-			want: "[features]\nplugins = true\nhooks = true\nplugin_hooks = true\n\n[plugins.\"crit@local\"]\nenabled = true\n",
+			want: "[features]\nplugins = true\nhooks = true\nplugin_hooks = true\n\n[plugins.\"crit-plus@local\"]\nenabled = true\n",
 		},
 		{
 			name: "enables existing plugin table",
-			raw:  "[plugins.\"crit@local\"]\nenabled = false\nsource = \"keep\"\n",
-			want: "[plugins.\"crit@local\"]\nenabled = true\nsource = \"keep\"\n\n[features]\nplugins = true\nhooks = true\nplugin_hooks = true\n",
+			raw:  "[plugins.\"crit-plus@local\"]\nenabled = false\nsource = \"keep\"\n",
+			want: "[plugins.\"crit-plus@local\"]\nenabled = true\nsource = \"keep\"\n\n[features]\nplugins = true\nhooks = true\nplugin_hooks = true\n",
 		},
 		{
 			name: "preserves surrounding config",
 			raw:  "model = \"gpt-5.1\"\n\n[features]\nhooks = false\n\n[plugins.\"other@local\"]\nenabled = true\n",
-			want: "model = \"gpt-5.1\"\n\n[features]\nhooks = true\nplugins = true\nplugin_hooks = true\n\n[plugins.\"other@local\"]\nenabled = true\n\n[plugins.\"crit@local\"]\nenabled = true\n",
+			want: "model = \"gpt-5.1\"\n\n[features]\nhooks = true\nplugins = true\nplugin_hooks = true\n\n[plugins.\"other@local\"]\nenabled = true\n\n[plugins.\"crit-plus@local\"]\nenabled = true\n",
 		},
 		{
 			name: "updates commented table headers",
-			raw:  "[features] # managed by user\nhooks = false\n\n[plugins.\"crit@local\"] # existing plugin\nenabled = false\n",
-			want: "[features] # managed by user\nhooks = true\nplugins = true\nplugin_hooks = true\n\n[plugins.\"crit@local\"] # existing plugin\nenabled = true\n",
+			raw:  "[features] # managed by user\nhooks = false\n\n[plugins.\"crit-plus@local\"] # existing plugin\nenabled = false\n",
+			want: "[features] # managed by user\nhooks = true\nplugins = true\nplugin_hooks = true\n\n[plugins.\"crit-plus@local\"] # existing plugin\nenabled = true\n",
 		},
 		{
 			name: "stops before array table headers",
-			raw:  "[features]\nhooks = false\n\n[[hooks.PreToolUse]]\nmatcher = \"shell\"\n\n[plugins.\"crit@local\"]\nenabled = false\n",
-			want: "[features]\nhooks = true\nplugins = true\nplugin_hooks = true\n\n[[hooks.PreToolUse]]\nmatcher = \"shell\"\n\n[plugins.\"crit@local\"]\nenabled = true\n",
+			raw:  "[features]\nhooks = false\n\n[[hooks.PreToolUse]]\nmatcher = \"shell\"\n\n[plugins.\"crit-plus@local\"]\nenabled = false\n",
+			want: "[features]\nhooks = true\nplugins = true\nplugin_hooks = true\n\n[[hooks.PreToolUse]]\nmatcher = \"shell\"\n\n[plugins.\"crit-plus@local\"]\nenabled = true\n",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := upsertCodexPluginConfig(tt.raw, "crit@local"); got != tt.want {
+			if got := upsertCodexPluginConfig(tt.raw, "crit-plus@local"); got != tt.want {
 				t.Fatalf("got:\n%s\nwant:\n%s", got, tt.want)
 			}
 		})
@@ -966,7 +966,7 @@ func TestInstallCodexPluginConfigPreservesModeAndSymlink(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := installCodexPluginConfig(link, "crit@local"); err != nil {
+	if err := installCodexPluginConfig(link, "crit-plus@local"); err != nil {
 		t.Fatalf("installCodexPluginConfig: %v", err)
 	}
 	if info, err := os.Lstat(link); err != nil {
@@ -983,14 +983,14 @@ func TestInstallCodexPluginConfigPreservesModeAndSymlink(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(string(data), "[plugins.\"crit@local\"]") {
+	if !strings.Contains(string(data), "[plugins.\"crit-plus@local\"]") {
 		t.Fatalf("expected target config to be updated, got:\n%s", data)
 	}
 }
 
 func TestInstallCodexPluginConfigDefaultsNewFileTo0600(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "config.toml")
-	if err := installCodexPluginConfig(path, "crit@local"); err != nil {
+	if err := installCodexPluginConfig(path, "crit-plus@local"); err != nil {
 		t.Fatalf("installCodexPluginConfig: %v", err)
 	}
 	info, err := os.Stat(path)
@@ -1037,21 +1037,21 @@ func countCritMarketplaceEntries(t *testing.T, path, wantSourcePath string) int 
 	}
 	count := 0
 	for _, plugin := range marketplace.Plugins {
-		if plugin.Name != "crit" {
+		if plugin.Name != "crit-plus" {
 			continue
 		}
 		count++
 		if plugin.Source.Source != "local" || plugin.Source.Path != wantSourcePath {
-			t.Fatalf("unexpected Crit plugin source: %+v", plugin.Source)
+			t.Fatalf("unexpected Crit Plus plugin source: %+v", plugin.Source)
 		}
 		if plugin.Policy.Installation != "INSTALLED_BY_DEFAULT" {
-			t.Fatalf("unexpected Crit plugin policy: %+v", plugin.Policy)
+			t.Fatalf("unexpected Crit Plus plugin policy: %+v", plugin.Policy)
 		}
 		if plugin.Policy.Authentication != "ON_INSTALL" {
-			t.Fatalf("unexpected Crit plugin auth policy: %+v", plugin.Policy)
+			t.Fatalf("unexpected Crit Plus plugin auth policy: %+v", plugin.Policy)
 		}
 		if plugin.Category != "Developer Tools" {
-			t.Fatalf("unexpected Crit plugin category: %+v", plugin.Category)
+			t.Fatalf("unexpected Crit Plus plugin category: %+v", plugin.Category)
 		}
 	}
 	return count
@@ -1069,7 +1069,7 @@ func assertCritMarketplacePathExists(t *testing.T, marketplacePath, marketplaceR
 		t.Fatal(err)
 	}
 	for _, plugin := range marketplace.Plugins {
-		if plugin.Name != "crit" {
+		if plugin.Name != "crit-plus" {
 			continue
 		}
 		relPath := plugin.Source.Path
@@ -1080,7 +1080,7 @@ func assertCritMarketplacePathExists(t *testing.T, marketplacePath, marketplaceR
 		}
 		return
 	}
-	t.Fatal("Crit marketplace entry not found")
+	t.Fatal("Crit Plus marketplace entry not found")
 }
 
 func assertCodexPluginEnabled(t *testing.T, path, pluginKey string) {
@@ -1128,8 +1128,8 @@ func TestInstallIntegration_HermesPrintsExternalDirsNote(t *testing.T) {
 	_ = w.Close()
 	out := <-done
 
-	if _, err := os.Stat(filepath.Join(dir, ".hermes/skills/crit/SKILL.md")); err != nil {
-		t.Fatalf("expected .hermes/skills/crit/SKILL.md to be written: %v", err)
+	if _, err := os.Stat(filepath.Join(dir, ".hermes/skills/crit-plus/SKILL.md")); err != nil {
+		t.Fatalf("expected .hermes/skills/crit-plus/SKILL.md to be written: %v", err)
 	}
 	for _, want := range []string{"~/.hermes/skills/", "external_dirs", "config.yaml"} {
 		if !strings.Contains(out, want) {
@@ -1180,7 +1180,7 @@ func TestInstallGeminiSettings(t *testing.T) {
 		dir := t.TempDir()
 		path := filepath.Join(dir, "settings.json")
 		// Write a valid settings.json that already has the hook plus a sentinel field.
-		prebuilt := `{"hooks":{"BeforeTool":[{"matcher":"exit_plan_mode","hooks":[{"type":"command","command":"crit plan-hook","timeout":345600000}]}]},"sentinel":true}` + "\n"
+		prebuilt := `{"hooks":{"BeforeTool":[{"matcher":"exit_plan_mode","hooks":[{"type":"command","command":"crit-plus plan-hook","timeout":345600000}]}]},"sentinel":true}` + "\n"
 		_ = os.WriteFile(path, []byte(prebuilt), 0o644)
 		installGeminiSettings(path, false)
 		got, _ := os.ReadFile(path)

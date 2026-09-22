@@ -15,7 +15,7 @@ import (
 // the file will fail to parse mid-run.
 //
 // Production calls saveCritJSONToDisk from at least: the daemon's debounced
-// writer, comment_cli direct writes, share/unpublish, and crit pull/push.
+// writer, comment_cli direct writes, share/unpublish, and crit-plus pull/push.
 // These can interleave when a daemon and a CLI run at the same time.
 //
 // The test does not assert ordering — last-writer-wins is acceptable.

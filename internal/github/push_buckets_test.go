@@ -352,7 +352,7 @@ func TestBucketsToGHComments_EmptyInput(t *testing.T) {
 }
 
 // Default (nil) rewriter strips local attachment refs and appends a
-// "view in Crit" placeholder. Verifies the body sent to GitHub doesn't
+// "view in Crit Plus" placeholder. Verifies the body sent to GitHub doesn't
 // leak relative attachments/<uuid> paths.
 func TestBucketsToGHComments_StripsLocalAttachmentRefsByDefault(t *testing.T) {
 	uuid, _ := randomUUID()
@@ -368,7 +368,7 @@ func TestBucketsToGHComments_StripsLocalAttachmentRefsByDefault(t *testing.T) {
 	if strings.Contains(out, "](attachments/") {
 		t.Errorf("body still contains local attachment ref: %q", out)
 	}
-	if !strings.Contains(out, "view in Crit") {
+	if !strings.Contains(out, "view in Crit Plus") {
 		t.Errorf("expected placeholder note in body: %q", out)
 	}
 }
@@ -402,7 +402,7 @@ func TestBucketsToGHComments_SwapsLocalAttachmentRefsWhenUpload(t *testing.T) {
 	if strings.Contains(out, "](attachments/") {
 		t.Errorf("body still references local attachments/: %q", out)
 	}
-	if strings.Contains(out, "view in Crit") {
+	if strings.Contains(out, "view in Crit Plus") {
 		t.Errorf("body should not carry strip placeholder when upload swaps URL: %q", out)
 	}
 }
@@ -503,7 +503,7 @@ func TestBucketComments_DeterministicOrder(t *testing.T) {
 	}
 }
 
-// TestPushBlockedByFullStackScope asserts the predicate that gates `crit push`
+// TestPushBlockedByFullStackScope asserts the predicate that gates `crit-plus push`
 // when comments were authored under the cumulative stack range (full_stack
 // scope). Only the literal "full_stack" disk scope triggers the gate; layer
 // scope and unset (working tree) do not. The gate message wording is locked

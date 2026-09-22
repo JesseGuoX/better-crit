@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-// jjSummaryStatusMap maps `jj diff --summary` status letters to crit status strings.
+// jjSummaryStatusMap maps `jj diff --summary` status letters to crit-plus status strings.
 var jjSummaryStatusMap = map[byte]string{
 	'M': "modified",
 	'A': "added",
@@ -12,7 +12,7 @@ var jjSummaryStatusMap = map[byte]string{
 	'R': "renamed",
 }
 
-// parseJJDiffSummary parses `jj diff --summary` output into crit file changes.
+// parseJJDiffSummary parses `jj diff --summary` output into crit-plus file changes.
 // Renames keep the new path so the review attaches comments to the current file.
 func parseJJDiffSummary(output string) []FileChange {
 	trimmed := strings.TrimSpace(output)

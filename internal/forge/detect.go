@@ -21,7 +21,7 @@ func ParseKind(value string) (Kind, error) {
 }
 
 // DetectKind applies an explicit selection first, then recognizes common
-// remote hosts. Unknown hosts retain GitHub as Crit's compatibility default.
+// remote hosts. Unknown hosts retain GitHub as Crit Plus's compatibility default.
 func DetectKind(explicit string, remote string) (Kind, error) {
 	kind, err := ParseKind(explicit)
 	if err != nil || kind != Auto {

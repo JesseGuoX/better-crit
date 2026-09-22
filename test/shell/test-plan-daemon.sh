@@ -4,7 +4,7 @@
 # Usage: ./test/shell/test-plan-daemon.sh [port]
 #
 # Tests the plan mode workflow:
-#   1. Pipe content via stdin to "crit plan --name test-plan" on a fixed port
+#   1. Pipe content via stdin to "crit-plus plan --name test-plan" on a fixed port
 #   2. Verify daemon starts with mode "plan", file shows as "test-plan.md"
 #   3. Verify versioned storage (~/.crit/plans/test-plan/v001.md)
 #   4. Finish the review (has unresolved comments)
@@ -19,13 +19,13 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 PORT="${1:-3199}"
-BINARY="$ROOT/crit"
+BINARY="$ROOT/crit-plus"
 SLUG="test-plan"
 PLAN_DIR="$HOME/.crit/plans/$SLUG"
 
 if [ ! -f "$BINARY" ]; then
   echo "Binary not found — building..."
-  (cd "$ROOT" && go build -o crit ./cmd/crit)
+  (cd "$ROOT" && go build -o crit-plus ./cmd/crit-plus)
 fi
 
 # Kill any stale process on our test port
@@ -90,7 +90,7 @@ echo ""
 echo "=== Phase 1: First plan invocation via stdin ==="
 echo ""
 
-# Pipe content to crit plan (runs in background — starts daemon, blocks on review-cycle)
+# Pipe content to crit-plus plan (runs in background — starts daemon, blocks on review-cycle)
 printf "# Plan v1\n\nStep 1\n" | (cd "$WORKDIR" && "$BINARY" plan --name "$SLUG" --no-open --port "$PORT" > /dev/null 2>&1) &
 CLIENT1_PID=$!
 wait_for_server "$PORT"

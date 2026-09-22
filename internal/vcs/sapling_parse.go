@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-// saplingStatusMap maps Sapling/Mercurial status characters to crit status strings.
+// saplingStatusMap maps Sapling/Mercurial status characters to crit-plus status strings.
 var saplingStatusMap = map[byte]string{
 	'M': "modified",
 	'A': "added",

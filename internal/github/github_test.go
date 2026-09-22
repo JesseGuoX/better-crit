@@ -650,8 +650,8 @@ func TestCollectNewRepliesForPush_NoGitHubRoot(t *testing.T) {
 
 // TestCollectNewRepliesForPush_ParentSources verifies that local-only replies
 // are collected regardless of how their parent acquired its github_id —
-// whether the parent was imported via `crit pull` or pushed by us in an
-// earlier `crit push`. This pins the fix for issue #442.
+// whether the parent was imported via `crit-plus pull` or pushed by us in an
+// earlier `crit-plus push`. This pins the fix for issue #442.
 func TestCollectNewRepliesForPush_ParentSources(t *testing.T) {
 	cases := []struct {
 		name        string
@@ -2687,7 +2687,7 @@ func TestMergeGHComments_UsesDisplayNameFromCache(t *testing.T) {
 }
 
 // TestMergeGHCommentsScoped_StampsHeadAndLayer verifies the C-1 fix: when
-// mergeGHCommentsScoped is invoked with a non-empty scope (i.e., `crit pull`
+// mergeGHCommentsScoped is invoked with a non-empty scope (i.e., `crit-plus pull`
 // running inside an active range-mode focus), imported root comments are
 // stamped with HeadSHA + DiffScope=layer so visibleInFocus shows them.
 func TestMergeGHCommentsScoped_StampsHeadAndLayer(t *testing.T) {
@@ -2733,7 +2733,7 @@ func TestMergeGHCommentsScoped_NoStampWithEmptyScope(t *testing.T) {
 }
 
 // TestResolvePullScope verifies the daemon-probe + on-disk fallback used by
-// `crit pull` and mergeWebComments. Mirrors the precedence in
+// `crit-plus pull` and mergeWebComments. Mirrors the precedence in
 // resolveCommentScope (focus_cli.go) but always emits DiffScope=layer.
 func TestResolvePullScope(t *testing.T) {
 	cases := []struct {
@@ -3400,7 +3400,7 @@ func TestMergeGHComments_ThreadResolved_NewComment(t *testing.T) {
 }
 
 // TestMergeGHComments_ThreadResolved_ExistingDedupedComment exercises the
-// crit pull workflow: an earlier pull imported the comment with
+// crit-plus pull workflow: an earlier pull imported the comment with
 // Resolved=false; the reviewer later clicked Resolve on github.com; the
 // next pull must update Resolved on the deduplicated local comment.
 func TestMergeGHComments_ThreadResolved_ExistingDedupedComment(t *testing.T) {
@@ -3441,7 +3441,7 @@ func TestMergeGHComments_ThreadResolved_ExistingDedupedComment(t *testing.T) {
 // TestMergeGHComments_ThreadUnresolved_DoesNotClobberLocallyResolved
 // pins the asymmetric merge: a thread that is unresolved on github.com
 // must NOT undo a locally-resolved comment. Local users may resolve via
-// crit / crit-web independently of github.com, and crit pull is not
+// crit-plus / crit-web independently of github.com, and crit-plus pull is not
 // authoritative on the unresolved->resolved transition direction.
 func TestMergeGHComments_ThreadUnresolved_DoesNotClobberLocallyResolved(t *testing.T) {
 	cj := CritJSON{

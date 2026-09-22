@@ -62,7 +62,7 @@ func TestPullUsesBoundShareBaseURLPathPrefix(t *testing.T) {
 		_ = json.NewEncoder(w).Encode([]any{})
 	}))
 	t.Cleanup(upstream.Close)
-	base := upstream.URL + "/crit"
+	base := upstream.URL + "/crit-plus"
 
 	s, sess := newShareTestServer(t, base, true)
 	cfg := `{"share_targets":[{"name":"Prefixed","url":"` + base + `","default":true}]}`
@@ -78,8 +78,8 @@ func TestPullUsesBoundShareBaseURLPathPrefix(t *testing.T) {
 	if rr.Code != http.StatusOK {
 		t.Fatalf("status=%d body=%s", rr.Code, rr.Body.String())
 	}
-	if gotPath != "/crit/api/reviews/abc123/comments" {
-		t.Fatalf("pull path=%q, want /crit/api/reviews/abc123/comments", gotPath)
+	if gotPath != "/crit-plus/api/reviews/abc123/comments" {
+		t.Fatalf("pull path=%q, want /crit-plus/api/reviews/abc123/comments", gotPath)
 	}
 }
 

@@ -25,7 +25,7 @@ func ParseScopeSpec(s string) (DiffScope, error) {
 	return parseScopeSpec(s)
 }
 
-// CommentScopeOverrideFromFlag normalizes the raw --scope string for crit comment.
+// CommentScopeOverrideFromFlag normalizes the raw --scope string for crit-plus comment.
 func CommentScopeOverrideFromFlag(s string) (CommentFocusOverride, error) {
 	return commentScopeOverrideFromFlag(s)
 }

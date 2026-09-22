@@ -51,7 +51,7 @@ func writeProjectConfig(t *testing.T, dir string, cfg map[string]any) {
 	}
 }
 
-// TestShareAttributesConfiguredAuthor verifies that when crit is configured
+// TestShareAttributesConfiguredAuthor verifies that when crit-plus is configured
 // with `author: "Alice Smith"`, the local comments shared to crit-web are
 // attributed to "Alice Smith" — NOT the placeholder "imported".
 func TestShareAttributesConfiguredAuthor(t *testing.T) {
@@ -126,7 +126,7 @@ func TestShareAuthAttributesUserIdentity(t *testing.T) {
 	cmd.Env = append(os.Environ(), "CRIT_AUTH_TOKEN="+authToken)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		t.Fatalf("crit share failed: %s\n%s", err, out)
+		t.Fatalf("crit-plus share failed: %s\n%s", err, out)
 	}
 	output := strings.TrimSpace(string(out))
 	logReview(t, output)
@@ -151,14 +151,14 @@ func TestShareAuthAttributesUserIdentity(t *testing.T) {
 }
 
 // TestAuthSessionReLoginEndToEnd verifies that saveAuthSession atomically
-// replaces a previous account's credentials such that a subsequent crit ↔
+// replaces a previous account's credentials such that a subsequent crit-plus ↔
 // crit-web share authenticates as the new user. Reproduces the prod scenario
 // from #371 where a stale auth_user_id from a prior login leaked into shares
 // of the next user.
 //
 // Unlike the other share-auth tests, this one does NOT inject CRIT_AUTH_TOKEN
 // via env — it persists credentials through saveAuthSession into the global
-// config and lets the crit binary discover them via HOME, exercising the real
+// config and lets the crit-plus binary discover them via HOME, exercising the real
 // post-login flow.
 func TestAuthSessionReLoginEndToEnd(t *testing.T) {
 	baseURL := critWebURL(t)
@@ -208,7 +208,7 @@ func TestAuthSessionReLoginEndToEnd(t *testing.T) {
 		t.Fatalf("auth_user_name = %q, want %q (re-login leaked A)", diskName, nameB)
 	}
 
-	// Run `crit share` with no CRIT_AUTH_TOKEN override — binary reads
+	// Run `crit-plus share` with no CRIT_AUTH_TOKEN override — binary reads
 	// the bearer from $HOME/.crit.config.json, which now holds B's session.
 	dir := t.TempDir()
 	if err := os.WriteFile(filepath.Join(dir, "plan.md"), []byte("# Plan\n\nStep 1\n"), 0644); err != nil {
@@ -230,7 +230,7 @@ func TestAuthSessionReLoginEndToEnd(t *testing.T) {
 	// HOME pointing at the test home so the binary picks up B's persisted session.
 	output, err := runCritShareEnv(t, binary, baseURL, dir, []string{"HOME=" + home}, "plan.md")
 	if err != nil {
-		t.Fatalf("crit share failed: %v\n%s", err, output)
+		t.Fatalf("crit-plus share failed: %v\n%s", err, output)
 	}
 	logReview(t, output)
 	reviewToken := extractToken(t, output)
@@ -344,7 +344,7 @@ func TestShareAttrBackwardsCompatNoUserID(t *testing.T) {
 						"id": "c1",
 						"start_line": 3,
 						"end_line": 3,
-						"body": "from old crit",
+						"body": "from old crit-plus",
 						"scope": "line",
 						"created_at": "2026-01-01T00:00:00Z",
 						"updated_at": "2026-01-01T00:00:00Z"
@@ -476,7 +476,7 @@ outer:
 	return out
 }
 
-// runCritShareEnv runs `crit share` in dir with the given env (caller controls
+// runCritShareEnv runs `crit-plus share` in dir with the given env (caller controls
 // whether CRIT_AUTH_TOKEN/HOME are present). Returns combined output.
 func runCritShareEnv(t *testing.T, binary, baseURL, dir string, extraEnv []string, files ...string) (string, error) {
 	t.Helper()
@@ -521,7 +521,7 @@ func TestShareAttrLoginMidFlow(t *testing.T) {
 
 	output, err := runCritShareEnv(t, binary, baseURL, dir, []string{"CRIT_AUTH_TOKEN=" + authToken}, "plan.md")
 	if err != nil {
-		t.Fatalf("crit share failed: %v\n%s", err, output)
+		t.Fatalf("crit-plus share failed: %v\n%s", err, output)
 	}
 	logReview(t, output)
 	token := extractToken(t, output)
@@ -1029,7 +1029,7 @@ func TestShareAttrReplyRoundtripPreservesUserID(t *testing.T) {
 }
 
 // TestShareAttr401ClearsCachedIdentity verifies that when a cached token has
-// been revoked server-side, the lazy whoami backfill on the next `crit share`
+// been revoked server-side, the lazy whoami backfill on the next `crit-plus share`
 // detects the 401 and removes auth_token / auth_user_id from the global
 // config. Uses a HOME override so the dev config is not touched.
 func TestShareAttr401ClearsCachedIdentity(t *testing.T) {
@@ -1072,7 +1072,7 @@ func TestShareAttr401ClearsCachedIdentity(t *testing.T) {
 	if out, err := cmd.CombinedOutput(); err != nil {
 		// We don't require non-zero exit — the share may continue anonymously.
 		// The invariant is: cached credentials must be cleared.
-		t.Logf("crit share exit: %v\noutput: %s", err, out)
+		t.Logf("crit-plus share exit: %v\noutput: %s", err, out)
 	}
 
 	data, err := os.ReadFile(filepath.Join(homeDir, ".crit.config.json"))
@@ -1117,7 +1117,7 @@ func TestShareAttrCachedIdentityFromConfigOnly(t *testing.T) {
 	}
 	// .crit.json deliberately has no UserID on the comment; the CLI must stamp
 	// it from the cached config at write-time semantics. For an integration
-	// test we approximate by setting UserID directly (mirrors what `crit
+	// test we approximate by setting UserID directly (mirrors what `crit-plus
 	// comment` would do at write time when cfg.AuthUserID is set).
 	writeTestCritJSON(t, dir, CritJSON{
 		ReviewRound: 1,
@@ -1138,7 +1138,7 @@ func TestShareAttrCachedIdentityFromConfigOnly(t *testing.T) {
 	cmd.Env = append(envWithout("CRIT_AUTH_TOKEN=", "HOME="), "HOME="+homeDir)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		t.Fatalf("crit share failed: %v\n%s", err, out)
+		t.Fatalf("crit-plus share failed: %v\n%s", err, out)
 	}
 	output := strings.TrimSpace(string(out))
 	logReview(t, output)

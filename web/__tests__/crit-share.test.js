@@ -192,5 +192,5 @@ test('share modal disables policy-blocked visibility options', () => {
   assert.match(src, /setAttribute\('aria-disabled', allowed \? 'false' : 'true'\)/);
   assert.match(src, /getAttribute\('aria-disabled'\) !== 'true'/);
   assert.match(src, /if \(isSharePolicyRejection\(err\)\) clearSharePolicyCache\(\)/);
-  assert.match(src, /That sharing option is not allowed by this Crit instance/);
+  assert.match(src, /That sharing option is not allowed by this crit\+ instance/);
 });

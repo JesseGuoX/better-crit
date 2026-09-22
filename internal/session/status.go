@@ -11,7 +11,7 @@ const (
 	ansiReset = "\033[0m"
 )
 
-// Status handles formatted terminal output for the crit review lifecycle.
+// Status handles formatted terminal output for the crit-plus review lifecycle.
 type Status struct {
 	w     io.Writer
 	color bool

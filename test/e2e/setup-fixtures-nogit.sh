@@ -14,7 +14,7 @@ trap 'rm -rf "$DIR" "$BIN_DIR"' EXIT
 
 cd "$DIR"
 
-# === No git init — this tests crit outside any git repository ===
+# === No git init — this tests crit-plus outside any git repository ===
 
 cat > plan.md << 'MDFILE'
 # Authentication Plan
@@ -159,14 +159,14 @@ export function handleNotification(req, res) {
 }
 JSFILE
 
-# Build crit binary outside the fixture dir (skip if CRIT_BIN is set)
+# Build crit-plus binary outside the fixture dir (skip if CRIT_BIN is set)
 if [ -z "${CRIT_BIN:-}" ]; then
   CRIT_BIN="$BIN_DIR/$(e2e_bin_name)"
-  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit)
+  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit-plus)
 fi
 
 # Isolate from user's ~/.crit.config.json (and USERPROFILE on Windows).
 e2e_export_fake_home "$DIR"
 
-# Run crit in file mode outside any git repository
+# Run crit-plus in file mode outside any git repository
 exec "$CRIT_BIN" _serve --no-open --port "$PORT" plan.md server.go handler.js

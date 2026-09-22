@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# End-to-end integration test runner for crit ↔ crit-web share flow.
-# Builds crit, starts a local crit-web, runs share integration tests, tears down.
+# End-to-end integration test runner for crit-plus ↔ crit-web share flow.
+# Builds crit-plus, starts a local crit-web, runs share integration tests, tears down.
 #
 # Usage:
 #   ./scripts/e2e-share.sh              # run all share integration tests
@@ -42,7 +42,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# 1. Build crit
+# 1. Build crit-plus
 echo "→ Building crit..."
 make -C "$CRIT_DIR" build -j
 
@@ -87,8 +87,8 @@ fi
 # 3. Serve-only mode: keep running for manual testing
 if [ "$SERVE_ONLY" = true ]; then
   echo "✓ crit-web running at $WEB_URL (Ctrl+C to stop)"
-  echo "  crit binary: $CRIT_DIR/crit"
-  echo "  Usage: CRIT_SHARE_URL=$WEB_URL CRIT_AUTH_TOKEN='' $CRIT_DIR/crit share -o /tmp/test plan.md"
+  echo "  crit-plus binary: $CRIT_DIR/crit-plus"
+  echo "  Usage: CRIT_SHARE_URL=$WEB_URL CRIT_AUTH_TOKEN='' $CRIT_DIR/crit-plus share -o /tmp/test plan.md"
   wait "$WEB_PID"
   exit 0
 fi
@@ -98,7 +98,7 @@ echo "→ Running share integration tests..."
 cd "$CRIT_DIR"
 CRIT_SHARE_URL="$WEB_URL" \
 CRIT_WEB_URL="$WEB_URL" \
-CRIT_BINARY="$CRIT_DIR/crit" \
+CRIT_BINARY="$CRIT_DIR/crit-plus" \
 CRIT_AUTH_TOKEN="" \
   go test -tags integration -run TestShareSync -v -count=1 "${GO_TEST_ARGS[@]}" ./...
 

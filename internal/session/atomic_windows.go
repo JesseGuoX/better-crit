@@ -44,7 +44,7 @@ func renameAtomic(src, dst string) error {
 // MoveFileEx with MOVEFILE_REPLACE_EXISTING can also briefly surface
 // ERROR_FILE_NOT_FOUND on the destination between delete-and-replace;
 // retry that the same way (see TestConcurrentSaveCritJSON_NoCorruption).
-// 10 attempts with 1→50ms backoff covers any realistic crit workload.
+// 10 attempts with 1→50ms backoff covers any realistic crit-plus workload.
 func ReadFileShared(path string) ([]byte, error) {
 	const maxAttempts = 10
 	delay := 1 * time.Millisecond

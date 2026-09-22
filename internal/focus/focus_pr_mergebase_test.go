@@ -7,7 +7,7 @@ import (
 )
 
 // TestResolveFocusFromPR_UsesMergeBaseNotBaseTip is the regression guard for the
-// reported bug: `crit --pr` on a branch that isn't rebased onto its base must
+// reported bug: `crit-plus --pr` on a branch that isn't rebased onto its base must
 // diff from the merge-base (matching GitHub's base...head), not from the base
 // branch tip (which folds in unrelated base-branch drift as spurious changes).
 func TestResolveFocusFromPR_UsesMergeBaseNotBaseTip(t *testing.T) {

@@ -17,7 +17,7 @@ import (
 	"github.com/tomasz-tomczyk/crit/internal/vcs"
 )
 
-// CommentFocusOverride captures the user's --scope flag for `crit comment`.
+// CommentFocusOverride captures the user's --scope flag for `crit-plus comment`.
 type CommentFocusOverride string
 
 const (
@@ -28,7 +28,7 @@ const (
 )
 
 // InheritedScope is the focus metadata stamped on comments authored via
-// `crit comment`. All fields empty for working-tree mode. Forge,
+// `crit-plus comment`. All fields empty for working-tree mode. Forge,
 // ChangeNumber, and BaseSHA flow through to the comment's FocusKey so
 // view-scoped visibility matches the daemon's view.
 //
@@ -78,7 +78,7 @@ func parseRangeSpec(spec string) (base, head string, err error) {
 
 // normalizeScopeSpec is the shared parser for the --scope CLI flag. It maps
 // the raw string to a DiffScope and reports whether the value referred to
-// the working-tree pseudo-scope (only valid for `crit comment`, not for
+// the working-tree pseudo-scope (only valid for `crit-plus comment`, not for
 // starting a session). Callers gate on the bool depending on which surface
 // they implement.
 //
@@ -100,7 +100,7 @@ func normalizeScopeSpec(s string) (DiffScope, bool, error) {
 }
 
 // parseScopeSpec maps the --scope flag to a DiffScope for the session-start
-// surface (`crit --pr <n> --scope=...`). Rejects "working-tree" because it's
+// surface (`crit-plus --pr <n> --scope=...`). Rejects "working-tree" because it's
 // not a valid scope for a focus — sessions either run in working-tree mode
 // (no --pr/--range) or in range mode with layer/full-stack.
 func parseScopeSpec(s string) (DiffScope, error) {
@@ -300,7 +300,7 @@ func resolveFocusFromRange(rangeSpec string, remoteFiles bool, v vcs.VCS, repoRo
 	}, nil
 }
 
-// commentScopeOverrideFromFlag normalizes the raw --scope string for `crit comment`.
+// commentScopeOverrideFromFlag normalizes the raw --scope string for `crit-plus comment`.
 // Unlike parseScopeSpec (used at session start), this surface accepts
 // "working-tree" — a comment can be explicitly stamped against the working
 // tree even when a daemon is running in range mode. Empty input is unset.
@@ -343,7 +343,7 @@ func probeDaemonFocusReal() *Focus {
 	}
 	// Query every daemon for its Focus. When multiple daemons run in the
 	// same cwd (e.g. one reviewing a PR, one reviewing the working tree),
-	// returning sessions[0] would silently stamp `crit comment` with the
+	// returning sessions[0] would silently stamp `crit-plus comment` with the
 	// wrong scope. Treat ambiguity as "no inheritable focus" so the caller
 	// falls through to the on-disk ActiveDiffScope path — which is the
 	// safer default than guessing.
@@ -423,9 +423,9 @@ func loadCritJSONForOutputDir(outputDir string) (CritJSON, bool) {
 	return cj, true
 }
 
-// resolveCommentScope decides which scope tags `crit comment` should stamp,
+// resolveCommentScope decides which scope tags `crit-plus comment` should stamp,
 // based on the --scope flag, a running daemon's Focus, and the on-disk
-// ActiveDiffScope. Order of precedence per spec §C "crit comment scope inheritance".
+// ActiveDiffScope. Order of precedence per spec §C "crit-plus comment scope inheritance".
 func ResolveCommentScope(override CommentFocusOverride, outputDir string) (InheritedScope, error) {
 	daemon := probeDaemonFocus()
 
@@ -434,10 +434,10 @@ func ResolveCommentScope(override CommentFocusOverride, outputDir string) (Inher
 		return InheritedScope{}, nil
 	case ScopeOverrideFullStack:
 		return resolveExplicitScope(daemon, outputDir, DiffScopeFullStack, "full_stack",
-			"--scope=full-stack: no active full-stack focus to attach to (start `crit --pr <n> --scope=full-stack` first)")
+			"--scope=full-stack: no active full-stack focus to attach to (start `crit-plus --pr <n> --scope=full-stack` first)")
 	case ScopeOverrideLayer:
 		return resolveExplicitScope(daemon, outputDir, DiffScopeLayer, "layer",
-			"--scope=layer: no active layer focus to attach to (start `crit --pr <n>` first)")
+			"--scope=layer: no active layer focus to attach to (start `crit-plus --pr <n>` first)")
 	case ScopeOverrideUnset:
 		return resolveAutoScope(daemon, outputDir), nil
 	}

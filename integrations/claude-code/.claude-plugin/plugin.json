@@ -1,8 +1,9 @@
 {
-  "name": "crit",
+  "name": "crit-plus",
   "version": "1.8.10",
-  "description": "Close the feedback loop on AI coding: review plans and code changes with GitHub-style inline comments, then let the agent address them.",
+  "description": "Crit Plus: an enhanced fork of Crit by Tomasz Tomczyk, with inline review and structured human decisions.",
   "author": {
-    "name": "Tomasz Tomczyk"
-  }
+    "name": "JesseGuoX; based on Crit by Tomasz Tomczyk"
+  },
+  "homepage": "https://github.com/JesseGuoX/better-crit"
 }

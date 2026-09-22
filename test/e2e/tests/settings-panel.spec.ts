@@ -139,7 +139,7 @@ test.describe('Settings Panel', () => {
     await finishReview.click();
     await page.keyboard.press('Control+Shift+Enter');
 
-    await expect(page.locator('.mini-toast--error')).toContainText('is reserved by Crit');
+    await expect(page.locator('.mini-toast--error')).toContainText('is reserved by crit+');
     await expect(finishReview).toContainText('Shift+F');
   });
 
@@ -246,11 +246,11 @@ test.describe('Settings Panel', () => {
     ).toBeVisible();
   });
 
-  test('updates pane shows Crit status and AI integrations', async ({ page }) => {
+  test('updates pane shows crit+ status and AI integrations', async ({ page }) => {
     await page.click('#settingsToggle');
     await page.click('.settings-tab[data-tab="updates"]');
     const pane = page.locator('.settings-pane[data-pane="updates"]');
-    await expect(pane.locator('.settings-section-label', { hasText: 'Crit' })).toBeVisible();
+    await expect(pane.locator('.settings-section-label', { hasText: 'crit+' })).toBeVisible();
     await expect(pane.locator('.updates-crit-row')).toBeVisible();
     await expect(pane.locator('.settings-section-label', { hasText: 'AI integrations' })).toBeVisible();
   });
@@ -259,7 +259,7 @@ test.describe('Settings Panel', () => {
     await page.click('#settingsToggle');
     await page.click('.settings-tab[data-tab="about"]');
     const pane = page.locator('.settings-pane[data-pane="about"]');
-    await expect(pane.locator('.about-header h2')).toHaveText('Crit');
+    await expect(pane.locator('.about-header h2')).toHaveText('crit+');
     await expect(pane.locator('.about-session')).toBeVisible();
     await expect(pane.locator('.about-links')).toBeVisible();
   });

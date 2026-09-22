@@ -4,7 +4,7 @@
 # Build up a persistent dataset of code patterns the agent handled poorly by
 # copying the files you commented on alongside the review JSON.
 #
-# Crit exposes the review context as env vars (CRIT_*) and a JSON payload on
+# Crit Plus exposes the review context as env vars (CRIT_*) and a JSON payload on
 # stdin. See docs/agent-hooks.md for the full reference.
 #
 # Runs with $PWD = the repo root, so $CRIT_FILES_WITH_COMMENTS (repo-relative,
@@ -48,4 +48,4 @@ else
   fi
 fi
 
-echo "crit: snapshotted $CRIT_UNRESOLVED_COUNT unresolved comment(s) to $dest" >&2
+echo "crit-plus: snapshotted $CRIT_UNRESOLVED_COUNT unresolved comment(s) to $dest" >&2

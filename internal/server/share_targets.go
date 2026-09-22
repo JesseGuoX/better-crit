@@ -99,7 +99,7 @@ func (s *Server) targetForRequest(requested string) (config.ShareTarget, error) 
 				return applyServerAuthEnv(target), nil
 			}
 		}
-		return config.ShareTarget{}, fmt.Errorf("originating Crit instance %s is no longer configured", bound)
+		return config.ShareTarget{}, fmt.Errorf("originating Crit Plus instance %s is no longer configured", bound)
 	}
 	cfg := s.freshShareConfig()
 	if !s.configConfigured && s.shareURL != "" {

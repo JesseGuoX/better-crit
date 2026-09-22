@@ -77,7 +77,7 @@ func TestBuildCritJSONPreservesStory(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Seed a review.json that already carries a story (as `crit story` would).
+	// Seed a review.json that already carries a story (as `crit-plus story` would).
 	seeded := CritJSON{
 		Branch:      "feature",
 		BaseRef:     "abc",

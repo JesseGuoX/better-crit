@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# End-to-end test runner for the crit ↔ GitLab MR roundtrip.
+# End-to-end test runner for the crit-plus ↔ GitLab MR roundtrip.
 set -euo pipefail
 
 CRIT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
@@ -25,5 +25,5 @@ if ! "${auth_status[@]}" >/dev/null 2>&1; then
 fi
 
 cd "$CRIT_DIR"
-export CRIT_BINARY="$CRIT_DIR/crit"
+export CRIT_BINARY="$CRIT_DIR/crit-plus"
 exec go test -tags e2e_gitlab -count=1 -timeout 20m -run TestGitLabRoundtrip "$@" ./internal/session

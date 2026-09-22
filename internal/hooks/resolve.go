@@ -1,4 +1,4 @@
-// Package hooks resolves and executes user-defined shell commands at Crit
+// Package hooks resolves and executes user-defined shell commands at Crit Plus
 // finish lifecycle points — the executable counterpart to internal/prompt's
 // text templates.
 //

@@ -54,7 +54,7 @@ var AgentScriptFiles = []string{
 	"crit-agent.js",
 }
 
-// Server handles HTTP requests for the crit review UI.
+// Server handles HTTP requests for the crit-plus review UI.
 type Server struct {
 	session             atomic.Pointer[Session]
 	mux                 *http.ServeMux
@@ -277,7 +277,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Sec-Fetch-Site on requests they initiate. Cross-site values mean the
 	// request came from another origin (e.g. evil.com → 127.0.0.1). Missing
 	// header = non-browser client (CLI, curl, agent) — allow. same-origin =
-	// Crit UI on this port — allow. DNS-rebinding is handled by checkHost.
+	// Crit Plus UI on this port — allow. DNS-rebinding is handled by checkHost.
 	if !checkSecFetchSite(r) {
 		http.Error(w, secFetchSiteForbiddenMessage(r), http.StatusForbidden)
 		return
@@ -291,7 +291,7 @@ func (s *Server) hostForbiddenMessage(r *http.Request) string {
 	host := requestHost(r.Host)
 	if s.publicURLHost == "" {
 		return fmt.Sprintf(
-			"Forbidden: request Host %q does not match loopback (set --public-url if reaching Crit via a reverse proxy)",
+			"Forbidden: request Host %q does not match loopback (set --public-url if reaching Crit Plus via a reverse proxy)",
 			host,
 		)
 	}
@@ -442,7 +442,7 @@ func (s *Server) CheckForUpdates() {
 		base = "https://api.github.com"
 	}
 	client := &http.Client{Timeout: 5 * time.Second}
-	resp, err := client.Get(base + "/repos/tomasz-tomczyk/crit/releases/latest")
+	resp, err := client.Get(base + "/repos/JesseGuoX/better-crit/releases/latest")
 	if err != nil {
 		return
 	}
@@ -865,7 +865,7 @@ func (s *Server) handleProjectPromptTrust(w http.ResponseWriter, r *http.Request
 // consentNeeded reports whether the user must still confirm before sharing.
 // It guards reads of s.cfg.ShareConsented under s.authMu and, if the in-memory
 // flag is false, re-checks the on-disk global config so consent granted by the
-// CLI (crit share) on a separate process is picked up by the running daemon.
+// CLI (crit-plus share) on a separate process is picked up by the running daemon.
 func (s *Server) consentNeeded() bool {
 	if !s.configConfigured {
 		s.authMu.RLock()
@@ -1909,7 +1909,7 @@ func (s *Server) handleFileComments(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// normalizeCommentSide canonicalizes the wire `side` field to crit's internal
+// normalizeCommentSide canonicalizes the wire `side` field to crit-plus's internal
 // representation: "" for the new (right) side and "old" for the deletion (left)
 // side. Callers may pass GitHub-style "RIGHT"/"LEFT" (e.g. seeded payloads,
 // pulled PR comments, third-party scripts); without normalization, those values
@@ -2552,7 +2552,7 @@ func listComments(sess *Session, unresolvedOnly bool) []comment.ListedComment {
 }
 
 func buildCommentsListCommand(sess *Session) string {
-	return "crit comments --json " + shellQuoteArg(sess.CritJSONPath())
+	return "crit-plus comments --json " + shellQuoteArg(sess.CritJSONPath())
 }
 
 // APIVersion is the HTTP API protocol version returned by GET /api/health as
@@ -2656,7 +2656,7 @@ func (s *Server) handleReviewCycle(w http.ResponseWriter, r *http.Request) {
 					"status":   "shutdown",
 					"approved": false,
 					"comments": []comment.ListedComment{},
-					"prompt":   "crit daemon shut down before review was finished.",
+					"prompt":   "crit-plus daemon shut down before review was finished.",
 				})
 				return
 			}
@@ -3141,7 +3141,7 @@ func buildAgentPrompt(c Comment, filePath string) string {
 		b.WriteString(fmt.Sprintf("Reply from %s:\n> %s\n\n", reply.Author, reply.Body))
 	}
 	b.WriteString("Address this comment. If it requires a code change, make the edit.\n\n" +
-		"IMPORTANT: Do NOT run `crit comment` or `crit` commands. " +
+		"IMPORTANT: Do NOT run `crit-plus comment` or `crit-plus` commands. " +
 		"Just print your response to stdout — it will be posted as a reply automatically.\n")
 	return b.String()
 }

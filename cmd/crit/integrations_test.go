@@ -31,7 +31,7 @@ func TestCheckInstalledIntegrations_StaleFile(t *testing.T) {
 	dir := t.TempDir()
 
 	// Write a file at the claude-code skill destination with different content
-	ccDest := filepath.Join(dir, ".claude", "skills", "crit")
+	ccDest := filepath.Join(dir, ".claude", "skills", "crit-plus")
 	if err := os.MkdirAll(ccDest, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -61,11 +61,11 @@ func TestCheckInstalledIntegrations_UpToDate(t *testing.T) {
 
 	// Read the actual embedded content and write it to the destination
 	// so it matches the precomputed hash
-	embedded, err := integrationsFS.ReadFile("integrations/claude-code/skills/crit/SKILL.md")
+	embedded, err := integrationsFS.ReadFile("integrations/claude-code/skills/crit-plus/SKILL.md")
 	if err != nil {
 		t.Fatal(err)
 	}
-	ccDest := filepath.Join(dir, ".claude", "skills", "crit")
+	ccDest := filepath.Join(dir, ".claude", "skills", "crit-plus")
 	if err := os.MkdirAll(ccDest, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -94,7 +94,7 @@ func TestCheckInstalledIntegrations_HomeDirStale(t *testing.T) {
 	homeDir := t.TempDir()
 
 	// Write stale file only in homeDir
-	ccDest := filepath.Join(homeDir, ".claude", "skills", "crit")
+	ccDest := filepath.Join(homeDir, ".claude", "skills", "crit-plus")
 	if err := os.MkdirAll(ccDest, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -116,8 +116,8 @@ func TestCheckInstalledIntegrations_MarketplaceStale(t *testing.T) {
 	homeDir := t.TempDir()
 
 	// Write stale file at marketplace source path
-	mpPath := filepath.Join(homeDir, ".claude", "plugins", "marketplaces", "crit",
-		"integrations", "claude-code", "skills", "crit")
+	mpPath := filepath.Join(homeDir, ".claude", "plugins", "marketplaces", "crit-plus",
+		"integrations", "claude-code", "skills", "crit-plus")
 	if err := os.MkdirAll(mpPath, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -134,7 +134,7 @@ func TestCheckInstalledIntegrations_MarketplaceStale(t *testing.T) {
 	for _, s := range stale {
 		if s.location == locationMarketplace {
 			found = true
-			if !strings.Contains(s.updateHint(), "claude plugin update crit@crit") {
+			if !strings.Contains(s.updateHint(), "claude plugin update crit-plus@crit-plus") {
 				t.Errorf("marketplace hint should suggest plugin update, got: %s", s.updateHint())
 			}
 		}
@@ -149,8 +149,8 @@ func TestCheckInstalledIntegrations_CacheStale(t *testing.T) {
 	homeDir := t.TempDir()
 
 	// Write stale file at cache path with hash-named dir
-	cachePath := filepath.Join(homeDir, ".claude", "plugins", "cache", "crit", "crit",
-		"abc123def456", "skills", "crit")
+	cachePath := filepath.Join(homeDir, ".claude", "plugins", "cache", "crit-plus", "crit-plus",
+		"abc123def456", "skills", "crit-plus")
 	if err := os.MkdirAll(cachePath, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -167,7 +167,7 @@ func TestCheckInstalledIntegrations_CacheStale(t *testing.T) {
 	for _, s := range stale {
 		if s.location == locationCache {
 			found = true
-			if !strings.Contains(s.updateHint(), "claude plugin update crit@crit") {
+			if !strings.Contains(s.updateHint(), "claude plugin update crit-plus@crit-plus") {
 				t.Errorf("cache hint should suggest plugin update, got: %s", s.updateHint())
 			}
 		}
@@ -213,8 +213,8 @@ func TestCheckInstalledIntegrations_CacheSkipsOldVersions(t *testing.T) {
 
 	// Create two version dirs: 1.0.0 (stale) and 1.0.1 (current)
 	for _, ver := range []string{"1.0.0", "1.0.1"} {
-		cachePath := filepath.Join(homeDir, ".claude", "plugins", "cache", "crit", "crit",
-			ver, "skills", "crit")
+		cachePath := filepath.Join(homeDir, ".claude", "plugins", "cache", "crit-plus", "crit-plus",
+			ver, "skills", "crit-plus")
 		if err := os.MkdirAll(cachePath, 0o755); err != nil {
 			t.Fatal(err)
 		}
@@ -223,7 +223,7 @@ func TestCheckInstalledIntegrations_CacheSkipsOldVersions(t *testing.T) {
 			os.WriteFile(filepath.Join(cachePath, "SKILL.md"), []byte("old stale"), 0o644)
 		} else {
 			// Current content — use the real source file to get the correct hash
-			data, err := integrationsFS.ReadFile("integrations/claude-code/skills/crit/SKILL.md")
+			data, err := integrationsFS.ReadFile("integrations/claude-code/skills/crit-plus/SKILL.md")
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -248,7 +248,7 @@ func TestPrintStaleWarnings_NoStale(t *testing.T) {
 
 func TestPrintStaleWarnings_WithStale(t *testing.T) {
 	stale := []staleFile{
-		{agent: "claude-code", file: "SKILL.md", dest: "/tmp/test/.claude/skills/crit/SKILL.md", location: locationProject},
+		{agent: "claude-code", file: "SKILL.md", dest: "/tmp/test/.claude/skills/crit-plus/SKILL.md", location: locationProject},
 	}
 	count := printStaleWarnings(stale)
 	if count == 0 {
@@ -416,11 +416,11 @@ func TestCheckInstalledIntegrations_CodexPluginCacheStale(t *testing.T) {
 	os.MkdirAll(homeDir, 0o755)
 
 	f := integrationMap["codex-plugin"][1]
-	relPath, ok := strings.CutPrefix(f.source, "integrations/codex/plugin/crit/")
+	relPath, ok := strings.CutPrefix(f.source, "integrations/codex/plugin/crit-plus/")
 	if !ok {
 		t.Fatalf("unexpected codex-plugin source path %q", f.source)
 	}
-	cachePath := filepath.Join(homeDir, ".codex", "plugins", "cache", "local", "crit", "local", relPath)
+	cachePath := filepath.Join(homeDir, ".codex", "plugins", "cache", "local", "crit-plus", "local", relPath)
 	os.MkdirAll(filepath.Dir(cachePath), 0o755)
 	os.WriteFile(cachePath, []byte("old cached skill"), 0o644)
 
@@ -443,7 +443,7 @@ func TestCheckInstalledIntegrations_CodexPluginCacheUsesMarketplaceName(t *testi
 	marketplace := `{
   "name": "personal",
   "plugins": [
-    {"name": "crit", "source": {"source": "local", "path": "./plugins/crit"}}
+    {"name": "crit-plus", "source": {"source": "local", "path": "./plugins/crit-plus"}}
   ]
 }`
 	if err := os.WriteFile(filepath.Join(projectDir, ".agents", "plugins", "marketplace.json"), []byte(marketplace), 0o644); err != nil {
@@ -451,11 +451,11 @@ func TestCheckInstalledIntegrations_CodexPluginCacheUsesMarketplaceName(t *testi
 	}
 
 	f := integrationMap["codex-plugin"][2]
-	relPath, ok := strings.CutPrefix(f.source, "integrations/codex/plugin/crit/")
+	relPath, ok := strings.CutPrefix(f.source, "integrations/codex/plugin/crit-plus/")
 	if !ok {
 		t.Fatalf("unexpected codex-plugin source path %q", f.source)
 	}
-	cachePath := filepath.Join(homeDir, ".codex", "plugins", "cache", "personal", "crit", "local", relPath)
+	cachePath := filepath.Join(homeDir, ".codex", "plugins", "cache", "personal", "crit-plus", "local", relPath)
 	os.MkdirAll(filepath.Dir(cachePath), 0o755)
 	os.WriteFile(cachePath, []byte("old cached skill"), 0o644)
 
@@ -478,7 +478,7 @@ func TestCodexPluginMarketplaceNamesRejectsInvalidName(t *testing.T) {
 	marketplace := `{
   "name": "../outside",
   "plugins": [
-    {"name": "crit", "source": {"source": "local", "path": "./plugins/crit"}}
+    {"name": "crit-plus", "source": {"source": "local", "path": "./plugins/crit-plus"}}
   ]
 }`
 	if err := os.WriteFile(filepath.Join(projectDir, ".agents", "plugins", "marketplace.json"), []byte(marketplace), 0o644); err != nil {
@@ -501,7 +501,7 @@ func TestCodexPluginMarketplaceNamesAcceptsShorthandSource(t *testing.T) {
 	marketplace := `{
   "name": "personal",
   "plugins": [
-    {"name": "crit", "source": "./plugins/crit"}
+    {"name": "crit-plus", "source": "./plugins/crit-plus"}
   ]
 }`
 	if err := os.WriteFile(filepath.Join(projectDir, ".agents", "plugins", "marketplace.json"), []byte(marketplace), 0o644); err != nil {
@@ -526,7 +526,7 @@ func TestCheckInstalledIntegrations_CodexPluginMissingMarketplaceConfigAndCache(
 	if err != nil {
 		t.Fatal(err)
 	}
-	manifestPath := filepath.Join(projectDir, "plugins", "crit", ".codex-plugin", "plugin.json")
+	manifestPath := filepath.Join(projectDir, "plugins", "crit-plus", ".codex-plugin", "plugin.json")
 	os.MkdirAll(filepath.Dir(manifestPath), 0o755)
 	os.WriteFile(manifestPath, sourceContent, 0o644)
 
@@ -534,7 +534,7 @@ func TestCheckInstalledIntegrations_CodexPluginMissingMarketplaceConfigAndCache(
 	want := []string{
 		filepath.Join(projectDir, ".agents", "plugins", "marketplace.json"),
 		filepath.Join(homeDir, ".codex", "config.toml"),
-		filepath.Join(homeDir, ".codex", "plugins", "cache", "local", "crit", "local", ".codex-plugin", "plugin.json"),
+		filepath.Join(homeDir, ".codex", "plugins", "cache", "local", "crit-plus", "local", ".codex-plugin", "plugin.json"),
 	}
 	for _, path := range want {
 		found := false
@@ -559,28 +559,28 @@ func TestCodexPluginConfigReadyRaw(t *testing.T) {
 		"hooks = true",
 		"plugin_hooks = true",
 		"",
-		"[plugins.\"crit@local\"]",
+		"[plugins.\"crit-plus@local\"]",
 		"enabled = true",
 		"",
 		"[plugins.\"other@local\"]",
 		"enabled = false",
 	}, "\n")
-	if !codexPluginConfigReadyRaw(raw, "crit@local") {
-		t.Fatal("expected crit plugin config to be ready")
+	if !codexPluginConfigReadyRaw(raw, "crit-plus@local") {
+		t.Fatal("expected crit-plus plugin config to be ready")
 	}
 	if codexPluginConfigReadyRaw(raw, "other@local") {
 		t.Fatal("did not expect disabled plugin config to be ready")
 	}
-	if codexPluginConfigReadyRaw(strings.Replace(raw, "plugin_hooks = true", "plugin_hooks = false", 1), "crit@local") {
+	if codexPluginConfigReadyRaw(strings.Replace(raw, "plugin_hooks = true", "plugin_hooks = false", 1), "crit-plus@local") {
 		t.Fatal("did not expect config without plugin_hooks to be ready")
 	}
-	if codexPluginConfigReadyRaw(strings.Replace(raw, "plugins = true", "plugins = false", 1), "crit@local") {
+	if codexPluginConfigReadyRaw(strings.Replace(raw, "plugins = true", "plugins = false", 1), "crit-plus@local") {
 		t.Fatal("did not expect config without plugins to be ready")
 	}
 
 	commentedHeaders := strings.ReplaceAll(raw, "[features]", "[features] # managed")
-	commentedHeaders = strings.ReplaceAll(commentedHeaders, "[plugins.\"crit@local\"]", "[plugins.\"crit@local\"] # managed")
-	if !codexPluginConfigReadyRaw(commentedHeaders, "crit@local") {
+	commentedHeaders = strings.ReplaceAll(commentedHeaders, "[plugins.\"crit-plus@local\"]", "[plugins.\"crit-plus@local\"] # managed")
+	if !codexPluginConfigReadyRaw(commentedHeaders, "crit-plus@local") {
 		t.Fatal("expected commented table headers to be ready")
 	}
 
@@ -592,10 +592,10 @@ func TestCodexPluginConfigReadyRaw(t *testing.T) {
 		"plugins = true",
 		"plugin_hooks = true",
 		"",
-		"[plugins.\"crit@local\"]",
+		"[plugins.\"crit-plus@local\"]",
 		"enabled = true",
 	}, "\n")
-	if codexPluginConfigReadyRaw(arrayTableRaw, "crit@local") {
+	if codexPluginConfigReadyRaw(arrayTableRaw, "crit-plus@local") {
 		t.Fatal("did not expect feature keys in array tables to count")
 	}
 }

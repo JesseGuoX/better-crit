@@ -1,9 +1,9 @@
 {
-  "name": "crit",
-  "owner": "tomasz-tomczyk",
+  "name": "crit-plus",
+  "owner": "JesseGuoX",
   "plugins": [
     {
-      "name": "crit",
+      "name": "crit-plus",
       "source": { "source": "local", "path": "integrations/cursor" }
     }
   ]

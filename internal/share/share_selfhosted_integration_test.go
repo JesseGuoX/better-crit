@@ -194,7 +194,7 @@ func TestSelfhostedReviewDocumentApiRequires401(t *testing.T) {
 	}
 }
 
-// TestSelfhostedShareRequiresAuthToken verifies that running `crit share`
+// TestSelfhostedShareRequiresAuthToken verifies that running `crit-plus share`
 // against a selfhosted instance WITHOUT a bearer token fails with auth-related
 // output. Strips CRIT_AUTH_TOKEN and HOME from the env so cached creds can't
 // leak in.
@@ -214,7 +214,7 @@ func TestSelfhostedShareRequiresAuthToken(t *testing.T) {
 
 	output, err := runCritShareEnv(t, binary, baseURL, dir, []string{"HOME=" + homeDir}, "plan.md")
 	if err == nil {
-		t.Fatalf("expected crit share to fail without auth in selfhosted mode; output:\n%s", output)
+		t.Fatalf("expected crit-plus share to fail without auth in selfhosted mode; output:\n%s", output)
 	}
 	lower := strings.ToLower(output)
 	if !strings.Contains(lower, "auth") && !strings.Contains(lower, "401") &&
@@ -257,7 +257,7 @@ func TestSelfhostedShareSucceedsWithAuthToken(t *testing.T) {
 			"HOME=" + homeDir,
 		}, "plan.md")
 	if err != nil {
-		t.Fatalf("crit share with auth failed: %v\n%s", err, output)
+		t.Fatalf("crit-plus share with auth failed: %v\n%s", err, output)
 	}
 	logReview(t, output)
 	token := extractToken(t, output)
@@ -323,7 +323,7 @@ func TestSelfhostedExportWithAuthToken(t *testing.T) {
 			"HOME=" + homeDir,
 		}, "plan.md")
 	if err != nil {
-		t.Fatalf("crit share: %v\n%s", err, output)
+		t.Fatalf("crit-plus share: %v\n%s", err, output)
 	}
 	logReview(t, output)
 	token := extractToken(t, output)

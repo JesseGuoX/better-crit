@@ -228,7 +228,7 @@ func (c generatedConfig) String() string {
 // GeneratedConfig is the printable default config template.
 type GeneratedConfig = generatedConfig
 
-// DefaultConfig returns the starter config template for `crit config`.
+// DefaultConfig returns the starter config template for `crit-plus config`.
 func DefaultConfig() GeneratedConfig {
 	return defaultConfig()
 }
@@ -572,7 +572,7 @@ func GlobalConfigPath() string {
 // The file is written with 0600 permissions since it may contain auth_token.
 //
 // A sibling lockfile (`<path>.lock`) is held with flock for the duration of the
-// read-modify-write so concurrent crit invocations (e.g. login + lazy backfill)
+// read-modify-write so concurrent crit-plus invocations (e.g. login + lazy backfill)
 // cannot lose updates. flock is released automatically when the process exits.
 func SaveGlobalConfig(apply func(m map[string]json.RawMessage) error) error {
 	path := GlobalConfigPath()

@@ -23,7 +23,7 @@ var (
 	selectResumeTarget = picker.Select
 	runReviewForResume = RunReview
 	// The picker reads keys from stdin and draws on stderr, so both have to be
-	// a terminal — `crit resume 2>log` would otherwise type blind.
+	// a terminal — `crit-plus resume 2>log` would otherwise type blind.
 	canShowPicker = func() bool {
 		return term.IsTerminal(int(os.Stdin.Fd())) && term.IsTerminal(int(os.Stderr.Fd()))
 	}
@@ -60,7 +60,7 @@ func RunResume(args []string) error {
 		return err
 	}
 	if len(reviews) == 0 {
-		fmt.Println("No reviews to resume. Run crit in a repository to start one.")
+		fmt.Println("No reviews to resume. Run crit-plus in a repository to start one.")
 		return nil
 	}
 	if listOnly {
@@ -69,7 +69,7 @@ func RunResume(args []string) error {
 	}
 	if !canShowPicker() {
 		printResumableReviews(os.Stderr, reviews)
-		return clicmd.ExitError{Code: 1, Err: errors.New("crit resume needs a terminal to show the picker; pass a session ID or use --list")}
+		return clicmd.ExitError{Code: 1, Err: errors.New("crit-plus resume needs a terminal to show the picker; pass a session ID or use --list")}
 	}
 
 	// The picker draws on stderr so stdout stays clean for the review output
@@ -85,7 +85,7 @@ func RunResume(args []string) error {
 }
 
 // parseResumeArgs splits out the flags resume handles itself. Everything else
-// is forwarded to RunReview, so `crit resume --no-open` works.
+// is forwarded to RunReview, so `crit-plus resume --no-open` works.
 func parseResumeArgs(args []string) (listOnly bool, id string, passthrough []string, err error) {
 	for _, arg := range args {
 		switch {
@@ -93,7 +93,7 @@ func parseResumeArgs(args []string) (listOnly bool, id string, passthrough []str
 			listOnly = true
 		case daemon.ValidSessionKey(arg):
 			if id != "" {
-				return false, "", nil, clicmd.Usage("crit resume accepts at most one session ID")
+				return false, "", nil, clicmd.Usage("crit-plus resume accepts at most one session ID")
 			}
 			id = arg
 		default:
@@ -101,13 +101,13 @@ func parseResumeArgs(args []string) (listOnly bool, id string, passthrough []str
 		}
 	}
 	if listOnly && id != "" {
-		return false, "", nil, clicmd.Usage("crit resume --list does not take a session ID")
+		return false, "", nil, clicmd.Usage("crit-plus resume --list does not take a session ID")
 	}
 	return listOnly, id, passthrough, nil
 }
 
 // listResumableReviews reads every review folder under ~/.crit/reviews, newest
-// first. Reviews stored elsewhere (crit plan, or --output) are not listed:
+// first. Reviews stored elsewhere (crit-plus plan, or --output) are not listed:
 // their identity path cannot be discovered from the reviews directory.
 func listResumableReviews() ([]resumableReview, error) {
 	dir, err := daemon.ReviewsDir()
@@ -255,7 +255,7 @@ func printResumableReviews(w io.Writer, reviews []resumableReview) {
 		}
 		fmt.Fprintf(w, "    %s\n", detail)
 	}
-	fmt.Fprintln(w, "\nResume one with: crit resume <id>")
+	fmt.Fprintln(w, "\nResume one with: crit-plus resume <id>")
 }
 
 // displayPath shortens a home-relative path to ~/… and names the directory a

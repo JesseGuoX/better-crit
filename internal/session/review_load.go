@@ -25,7 +25,7 @@ func readCritJSONFromDisk(critPath string) (CritJSON, error) {
 
 // SaveCritJSON writes review.json for a review identity folder. It is the
 // single write path for review.json: review.SaveCritJSON delegates here, so
-// every writer (share, comment, github, live, preview, cmd/crit) gets the
+// every writer (share, comment, github, live, preview, cmd/crit-plus) gets the
 // same folder-normalization guard and atomic write.
 func SaveCritJSON(critPath string, cj CritJSON) error {
 	return saveCritJSONToDisk(critPath, cj)

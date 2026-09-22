@@ -11,7 +11,7 @@ import (
 	"github.com/tomasz-tomczyk/crit/internal/testutil"
 )
 
-// TestPreflightCheck_CleanRepo verifies that running crit in a clean
+// TestPreflightCheck_CleanRepo verifies that running crit-plus in a clean
 // repo with no changes returns the user-facing message instead of letting
 // the daemon spawn and crash with a misleading "could not reach daemon" error.
 func TestPreflightCheck_CleanRepo(t *testing.T) {
@@ -32,7 +32,7 @@ func TestPreflightCheck_CleanRepo(t *testing.T) {
 	if !strings.Contains(msg, "No changed files found.") {
 		t.Errorf("missing headline; got:\n%s", msg)
 	}
-	if !strings.Contains(msg, "crit <file") {
+	if !strings.Contains(msg, "crit-plus <file") {
 		t.Errorf("missing file-args hint; got:\n%s", msg)
 	}
 	if !strings.Contains(msg, "review changed files") {
@@ -88,7 +88,7 @@ func TestPreflightCheck_NotARepo(t *testing.T) {
 	if !strings.Contains(msg, "Not in a version-controlled repository") {
 		t.Errorf("missing headline; got:\n%s", msg)
 	}
-	if !strings.Contains(msg, "crit <file") {
+	if !strings.Contains(msg, "crit-plus <file") {
 		t.Errorf("missing file-args hint; got:\n%s", msg)
 	}
 	for _, banned := range []string{"daemon", "port", "connection", "127.0.0.1"} {

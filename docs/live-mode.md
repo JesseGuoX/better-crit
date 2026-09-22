@@ -1,21 +1,23 @@
 # Live mode
 
-Live mode (`crit live <url>` or `crit <url>`) proxies a running local app into
-Crit’s review UI so you can pin comments on the live DOM.
+Crit Plus (`crit-plus`) is an enhanced fork of [Crit](https://github.com/tomasz-tomczyk/crit), originally created by **Tomasz Tomczyk**. The upstream MIT license and copyright are preserved.
 
-Crit does **not** magically share your normal browser tab with the app. It
-loads the app inside an iframe on Crit’s proxy port, injects a small agent
+Live mode (`crit-plus live <url>` or `crit-plus <url>`) proxies a running local app into
+Crit Plus’s review UI so you can pin comments on the live DOM.
+
+Crit Plus does **not** magically share your normal browser tab with the app. It
+loads the app inside an iframe on Crit Plus’s proxy port, injects a small agent
 bundle into HTML responses, and talks to that agent over `postMessage`. When
 injection or the agent handshake fails, Browse/Navigate still works, but
 Comment/Pin stays unavailable (navbar chip + Flash: **Commenting unavailable —
-Crit could not connect to this page**, with a link to this guide).
+Crit Plus could not connect to this page**, with a link to this guide).
 
-This guide covers how that works, what Crit already rewrites for you, common
+This guide covers how that works, what Crit Plus already rewrites for you, common
 failure modes, and framework-specific setup for local apps.
 
 ## How injection works
 
-1. Crit starts an API server (review chrome) and a **proxy** port.
+1. Crit Plus starts an API server (review chrome) and a **proxy** port.
 2. The chrome iframe loads `http://<host>:<proxy>/…`, which reverse-proxies
    your upstream origin.
 3. For `text/html` responses, the proxy:
@@ -23,17 +25,17 @@ failure modes, and framework-specific setup for local apps.
    - rewrites `Set-Cookie` so cookies work on the proxy host
    - injects a service-worker shim + route announcer into `<head>`
    - injects the agent script bundle just before the last `</body>`
-4. The agent loads scripts from Crit’s API origin (e.g.
+4. The agent loads scripts from Crit Plus’s API origin (e.g.
    `http://localhost:3195/crit-agent.js`), then posts `agent-ready` to the
    parent chrome.
-5. Only after `agent-ready` does Crit enable Comment/Pin. Live mode launches
+5. Only after `agent-ready` does Crit Plus enable Comment/Pin. Live mode launches
    in Comment mode by default; until the agent is ready the Comment button
    stays disabled.
 
 If step 3 or 4 fails, you get the connection-unavailable Flash (Browse still
-works). Fix the upstream issue and reload Crit — see the checklist below.
+works). Fix the upstream issue and reload Crit Plus — see the checklist below.
 
-## What Crit already handles
+## What Crit Plus already handles
 
 You usually do **not** need to change these yourself — the proxy does them:
 
@@ -58,33 +60,33 @@ Typical causes:
    (`localhost` vs `127.0.0.1` / IPv6), or the app died. The iframe may show a
    502 (`upstream unreachable`).
 2. **Non-HTML response** — API JSON, empty body, or a redirect chain that never
-   returns HTML with a `</body>`. Crit needs a real HTML document to inject
+   returns HTML with a `</body>`. Crit Plus needs a real HTML document to inject
    into.
 3. **Missing `</body>`** — some minimal or streaming responses never emit a
    body close tag; injection is skipped (`X-Crit-Agent-Injection: failed`).
 4. **Oversized HTML** — responses larger than the proxy buffer are passed
    through without injection (`skipped-oversized`).
-5. **Meta-tag CSP** — Crit strips the **header**, not `<meta
+5. **Meta-tag CSP** — Crit Plus strips the **header**, not `<meta
    http-equiv="Content-Security-Policy">` in the document. A strict meta CSP
    can still block the injected scripts.
-6. **`localhost` vs `127.0.0.1` mismatch in the Crit tab** — open Crit via
+6. **`localhost` vs `127.0.0.1` mismatch in the Crit Plus tab** — open Crit Plus via
    `http://localhost:<port>/live` (not `http://127.0.0.1:…`). The proxy injects
    agent `<script src="http://localhost:…">` tags; if the chrome tab is on
    `127.0.0.1`, `postMessage` target origins do not match and `agent-ready` is
-   dropped. Point `--live` / `crit live` at whatever host your app actually
-   binds (often `127.0.0.1`), but keep the Crit UI on `localhost`.
+   dropped. Point `--live` / `crit-plus live` at whatever host your app actually
+   binds (often `127.0.0.1`), but keep the Crit Plus UI on `localhost`.
 
 **Quick checks**
 
 - Direct URL works in a normal tab?
-- Crit stderr smoke notes / warnings?
+- Crit Plus stderr smoke notes / warnings?
 - DevTools → iframe document → Network: do `agent-protocol.js` / `crit-agent.js`
-  load from the Crit API origin?
+  load from the Crit Plus API origin?
 - Console errors about CSP / blocked script?
 
 ### App loads but shows login / wrong session
 
-The iframe origin is Crit’s proxy, not your app’s host, so **host-scoped
+The iframe origin is Crit Plus’s proxy, not your app’s host, so **host-scoped
 session cookies are not shared** with a tab where you already logged in.
 
 Forward cookies with `--cookie`, `--cookie-file`, or `--cdp-url` (see the
@@ -94,21 +96,21 @@ Forward cookies with `--cookie`, `--cookie-file`, or `--cdp-url` (see the
 
 - Prefer reviewing the same URL path you use day-to-day (not a bare API
   prefix).
-- After changing cookie forwarding, hard-refresh the Crit live tab.
-- If the app depends on a service worker for assets, remember Crit disables
+- After changing cookie forwarding, hard-refresh the Crit Plus live tab.
+- If the app depends on a service worker for assets, remember Crit Plus disables
   SW registration inside the proxied iframe by design.
 
 ## Framework setups (local / dev)
 
 Recipes below are for **local development** only. Do not weaken CSP or framing
-controls in production to satisfy Crit.
+controls in production to satisfy Crit Plus.
 
 ### Phoenix (LiveView)
 
-Crit detects LiveView markers (`phx-hook`, `phx-main`, `phx-track-static`) and
+Crit Plus detects LiveView markers (`phx-hook`, `phx-main`, `phx-track-static`) and
 reminds you that the dev endpoint must allow iframing.
 
-**Usually enough:** run Crit against the endpoint URL; the proxy strips CSP /
+**Usually enough:** run Crit Plus against the endpoint URL; the proxy strips CSP /
 `X-Frame-Options` headers.
 
 **If the agent still cannot connect**, check for a **meta CSP** or a custom
@@ -123,7 +125,7 @@ config :my_app, MyAppWeb.Endpoint,
 ```
 
 And in the browser pipeline / `put_secure_browser_headers`, ensure you are not
-setting a document meta CSP that blocks scripts from Crit’s API origin.
+setting a document meta CSP that blocks scripts from Crit Plus’s API origin.
 
 LiveView WebSockets go through the same reverse proxy as HTTP. If the socket
 URL is hard-coded to an absolute `ws://127.0.0.1:4000/…` that bypasses the
@@ -135,10 +137,10 @@ proxy host.
 
 ### Vite (Vue, React, Svelte, …)
 
-Crit detects `/@vite/client` and proxies HMR WebSockets automatically.
+Crit Plus detects `/@vite/client` and proxies HMR WebSockets automatically.
 
 ```bash
-crit live http://localhost:5173
+crit-plus live http://localhost:5173
 ```
 
 Tips:
@@ -146,17 +148,17 @@ Tips:
 - Use the Vite **dev** server URL, not a `file://` open or a preview that
   omits HTML shell tags.
 - If you set a custom `server.origin` / absolute asset URLs, keep them
-  relative or pointed at the proxied host so scripts still load through Crit.
+  relative or pointed at the proxied host so scripts still load through Crit Plus.
 - Strict meta CSP in `index.html` will block injection even though response
   CSP headers are stripped.
 
 ### Next.js
 
-Crit detects `id="__next"` and supports client navigations that use
-`history.pushState` (the injected route announcer keeps Crit’s chrome in sync).
+Crit Plus detects `id="__next"` and supports client navigations that use
+`history.pushState` (the injected route announcer keeps Crit Plus’s chrome in sync).
 
 ```bash
-crit live http://localhost:3000
+crit-plus live http://localhost:3000
 ```
 
 Tips:
@@ -164,30 +166,30 @@ Tips:
 - App Router and Pages Router both work when the response is HTML with a
   `</body>`.
 - Middleware that returns non-HTML (JSON, opaque redirects to an IdP) will
-  prevent injection on that URL — start Crit on a path that already renders
+  prevent injection on that URL — start Crit Plus on a path that already renders
   the app shell while authenticated (and forward cookies).
 - `next start` / production builds may send stricter headers; prefer `next
   dev` for live review.
 
 ### Generic Node / Express / Rails / Django / static servers
 
-As long as the URL returns HTML with a `</body>`, Crit can inject. Checklist:
+As long as the URL returns HTML with a `</body>`, Crit Plus can inject. Checklist:
 
-1. Dev server bound and reachable (`curl -I` the same URL you pass to Crit).
+1. Dev server bound and reachable (`curl -I` the same URL you pass to Crit Plus).
 2. No meta CSP blocking external scripts.
 3. Session cookies forwarded if the page requires auth.
-4. Open Crit’s UI at `http://localhost:<crit-port>/live`.
+4. Open Crit Plus’s UI at `http://localhost:<crit-port>/live`.
 
 ## Debugging checklist
 
 ```text
 [ ] App URL returns 200 text/html with </body>
-[ ] crit live stderr: no fatal smoke errors
-[ ] Crit tab is http://localhost:<port>/live (not 127.0.0.1)
+[ ] crit-plus live stderr: no fatal smoke errors
+[ ] Crit Plus tab is http://localhost:<port>/live (not 127.0.0.1)
 [ ] Iframe Network: agent-*.js / crit-agent.js load (200)
 [ ] No CSP / blocked-script errors in the iframe console
 [ ] After login walls: cookies forwarded (--cookie / --cookie-file / --cdp-url)
-[ ] Reload Crit after fixing upstream (no Retry button — structural failures need a real fix)
+[ ] Reload Crit Plus after fixing upstream (no Retry button — structural failures need a real fix)
 ```
 
 ## Related

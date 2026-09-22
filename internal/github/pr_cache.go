@@ -27,7 +27,7 @@ type prCacheEntry struct {
 // back to a previously-visited PR feels instant when this metadata is held in
 // memory; the alternative is a 1-3s `gh pr view` round trip on every focus
 // change. Capacity-bounded LRU; entries also invalidate on force-push and
-// `crit pull`.
+// `crit-plus pull`.
 type prMetadataCache struct {
 	mu      sync.Mutex
 	entries map[string]*prCacheEntry
@@ -113,7 +113,7 @@ func (c *prMetadataCache) invalidate(id forge.ChangeID) {
 }
 
 // invalidateNumber drops the bare-number entry and every project-qualified
-// entry for num. Used when only the PR number is known (e.g. crit pull).
+// entry for num. Used when only the PR number is known (e.g. crit-plus pull).
 func (c *prMetadataCache) invalidateNumber(num int) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -137,12 +137,12 @@ func (c *prMetadataCache) reset() {
 // prMetaCache is the package-level singleton consulted by FetchPR and
 // the focus/pull invalidation hooks. Mirrors the singleton shape of
 // PRListCache (held on Server) but lives at package scope because callers
-// (including the CLI `crit pull` path) don't always have a Server in hand.
+// (including the CLI `crit-plus pull` path) don't always have a Server in hand.
 var prMetaCache = newPRMetadataCache()
 
 // InvalidatePRCache drops every cached PRInfo for num — both the bare-number
 // key (checkout-scoped --pr) and any project-qualified keys (URL-scoped).
-// Used by `crit pull`, which only knows the PR number.
+// Used by `crit-plus pull`, which only knows the PR number.
 func InvalidatePRCache(num int) {
 	if num <= 0 {
 		return

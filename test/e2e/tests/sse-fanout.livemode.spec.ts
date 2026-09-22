@@ -6,7 +6,7 @@
 //   3d0cbde  fix(live): refresh /api/session before each comment reload
 //
 // Pre-fix symptoms (caught by the user, not by E2E):
-//   * CLI-driven `crit comment --reply-to` writes never reached an open chrome.
+//   * CLI-driven `crit-plus comment --reply-to` writes never reached an open chrome.
 //   * Comment deletes via the comment-card UI did not propagate to other tabs.
 //   * Replies posted in tab A never showed up in tab B.
 //

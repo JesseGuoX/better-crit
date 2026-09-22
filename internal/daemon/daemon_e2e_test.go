@@ -34,11 +34,11 @@ func TestDaemonLifecycle(t *testing.T) {
 		t.Skip("daemon E2E spawn/wait/kill semantics differ on Windows; covered by daemon_test.go unit tests; TODO: revisit after CTRL_BREAK shutdown lands")
 	}
 
-	// Build crit binary
+	// Build crit-plus binary
 	dir := t.TempDir()
-	binaryName := "crit"
+	binaryName := "crit-plus"
 	if runtime.GOOS == "windows" {
-		binaryName = "crit.exe"
+		binaryName = "crit-plus.exe"
 	}
 	binary := filepath.Join(dir, binaryName)
 	_, testFile, _, _ := runtime.Caller(0)
@@ -62,7 +62,7 @@ func TestDaemonLifecycle(t *testing.T) {
 	testutil.Git(t, repoDir, "add", ".")
 	testutil.Git(t, repoDir, "commit", "-m", "init")
 
-	// Make a change so crit has something to review
+	// Make a change so crit-plus has something to review
 	testutil.WriteFile(t, filepath.Join(repoDir, "test.md"), "# Hello\n\nWorld\n")
 
 	// Resolve symlinks so the session key matches (macOS: /var → /private/var)

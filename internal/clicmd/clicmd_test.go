@@ -102,7 +102,7 @@ func TestReorderFlagsFirst(t *testing.T) {
 		want []string
 	}{
 		{
-			name: "flag after file arg (crit#787 repro)",
+			name: "flag after file arg (crit-plus#787 repro)",
 			args: []string{"design.md", "-p", "51573", "--public-url", "https://x.ts.net", "--no-open"},
 			want: []string{"-p", "51573", "--public-url", "https://x.ts.net", "--no-open", "design.md"},
 		},

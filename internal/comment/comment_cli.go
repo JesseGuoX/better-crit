@@ -45,7 +45,7 @@ func checkCommentCLIAllowed(critPath string) error {
 		return nil //nolint:nilerr // malformed review file: do not block CLI
 	}
 	if cj.ReviewType == "live" {
-		return fmt.Errorf("crit comment <path>:<line> is not supported for live reviews; use the browser UI to add pins")
+		return fmt.Errorf("crit-plus comment <path>:<line> is not supported for live reviews; use the browser UI to add pins")
 	}
 	return nil
 }

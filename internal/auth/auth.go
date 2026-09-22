@@ -38,7 +38,7 @@ func RunAuth(args []string) {
 }
 
 func printAuthUsage() {
-	fmt.Fprintln(os.Stderr, "Usage: crit auth <command>")
+	fmt.Fprintln(os.Stderr, "Usage: crit-plus auth <command>")
 	fmt.Fprintln(os.Stderr, "")
 	fmt.Fprintln(os.Stderr, "Commands:")
 	fmt.Fprintln(os.Stderr, "  login     Log in to crit-web")
@@ -48,7 +48,7 @@ func printAuthUsage() {
 	os.Exit(1)
 }
 
-// authLoginFlags holds parsed flags for crit auth login.
+// authLoginFlags holds parsed flags for crit-plus auth login.
 type authLoginFlags struct {
 	force      bool
 	shareURL   string
@@ -280,7 +280,7 @@ func handlePollError(errStr string) (pollResult, error) {
 	case "slow_down":
 		return pollResult{slowDown: true}, nil
 	case "expired_token":
-		return pollResult{}, fmt.Errorf("login timed out. Run 'crit auth login' to try again")
+		return pollResult{}, fmt.Errorf("login timed out. Run 'crit-plus auth login' to try again")
 	default:
 		return pollResult{}, fmt.Errorf("server error: %s", errStr)
 	}
@@ -436,7 +436,7 @@ func runAuthWhoami(args []string) {
 	token := target.Auth.Token
 
 	if token == "" {
-		fmt.Fprintln(os.Stderr, "  Not logged in. Run 'crit auth login' to authenticate.")
+		fmt.Fprintln(os.Stderr, "  Not logged in. Run 'crit-plus auth login' to authenticate.")
 		return
 	}
 
@@ -445,7 +445,7 @@ func runAuthWhoami(args []string) {
 	defer cancel()
 	who, err := fetchWhoami(ctx, serverURL, token)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "  Token is invalid or revoked. Run 'crit auth login' to re-authenticate.\n")
+		fmt.Fprintf(os.Stderr, "  Token is invalid or revoked. Run 'crit-plus auth login' to re-authenticate.\n")
 		return
 	}
 
@@ -616,14 +616,14 @@ func LazyBackfillTargetAuth(serverURL string) {
 // the write when the hint was already shown.
 var errHintAlreadyShown = errors.New("login hint already shown")
 
-// ShowLoginHint prints a one-time hint about crit auth login after anonymous shares.
+// ShowLoginHint prints a one-time hint about crit-plus auth login after anonymous shares.
 // Uses SaveGlobalConfig for both read and write to avoid TOCTOU races.
 func ShowLoginHint() {
 	err := config.SaveGlobalConfig(func(m map[string]json.RawMessage) error {
 		if v, ok := m["login_hint_shown"]; ok && string(v) == "true" {
 			return errHintAlreadyShown
 		}
-		fmt.Fprintln(os.Stderr, "  Tip: Run 'crit auth login' to link reviews to your account.")
+		fmt.Fprintln(os.Stderr, "  Tip: Run 'crit-plus auth login' to link reviews to your account.")
 		m["login_hint_shown"] = json.RawMessage("true")
 		return nil
 	})

@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-// TargetAuth contains credentials and cached identity for exactly one Crit
+// TargetAuth contains credentials and cached identity for exactly one Crit Plus
 // deployment. A target's canonical URL is its authentication boundary.
 type TargetAuth struct {
 	Token     string `json:"token,omitempty"`
@@ -20,7 +20,7 @@ type TargetAuth struct {
 	UserEmail string `json:"user_email,omitempty"`
 }
 
-// ShareTarget is one configured Crit deployment.
+// ShareTarget is one configured Crit Plus deployment.
 type ShareTarget struct {
 	Name           string     `json:"name,omitempty"`
 	URL            string     `json:"url"`
@@ -41,7 +41,7 @@ func (e *CrossOriginRedirectError) Error() string {
 	return fmt.Sprintf("refusing cross-origin redirect from %s to %s", e.From, e.To)
 }
 
-// CanonicalShareURL validates and normalizes a Crit deployment base URL.
+// CanonicalShareURL validates and normalizes a Crit Plus deployment base URL.
 func CanonicalShareURL(raw string) (string, error) { //nolint:gocyclo // URL policy validation is intentionally centralized.
 	raw = strings.TrimSpace(raw)
 	if raw == "" {

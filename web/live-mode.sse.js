@@ -5,7 +5,7 @@
 //     _roundResolved flags), updates the round counter, schedules lazy
 //     resolution for the current pathname, announces via aria-live.
 //   - `comments-changed`: re-fetches comments and re-renders the panel so
-//     CLI-driven mutations (`crit comment --reply-to`, etc.) appear live
+//     CLI-driven mutations (`crit-plus comment --reply-to`, etc.) appear live
 //     without a manual refresh.
 //
 // The scheduling/announcing/reload helpers live on the controller; this
@@ -84,7 +84,7 @@
       if (rcEl) rcEl.textContent = roundN > 1 ? 'Round #' + roundN : '';
       setUIState('reviewing');
       // Re-fetch the canonical comment list. Replies posted during the
-      // previous round (e.g. via `crit comment --reply-to`) might still be
+      // previous round (e.g. via `crit-plus comment --reply-to`) might still be
       // in flight or emitted via a comments-changed event that races with
       // this round-start re-render. Pulling fresh state here makes the
       // re-render authoritative regardless of event timing.
@@ -123,7 +123,7 @@
         },
         'comments-changed': function () {
           // Server emits this on any comment mutation (add/edit/delete/reply
-          // /resolve), including CLI-driven writes via `crit comment`. The
+          // /resolve), including CLI-driven writes via `crit-plus comment`. The
           // payload is informational only — we always re-fetch the canonical
           // list so we don't have to mirror reconciliation rules client-side.
           applyCommentsChanged();

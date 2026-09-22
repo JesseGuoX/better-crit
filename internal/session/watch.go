@@ -334,7 +334,7 @@ func (s *Session) watchGit(stop <-chan struct{}) {
 		case <-stop:
 			return
 		case <-ticker.C:
-			// Check for external review file changes (e.g. crit comment).
+			// Check for external review file changes (e.g. crit-plus comment).
 			s.mergeExternalCritJSON()
 
 			// Only poll vcs.VCS status while waiting for the agent to make edits.
@@ -385,7 +385,7 @@ func (s *Session) watchFileMtimes(stop <-chan struct{}) {
 		case <-stop:
 			return
 		case <-ticker.C:
-			// Check for external review file changes (e.g. crit comment).
+			// Check for external review file changes (e.g. crit-plus comment).
 			s.mergeExternalCritJSON()
 
 			s.mu.RLock()
@@ -488,7 +488,7 @@ func carryForwardComment(old Comment, now string) Comment {
 		GitLabDiscussionID: old.GitLabDiscussionID,
 		GitLabResolved:     old.GitLabResolved,
 		// LastPushedBodyHash is the digest of Body at the most recent
-		// successful GitHub push; `crit push` uses it to decide POST vs
+		// successful GitHub push; `crit-plus push` uses it to decide POST vs
 		// PATCH vs skip. Must round-trip with GitHubID, otherwise every
 		// already-pushed comment looks "never pushed" after a round bump
 		// and gets re-PATCHed (or worse, double-posted).
@@ -908,7 +908,7 @@ func (s *Session) loadResolvedComments() {
 	s.reviewComments = cj.ReviewComments
 	// Record the current mtime so mergeExternalCritJSON does not re-process
 	// this same file. Without this, the file watcher could detect the
-	// externally-written review file (e.g. from a test or crit comment) as a
+	// externally-written review file (e.g. from a test or crit-plus comment) as a
 	// new change and wipe comments that were added via the API after the
 	// round completed.
 	if statErr == nil {

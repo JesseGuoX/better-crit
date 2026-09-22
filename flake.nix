@@ -1,5 +1,5 @@
 {
-  description = "Browser-based markdown review tool with inline commenting";
+  description = "Crit Plus, an enhanced fork of Crit by Tomasz Tomczyk";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
@@ -12,8 +12,8 @@
       packages = forAllSystems (system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          crit = pkgs.buildGo126Module {
-            pname = "crit";
+          crit-plus = pkgs.buildGo126Module {
+            pname = "crit-plus";
             inherit version;
             src = self;
             subPackages = [ "cmd/crit" ];
@@ -22,22 +22,27 @@
             # /build TMPDIR cleanup races with the debounced review file writer.
             doCheck = false;
             ldflags = [ "-s" "-w" "-X main.version=${version}" ];
+            postInstall = ''
+              mv "$out/bin/crit" "$out/bin/crit-plus"
+              mkdir -p "$out/share/doc/crit-plus"
+              cp LICENSE NOTICE "$out/share/doc/crit-plus/"
+            '';
             meta = with nixpkgs.lib; {
-              description = "Browser-based markdown review tool with inline commenting";
-              homepage = "https://github.com/tomasz-tomczyk/crit";
+              description = "Crit Plus, an enhanced fork of Crit by Tomasz Tomczyk";
+              homepage = "https://github.com/JesseGuoX/better-crit";
               license = licenses.mit;
-              mainProgram = "crit";
+              mainProgram = "crit-plus";
             };
           };
         in {
-          inherit crit;
-          default = crit;
+          inherit crit-plus;
+          default = crit-plus;
         });
 
       apps = forAllSystems (system: {
         default = {
           type = "app";
-          program = "${packages.${system}.default}/bin/crit";
+          program = "${packages.${system}.default}/bin/crit-plus";
         };
       });
 

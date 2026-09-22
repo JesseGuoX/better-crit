@@ -21,43 +21,43 @@ type commandDescriptor struct {
 // commandRegistry is the single source of truth for command dispatch, help,
 // ordering, and public visibility.
 var commandRegistry = []commandDescriptor{
-	{name: "share", handler: runShare, help: `Usage: crit share [options] <file> [file...]
-       crit share [options] --preview <file.html>
+	{name: "share", handler: runShare, help: `Usage: crit-plus share [options] <file> [file...]
+       crit-plus share [options] --preview <file.html>
 
 Share files to crit-web and print the review URL.
 
 Options:
-  -o, --output <dir>       Crit data root for reviews
+  -o, --output <dir>       Crit Plus data root for reviews
       --share-url <url>    Share service URL
       --org <slug>         Organization slug
       --visibility <level> Review visibility
       --preview <file>     Share a local HTML preview
       --qr                 Print a QR code`},
-	{name: "fetch", handler: runFetch, help: `Usage: crit fetch [--output <dir>]
+	{name: "fetch", handler: runFetch, help: `Usage: crit-plus fetch [--output <dir>]
 
 Fetch comments from a shared crit-web review.`},
-	{name: "unpublish", handler: runUnpublish, help: `Usage: crit unpublish [options] [file...]
+	{name: "unpublish", handler: runUnpublish, help: `Usage: crit-plus unpublish [options] [file...]
 
 Remove a shared review from crit-web.
 
 Options:
-  -o, --output <dir>       Crit data root for reviews
+  -o, --output <dir>       Crit Plus data root for reviews
       --share-url <url>    Share service URL`},
 	{name: "install", handler: runInstall, helpFn: printInstallUsage},
 	{name: "config", handler: runConfig, bareHelp: true, helpFn: config.PrintConfigHelp},
-	{name: "check", handler: func([]string) { runCheck() }, help: `Usage: crit check
+	{name: "check", handler: func([]string) { runCheck() }, help: `Usage: crit-plus check
 
 Check installed integrations for missing or stale configuration.`},
-	{name: "pr", handler: runPR, help: `Usage: crit pr <num|url>
+	{name: "pr", handler: runPR, help: `Usage: crit-plus pr <num|url>
 
 Open a GitHub pull request for review.`},
-	{name: "mr", handler: runMR, help: `Usage: crit mr <iid|url>
+	{name: "mr", handler: runMR, help: `Usage: crit-plus mr <iid|url>
 
 Open a GitLab merge request for review.`},
-	{name: "pull", handler: runPull, help: `Usage: crit pull [--session <id>] [--output <dir>] [number|url]
+	{name: "pull", handler: runPull, help: `Usage: crit-plus pull [--session <id>] [--output <dir>] [number|url]
 
 Fetch PR/MR comments into the local review file.`},
-	{name: "push", handler: runPush, help: `Usage: crit push [options] [number|url]
+	{name: "push", handler: runPush, help: `Usage: crit-plus push [options] [number|url]
 
 Post local comments as a PR/MR review.
 
@@ -66,18 +66,18 @@ Options:
       --dry-run          Preview without posting
   -e, --event <type>     comment, approve, or request-changes
   -m, --message <text>   Review-level message
-  -o, --output <dir>     Crit data root for reviews`},
-	{name: "comment", handler: runComment, help: `Usage: crit comment [options] <body>
-       crit comment [options] <path> <body>
-       crit comment [options] <path>:<line[-end]> <body>
-       crit comment [options] --reply-to <id> [--resolve] <body>
-       crit comment [options] --json [--file <path>]
-       crit comment [options] --clear
+  -o, --output <dir>     Crit Plus data root for reviews`},
+	{name: "comment", handler: runComment, help: `Usage: crit-plus comment [options] <body>
+       crit-plus comment [options] <path> <body>
+       crit-plus comment [options] <path>:<line[-end]> <body>
+       crit-plus comment [options] --reply-to <id> [--resolve] <body>
+       crit-plus comment [options] --json [--file <path>]
+       crit-plus comment [options] --clear
 
 Add, reply to, bulk import, or clear review comments.
 
 Options:
-  -o, --output <dir>   Crit data root for reviews
+  -o, --output <dir>   Crit Plus data root for reviews
       --author <name>  Comment author
       --plan <name>    Target a stored plan review
       --session <id>   Target an active review session (all comment modes)
@@ -87,10 +87,10 @@ Options:
       --json           Read bulk comments as JSON
   -f, --file <path>    Read JSON from a file
       --scope <mode>   Override comment focus scope`},
-	{name: "comments", handler: runComments, help: `Usage: crit comments [--session <id>] [--json] [--all] [review]
+	{name: "comments", handler: runComments, help: `Usage: crit-plus comments [--session <id>] [--json] [--all] [review]
 
 List unresolved comments, with review-level comments first.`},
-	{name: "review", handler: runReview, help: `Usage: crit review [options] [file|dir...]
+	{name: "review", handler: runReview, help: `Usage: crit-plus review [options] [file|dir...]
 
 Open an inline review for git changes, a commit range, a PR/MR, or files.
 
@@ -100,8 +100,8 @@ Options:
       --range <base>..<head>  Review a commit range
       --base-branch <branch>  Override the diff base
       --no-open               Do not open a browser
-  -o, --output <dir>          Crit data root for reviews`},
-	{name: "live", handler: runLive, help: `Usage: crit live [options] <url>
+  -o, --output <dir>          Crit Plus data root for reviews`},
+	{name: "live", handler: runLive, help: `Usage: crit-plus live [options] <url>
 
 Review a running web application in live mode.
 
@@ -117,7 +117,7 @@ Options:
       --share-url <url>    Share service URL
       --no-open            Do not open a browser
   -q, --quiet              On success, suppress connect/start status, tips, and session summary`},
-	{name: "preview", handler: runPreview, help: `Usage: crit preview [options] <file.html>
+	{name: "preview", handler: runPreview, help: `Usage: crit-plus preview [options] <file.html>
 
 Review a local HTML file in preview mode.
 
@@ -130,10 +130,10 @@ Options:
       --share-url <url>   Share service URL
       --no-open           Do not open a browser
   -q, --quiet             On success, suppress connect/start status, tips, and session summary`},
-	{name: "plan", handler: runPlan, help: `Usage: crit plan [--name <slug>] [options] <file>
-       echo "content" | crit plan [--name <slug>] [options]
+	{name: "plan", handler: runPlan, help: `Usage: crit-plus plan [--name <slug>] [options] <file>
+       echo "content" | crit-plus plan [--name <slug>] [options]
 
-Create or continue a plan-file review. If --name is omitted, crit derives it
+Create or continue a plan-file review. If --name is omitted, crit-plus derives it
 from the plan content.
 
 Options:
@@ -147,7 +147,7 @@ Options:
   -q, --quiet             On success, suppress connect/start status, tips, and session summary`},
 	{name: "decide", handler: runDecide, help: decideHelp},
 	{name: "story", handler: runStory, helpFn: printStoryUsage, bareHelp: true},
-	{name: "auth", handler: runAuth, help: `Usage: crit auth <login|logout|whoami|status>
+	{name: "auth", handler: runAuth, help: `Usage: crit-plus auth <login|logout|whoami|status>
 
 Manage crit-web authentication.
 
@@ -156,7 +156,7 @@ Commands:
   logout    Log out and revoke the saved token
 	  whoami    Show the selected user
 	  status    List configured targets and identities`, subcommands: []commandDescriptor{
-		{name: "login", help: `Usage: crit auth login [--force] [--share-url <url>] [--set-default]
+		{name: "login", help: `Usage: crit-plus auth login [--force] [--share-url <url>] [--set-default]
 
 Log in to crit-web with the device authorization flow.
 
@@ -164,24 +164,24 @@ Options:
       --force         Reauthenticate even when already logged in
       --share-url     Add or update this target
       --set-default   Make this the sole default target`},
-		{name: "logout", help: `Usage: crit auth logout [--share-url <url>]
+		{name: "logout", help: `Usage: crit-plus auth logout [--share-url <url>]
 
 Revoke the current token and remove saved credentials.`},
-		{name: "whoami", help: `Usage: crit auth whoami
+		{name: "whoami", help: `Usage: crit-plus auth whoami
 
 Show the currently authenticated crit-web user.`},
-		{name: "status", help: `Usage: crit auth status [--share-url <url>]
+		{name: "status", help: `Usage: crit-plus auth status [--share-url <url>]
 
 List configured share targets and their authentication state.`},
 	}},
-	{name: "stop", handler: runStop, help: `Usage: crit stop [--all] [file...]
+	{name: "stop", handler: runStop, help: `Usage: crit-plus stop [--all] [file...]
 
 Stop the review daemon for the current session. Specify files to target an
 exact file-mode session, or use --all to stop every daemon.`},
-	{name: "status", handler: runStatus, help: `Usage: crit status [--json]
+	{name: "status", handler: runStatus, help: `Usage: crit-plus status [--json]
 
 Show active session IDs and review paths, daemon status, and comment counts.`},
-	{name: "resume", handler: runResume, help: `Usage: crit resume [--list | <id>] [review options]
+	{name: "resume", handler: runResume, help: `Usage: crit-plus resume [--list | <id>] [review options]
 
 Pick a stored review to reopen. Without arguments this shows an interactive
 list of every review in ~/.crit/reviews, newest first, and reconnects to the
@@ -193,17 +193,17 @@ Options:
 
 Any other option is passed through to the review, so flags like --no-open work.
 Reviews stored outside ~/.crit/reviews are not listed: reopen a plan with
-crit plan --name <slug>, and an --output review with crit --session <id>.`},
-	{name: "stats", handler: runStats, help: `Usage: crit stats [--json]
+crit-plus plan --name <slug>, and an --output review with crit-plus --session <id>.`},
+	{name: "stats", handler: runStats, help: `Usage: crit-plus stats [--json]
 
 Show lifetime review statistics.`},
-	{name: "cleanup", handler: runCleanup, help: `Usage: crit cleanup [--days N] [--force]
+	{name: "cleanup", handler: runCleanup, help: `Usage: crit-plus cleanup [--days N] [--force]
 
 Delete stale review files. The default age is seven days.`},
-	{name: "plan-hook", handler: runPlanHookCommand, help: `Usage: crit plan-hook [--mode claude|codex]
+	{name: "plan-hook", handler: runPlanHookCommand, help: `Usage: crit-plus plan-hook [--mode claude|codex]
 
 Run the internal plan hook.`, hidden: true},
-	{name: "_serve", handler: runServe, help: `Usage: crit _serve [options]
+	{name: "_serve", handler: runServe, help: `Usage: crit-plus _serve [options]
 
 Run the internal foreground review server.`, hidden: true},
 }
@@ -291,54 +291,57 @@ func printCommandHelp(command commandDescriptor) {
 }
 
 func printHelp() {
-	fmt.Fprintf(os.Stderr, `crit — inline code review for AI agent workflows
+	fmt.Fprintf(os.Stderr, `crit-plus — inline review and structured decisions for AI agent workflows
+
+An enhanced fork of Crit by Tomasz Tomczyk.
+Upstream: https://github.com/tomasz-tomczyk/crit (MIT)
 
 Getting started:
-  crit install <agent>                       Set up crit for your AI coding tool
-  crit                                       Review your current changes (auto-detects git)
+  crit-plus install <agent>                       Set up crit-plus for your AI coding tool
+  crit-plus                                       Review your current changes (auto-detects git)
 
 Commands:
   %s
 
 Review:
-  crit                                       Auto-detect changed files via git
-  crit <file|dir> [...]                      Review specific files or directories
-  crit live <url>                            Review a running web app in live mode
-  crit preview <file.html>                   Review a local HTML file in preview mode
-  crit --pr <num|url>                        Review a GitHub pull request
-  crit --mr <iid|url>                        Review a GitLab merge request
-  crit --range <base>..<head>                Review a commit range
-  crit plan --name <slug> <file>             Review a plan file
-  crit decide <checklist.json|->            Collect structured human decisions
-  crit story                                 Generate and review a story-mode diff
-  crit --session <id>                        Reconnect to an existing review session
-  crit resume [--list | <id>]               Pick a stored review to reopen
+  crit-plus                                       Auto-detect changed files via git
+  crit-plus <file|dir> [...]                      Review specific files or directories
+  crit-plus live <url>                            Review a running web app in live mode
+  crit-plus preview <file.html>                   Review a local HTML file in preview mode
+  crit-plus --pr <num|url>                        Review a GitHub pull request
+  crit-plus --mr <iid|url>                        Review a GitLab merge request
+  crit-plus --range <base>..<head>                Review a commit range
+  crit-plus plan --name <slug> <file>             Review a plan file
+  crit-plus decide <checklist.json|->            Collect structured human decisions
+  crit-plus story                                 Generate and review a story-mode diff
+  crit-plus --session <id>                        Reconnect to an existing review session
+  crit-plus resume [--list | <id>]               Pick a stored review to reopen
 
 Comments:
-  crit comment <path>:<line[-end]> <body>    Add a comment (headless, no server needed)
-  crit comment --reply-to <id> <body>        Reply to a comment
-  crit comment --json                        Bulk add comments from JSON on stdin
-  crit comment --clear                       Remove all comments
-  crit comments [--session <id>] [--json] [--all] [review]    List unresolved comments (review-level first)
+  crit-plus comment <path>:<line[-end]> <body>    Add a comment (headless, no server needed)
+  crit-plus comment --reply-to <id> <body>        Reply to a comment
+  crit-plus comment --json                        Bulk add comments from JSON on stdin
+  crit-plus comment --clear                       Remove all comments
+  crit-plus comments [--session <id>] [--json] [--all] [review]    List unresolved comments (review-level first)
 
 Sharing:
-  crit share <file> [file...]                Share files to crit-web, print URL
-  crit fetch [--output <dir>]                Fetch comments from crit-web
-  crit unpublish [file...]                   Remove a shared review from crit-web
+  crit-plus share <file> [file...]                Share files to crit-web, print URL
+  crit-plus fetch [--output <dir>]                Fetch comments from crit-web
+  crit-plus unpublish [file...]                   Remove a shared review from crit-web
 
 Remote review sync (provider auto-detected, or set "forge" in config):
-  crit pull [--session <id>] [number|url]    Fetch PR/MR comments into the review file
-  crit push [--session <id>] [--dry-run] [number|url]  Post review comments to a PR/MR
+  crit-plus pull [--session <id>] [number|url]    Fetch PR/MR comments into the review file
+  crit-plus push [--session <id>] [--dry-run] [number|url]  Post review comments to a PR/MR
 
 Setup & management:
-  crit install <agent>                       Install integration for an AI coding tool
-  crit check                                 Check integrations (staleness + missing)
-  crit status [--json]                       Print session info
-  crit stats [--json]                        Show lifetime review statistics
-  crit stop [--all]                          Stop the daemon
-  crit cleanup [--days N] [--force]          Delete stale review files (default: 7 days)
-  crit config [--generate]                   Show resolved configuration
-  crit auth login|logout|whoami              Manage crit-web authentication
+  crit-plus install <agent>                       Install integration for an AI coding tool
+  crit-plus check                                 Check integrations (staleness + missing)
+  crit-plus status [--json]                       Print session info
+  crit-plus stats [--json]                        Show lifetime review statistics
+  crit-plus stop [--all]                          Stop the daemon
+  crit-plus cleanup [--days N] [--force]          Delete stale review files (default: 7 days)
+  crit-plus config [--generate]                   Show resolved configuration
+  crit-plus auth login|logout|whoami              Manage crit-web authentication
 
   Agents: %s, all
 
@@ -347,8 +350,8 @@ Options:
       --host <host>           Listen host (default: 127.0.0.1)
       --public-url <url>      Advertised base URL (e.g. https://machine.ts.net via tailscale serve)
       --allow-unauthenticated-network
-                              Allow non-loopback --host or --public-url (trusted network only; Crit has no network auth)
-  -o, --output <dir>          Crit data root for reviews (default: ~/.crit)
+                              Allow non-loopback --host or --public-url (trusted network only; Crit Plus has no network auth)
+  -o, --output <dir>          Crit Plus data root for reviews (default: ~/.crit)
       --no-open               Don't auto-open browser
       --no-ignore             Disable all file ignore patterns
   -q, --quiet                 On success, suppress connect/start status, tips, and session summary
@@ -358,7 +361,7 @@ Options:
       --session <id>          Reconnect to an existing review session (from stderr or next_command)
       --forge <provider>      Select pull/push provider: auto, github, or gitlab
       --remote                Read --pr/--mr files via that change request's forge API
-      --qr                    Print QR code of share URL (with crit share)
+      --qr                    Print QR code of share URL (with crit-plus share)
   -v, --version               Print version
 
 Environment:
@@ -374,9 +377,10 @@ Environment:
 
 Configuration:
   Global: ~/.crit.config.json   Project: .crit.config.json (in repo root)
-  Run 'crit config' to see all keys and resolved values.
+  Run 'crit-plus config' to see all keys and resolved values.
 
-Learn more: https://crit.md
+Fork: https://github.com/JesseGuoX/better-crit
+Upstream Crit: https://github.com/tomasz-tomczyk/crit
 `, strings.Join(visibleCommandNames(), ", "), strings.Join(availableIntegrations(), ", "))
 }
 
@@ -422,7 +426,7 @@ func runPlanHookCommand(args []string) {
 }
 
 func printVersion() {
-	line := "crit " + version
+	line := "crit-plus " + version
 	var details []string
 	if date != "unknown" {
 		details = append(details, date)

@@ -163,7 +163,7 @@ func TestHandleStory_PostRejected_DuplicateHunk_ReturnsCoverageAndDoesNotSave(t 
 		t.Fatalf("status = %d, want 4xx, body = %s", w.Code, w.Body.String())
 	}
 
-	// Body is the bare StoryCoverage object — same shape `crit story` prints
+	// Body is the bare StoryCoverage object — same shape `crit-plus story` prints
 	// to stdout — not wrapped under an "error"/"coverage" envelope.
 	var coverage struct {
 		OK         bool     `json:"ok"`

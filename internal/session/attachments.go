@@ -180,8 +180,8 @@ func InlineAttachmentsAsDataURIs(reviewPath, body string) string {
 // stripAttachmentReferences removes local attachments/<file> markdown
 // image refs from body and returns the rewritten body plus the number
 // stripped. External and absolute URLs are left intact. Used on the GitHub
-// push path: pasted images live only inside the local crit review folder,
-// so the GitHub-rendered comment substitutes a "view in Crit" notice.
+// push path: pasted images live only inside the local crit-plus review folder,
+// so the GitHub-rendered comment substitutes a "view in Crit Plus" notice.
 func StripAttachmentReferences(body string) (string, int) {
 	if !strings.Contains(body, "attachments/") {
 		return body, 0
@@ -201,17 +201,17 @@ func StripAttachmentReferences(body string) (string, int) {
 	if count != 1 {
 		noun = "images"
 	}
-	out += fmt.Sprintf("\n\n_[%d %s removed — view in Crit]_", count, noun)
+	out += fmt.Sprintf("\n\n_[%d %s removed — view in Crit Plus]_", count, noun)
 	return out, count
 }
 
-// bodyRewriter processes a comment body before it leaves crit en route to
+// bodyRewriter processes a comment body before it leaves crit-plus en route to
 // GitHub. nil is interpreted as "leave the body alone"; this is convenient
 // for unit tests that don't care about attachment handling.
 type bodyRewriter func(body string) string
 
 // stripBodyRewriter removes local attachment refs from a body and appends
-// a "view in Crit" notice. Pasted images live only inside the local review
+// a "view in Crit Plus" notice. Pasted images live only inside the local review
 // folder; the push path is the only outbound boundary that doesn't carry
 // the bytes (share-to-crit-web inlines as data URI; the GitHub comment
 // gets a notice instead).

@@ -1,6 +1,10 @@
 # Compiled binary
+/crit-plus
+/crit-plus.exe
+# Legacy local build artifacts
 /crit
 /crit.exe
+/dist/
 *.test
 
 # Review session files (generated at runtime)

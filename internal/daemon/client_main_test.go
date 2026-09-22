@@ -136,7 +136,7 @@ func TestRunReviewClientRaw_DaemonShutdownDeniesNotApproves(t *testing.T) {
 				json.NewEncoder(w).Encode(map[string]any{
 					"status":   "shutdown",
 					"approved": false,
-					"prompt":   "crit daemon shut down before review was finished.",
+					"prompt":   "crit-plus daemon shut down before review was finished.",
 				})
 			default:
 				http.NotFound(w, r)
@@ -365,7 +365,7 @@ func TestRunReviewClientRaw_DoesNotExposeFallbackDaemonLog(t *testing.T) {
 	if strings.Contains(prompt, logContents) {
 		t.Fatalf("agent-facing prompt exposed daemon log: %q", prompt)
 	}
-	if prompt != "crit daemon was unreachable; plan was not reviewed." {
+	if prompt != "crit-plus daemon was unreachable; plan was not reviewed." {
 		t.Fatalf("unexpected fallback prompt: %q", prompt)
 	}
 }

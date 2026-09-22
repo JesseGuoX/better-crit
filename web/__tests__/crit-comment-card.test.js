@@ -193,7 +193,7 @@ test('suppressDrift omits the Drifted badge and drifted-context block', () => {
 test('GitHub badge renders when comment.github_id is set', () => {
   // Comments synced from a GitHub PR carry a non-zero github_id from the
   // Go side. The shared card paints a small pill so reviewers can tell
-  // imported comments apart from native crit comments (#370).
+  // imported comments apart from native crit-plus comments (#370).
   const out = card.buildCommentCard(
     { id: 'gh1', body: 'x', github_id: 12345,
       created_at: '2024-01-01T00:00:00Z' },

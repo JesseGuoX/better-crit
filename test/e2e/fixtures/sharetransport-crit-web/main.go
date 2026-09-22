@@ -1,5 +1,5 @@
 // Package main is the share-transport E2E fixture: a minimal stand-in for a
-// crit-web instance, implementing only the four endpoints the local crit
+// crit-web instance, implementing only the four endpoints the local crit-plus
 // server calls when sharing (POST/PUT/DELETE /api/reviews and
 // GET /api/reviews/:token/comments).
 //
@@ -139,7 +139,7 @@ func (f *fixture) deleteReview(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	// Unknown token — crit treats 404 as "already gone", i.e. success.
+	// Unknown token — crit-plus treats 404 as "already gone", i.e. success.
 	w.WriteHeader(http.StatusNotFound)
 }
 

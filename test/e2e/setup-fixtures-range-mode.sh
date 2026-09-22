@@ -56,13 +56,13 @@ D_SHA=$(git rev-parse HEAD)
 # Move HEAD back to feat-c for the picker tests.
 git checkout -q feat-c
 
-# Build crit binary outside the repo (skip if CRIT_BIN is set).
+# Build crit-plus binary outside the repo (skip if CRIT_BIN is set).
 if [ -z "${CRIT_BIN:-}" ]; then
   CRIT_BIN="$BIN_DIR/$(e2e_bin_name)"
   if command -v mise >/dev/null 2>&1; then
-    (cd "$CRIT_SRC" && mise exec -- go build -o "$CRIT_BIN" ./cmd/crit)
+    (cd "$CRIT_SRC" && mise exec -- go build -o "$CRIT_BIN" ./cmd/crit-plus)
   else
-    (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit)
+    (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit-plus)
   fi
 fi
 
@@ -82,5 +82,5 @@ STATE_FILE="$(e2e_state_file "$PORT")"
   echo "RANGE_HEAD_AFTER=$D_SHA"
 } > "$STATE_FILE"
 
-# Boot crit in range mode A..B.
+# Boot crit-plus in range mode A..B.
 exec "$CRIT_BIN" _serve --no-open --port "$PORT" --range "$A_SHA..$B_SHA"

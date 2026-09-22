@@ -148,20 +148,20 @@ func critBinary(t *testing.T) string {
 	if b := os.Getenv("CRIT_BINARY"); b != "" {
 		return b
 	}
-	// Default: binary from `make build` at repo root (../../crit from cmd/crit).
+	// Default: binary from `make build` at repo root (../../crit-plus from cmd/crit-plus).
 	wd, err := os.Getwd()
 	if err != nil {
 		t.Fatal(err)
 	}
 	for _, p := range []string{
-		filepath.Join(wd, "..", "..", "crit"),
-		filepath.Join(wd, "crit"),
+		filepath.Join(wd, "..", "..", "crit-plus"),
+		filepath.Join(wd, "crit-plus"),
 	} {
 		if _, err := os.Stat(p); err == nil {
 			return p
 		}
 	}
-	return filepath.Join(wd, "..", "..", "crit")
+	return filepath.Join(wd, "..", "..", "crit-plus")
 }
 
 // TestShareSyncIntegration exercises the full share -> review -> re-share loop.
@@ -198,7 +198,7 @@ func TestShareSyncIntegration(t *testing.T) {
 	cmd.Dir = dir
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		t.Fatalf("crit share failed: %s\n%s", err, out)
+		t.Fatalf("crit-plus share failed: %s\n%s", err, out)
 	}
 
 	// First share output is just the URL
@@ -234,12 +234,12 @@ func TestShareSyncIntegration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// e) Re-share: crit share should pull web comment, push new round
+	// e) Re-share: crit-plus share should pull web comment, push new round
 	cmd2 := exec.Command(binary, "share", "--share-url", baseURL, "--output", dir, "plan.md")
 	cmd2.Dir = dir
 	out2, err := cmd2.CombinedOutput()
 	if err != nil {
-		t.Fatalf("second crit share failed: %s\n%s", err, out2)
+		t.Fatalf("second crit-plus share failed: %s\n%s", err, out2)
 	}
 	output2 := string(out2)
 	t.Logf("Second share output: %s", output2)
@@ -487,8 +487,8 @@ func testOutputIdentity(t *testing.T, dir string) string {
 	return filepath.Join(abs, "reviews", daemon.SessionKey(cwd, "", nil))
 }
 
-// critShareCmd runs `crit share` and returns stdout. Fails the test on error.
-// Uses --output to point at the temp dir seeded by writeTestCritJSON, so crit
+// critShareCmd runs `crit-plus share` and returns stdout. Fails the test on error.
+// Uses --output to point at the temp dir seeded by writeTestCritJSON, so crit-plus
 // reads/writes reviews/<key>/review.json there.
 func critShareCmd(t *testing.T, binary, baseURL, dir string, files ...string) string {
 	t.Helper()
@@ -497,19 +497,19 @@ func critShareCmd(t *testing.T, binary, baseURL, dir string, files ...string) st
 	cmd.Dir = dir
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		t.Fatalf("crit share failed: %s\n%s", err, out)
+		t.Fatalf("crit-plus share failed: %s\n%s", err, out)
 	}
 	return strings.TrimSpace(string(out))
 }
 
-// critUnpublishCmd runs `crit unpublish` and returns stdout.
+// critUnpublishCmd runs `crit-plus unpublish` and returns stdout.
 func critUnpublishCmd(t *testing.T, binary, baseURL, dir string) string {
 	t.Helper()
 	cmd := exec.Command(binary, "unpublish", "--share-url", baseURL, "--output", dir)
 	cmd.Dir = dir
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		t.Fatalf("crit unpublish failed: %s\n%s", err, out)
+		t.Fatalf("crit-plus unpublish failed: %s\n%s", err, out)
 	}
 	return strings.TrimSpace(string(out))
 }
@@ -605,7 +605,7 @@ func TestShareSyncPreviewPreservesOriginalPath(t *testing.T) {
 	output, err := runCritCmd(t, binary, dir,
 		"share", "--share-url", baseURL, "--preview", originalPath)
 	if err != nil {
-		t.Fatalf("crit share --preview failed: %s\n%s", err, output)
+		t.Fatalf("crit-plus share --preview failed: %s\n%s", err, output)
 	}
 	logReview(t, output)
 	token := extractToken(t, output)
@@ -1628,7 +1628,7 @@ func TestShareSyncFullLifecycle(t *testing.T) {
 //
 // This uses shareFilesToWeb directly because orphaned files are shared via the
 // browser share path (LoadShareFilesFromDisk on a live session), not the CLI
-// `crit share` command (which reads files from disk — orphaned files don't exist on disk).
+// `crit-plus share` command (which reads files from disk — orphaned files don't exist on disk).
 func TestShareSyncOrphanedFile(t *testing.T) {
 	baseURL := critWebURL(t)
 
@@ -1723,7 +1723,7 @@ func TestShareSyncOrphanedFile(t *testing.T) {
 }
 
 // TestShareSyncFetchReplies verifies that replies to web-authored comments
-// are fetched back into the local .crit.json when running crit fetch (via re-share).
+// are fetched back into the local .crit.json when running crit-plus fetch (via re-share).
 func TestShareSyncFetchReplies(t *testing.T) {
 	baseURL := critWebURL(t)
 	binary := critBinary(t)
@@ -1912,7 +1912,7 @@ func seedResolve(t *testing.T, baseURL, token, commentID string, resolved bool) 
 
 // TestShareSyncResolvedRoundMapping verifies that crit-web stamps resolved_round
 // with the review's current review_round on resolve, clears it on unresolve,
-// and that both fields round-trip through the public API that crit reads.
+// and that both fields round-trip through the public API that crit-plus reads.
 func TestShareSyncResolvedRoundMapping(t *testing.T) {
 	baseURL := critWebURL(t)
 	binary := critBinary(t)
@@ -2042,7 +2042,7 @@ func htmlStubServer(t *testing.T) *httptest.Server {
 }
 
 // jsonShareStub returns a stub server that mimics a successful crit-web
-// /api/reviews POST: returns {url, delete_token} so `crit share` can record
+// /api/reviews POST: returns {url, delete_token} so `crit-plus share` can record
 // share state. Used to verify the legacy (non-popup) share path still works.
 func jsonShareStub(t *testing.T) *httptest.Server {
 	t.Helper()
@@ -2140,14 +2140,14 @@ func reviewDocInaccessible(t *testing.T, baseURL, token string) {
 	}
 }
 
-// critShareCmdWithArgs runs `crit share` with arbitrary extra arguments before the file list.
+// critShareCmdWithArgs runs `crit-plus share` with arbitrary extra arguments before the file list.
 // Returns combined output. Fails the test on non-zero exit.
 func critShareCmdWithArgs(t *testing.T, binary, baseURL, dir string, extraArgs []string, files ...string) string {
 	t.Helper()
 	return critShareCmdWithEnv(t, binary, baseURL, dir, extraArgs, nil, files...)
 }
 
-// critShareCmdWithEnv runs `crit share` with extra args and env vars.
+// critShareCmdWithEnv runs `crit-plus share` with extra args and env vars.
 func critShareCmdWithEnv(t *testing.T, binary, baseURL, dir string, extraArgs, extraEnv []string, files ...string) string {
 	t.Helper()
 	args := []string{"share", "--share-url", baseURL, "--output", dir}
@@ -2160,12 +2160,12 @@ func critShareCmdWithEnv(t *testing.T, binary, baseURL, dir string, extraArgs, e
 	}
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		t.Fatalf("crit share failed: %s\n%s", err, out)
+		t.Fatalf("crit-plus share failed: %s\n%s", err, out)
 	}
 	return strings.TrimSpace(string(out))
 }
 
-// critShareCmdExpectFail runs `crit share` and expects a non-zero exit code.
+// critShareCmdExpectFail runs `crit-plus share` and expects a non-zero exit code.
 // Returns combined output and the error.
 func critShareCmdExpectFail(t *testing.T, binary, baseURL, dir string, extraArgs, extraEnv, files []string) (string, error) {
 	t.Helper()
@@ -2183,7 +2183,7 @@ func critShareCmdExpectFail(t *testing.T, binary, baseURL, dir string, extraArgs
 
 // TestShareReceiver_HTMLPostReturnsProxyAuthError verifies that when crit-web
 // (or its reverse proxy) returns HTML on POST /api/reviews — the canonical
-// SSO failure path — `crit share` exits non-zero with an error message
+// SSO failure path — `crit-plus share` exits non-zero with an error message
 // pointing the user at proxy_auth=true.
 func TestShareReceiver_HTMLPostReturnsProxyAuthError(t *testing.T) {
 	binary := critBinary(t)
@@ -2209,7 +2209,7 @@ func TestShareReceiver_HTMLPostReturnsProxyAuthError(t *testing.T) {
 	}
 }
 
-// TestShareReceiver_FetchHTMLReturnsProxyAuthError verifies that `crit fetch`
+// TestShareReceiver_FetchHTMLReturnsProxyAuthError verifies that `crit-plus fetch`
 // against an HTML-returning stub crit-web (SSO proxy intercepting GET
 // /api/reviews/:token/comments) gives the helpful proxy_auth=true hint.
 func TestShareReceiver_FetchHTMLReturnsProxyAuthError(t *testing.T) {
@@ -2221,7 +2221,7 @@ func TestShareReceiver_FetchHTMLReturnsProxyAuthError(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, "plan.md"), []byte("# Plan\n"), 0644); err != nil {
 		t.Fatal(err)
 	}
-	// Pre-seed .crit.json with a share_url pointing at the stub so `crit
+	// Pre-seed .crit.json with a share_url pointing at the stub so `crit-plus
 	// fetch` has somewhere to look. tokenFromHostedURL parses /r/<token>.
 	writeTestCritJSON(t, dir, CritJSON{
 		ReviewRound: 1,
@@ -2240,7 +2240,7 @@ func TestShareReceiver_FetchHTMLReturnsProxyAuthError(t *testing.T) {
 }
 
 // TestShareReceiver_ProxyAuthEnabledBlocksShareCLI verifies that when
-// proxy_auth is already configured, crit share fails immediately with a
+// proxy_auth is already configured, crit-plus share fails immediately with a
 // message pointing at the browser UI — without contacting crit-web.
 func TestShareReceiver_ProxyAuthEnabledBlocksShareCLI(t *testing.T) {
 	binary := critBinary(t)
@@ -2258,7 +2258,7 @@ func TestShareReceiver_ProxyAuthEnabledBlocksShareCLI(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected non-zero exit, got success. output: %s", out)
 	}
-	for _, want := range []string{"proxy_auth", "Crit's browser interface"} {
+	for _, want := range []string{"proxy_auth", "Crit Plus's browser interface"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("expected output to mention %q, got: %s", want, out)
 		}
@@ -2445,7 +2445,7 @@ func TestShareSyncOrgNonMemberError(t *testing.T) {
 
 	output, err := critShareCmdExpectFail(t, binary, baseURL, dir, []string{"--org", "nonexistent-org-xyz"}, authEnv, []string{"readme.md"})
 	if err == nil {
-		t.Fatalf("expected crit share to fail for non-existent org, but it succeeded.\nOutput: %s", output)
+		t.Fatalf("expected crit-plus share to fail for non-existent org, but it succeeded.\nOutput: %s", output)
 	}
 	t.Logf("Expected failure output: %s", output)
 	t.Logf("Expected failure error: %v", err)
@@ -2482,7 +2482,7 @@ func TestShareSyncOrgUnpublish(t *testing.T) {
 	unpubCmd.Dir = dir
 	unpubOut, err := unpubCmd.CombinedOutput()
 	if err != nil {
-		t.Fatalf("crit unpublish failed: %s\n%s", err, unpubOut)
+		t.Fatalf("crit-plus unpublish failed: %s\n%s", err, unpubOut)
 	}
 	t.Logf("Unpublish output: %s", unpubOut)
 

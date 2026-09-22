@@ -30,8 +30,8 @@ func (s *Server) buildPromptContext(sess *Session, approved bool, stats map[stri
 	quoted := shellQuoteArg(reviewPath)
 	ctx := prompt.Context{
 		ReviewPath:          reviewPath,
-		CommentsCmd:         "crit comments --json " + quoted,
-		CommentsAllCmd:      "crit comments --json --all " + quoted,
+		CommentsCmd:         "crit-plus comments --json " + quoted,
+		CommentsAllCmd:      "crit-plus comments --json --all " + quoted,
 		NextRoundCmd:        session.NextRoundCommand(sess),
 		SessionKey:          sess.SessionKey,
 		Mode:                mode,

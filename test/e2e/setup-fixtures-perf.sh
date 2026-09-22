@@ -93,10 +93,10 @@ done
 git add -A
 git commit -q -m "perf: large review fixture"
 
-# Build crit binary outside the repo (skip if CRIT_BIN is set)
+# Build crit-plus binary outside the repo (skip if CRIT_BIN is set)
 if [ -z "${CRIT_BIN:-}" ]; then
   CRIT_BIN="$BIN_DIR/$(e2e_bin_name)"
-  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit)
+  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit-plus)
 fi
 
 FAKE_HOME=$(e2e_native_tempdir)
@@ -111,5 +111,5 @@ STATE_FILE="$(e2e_state_file "$PORT")"
 
 echo '{"agent_cmd": "echo"}' > "$FAKE_HOME/.crit.config.json"
 
-# Run crit in the fixture repo (git mode: branch diff vs default branch)
+# Run crit-plus in the fixture repo (git mode: branch diff vs default branch)
 exec "$CRIT_BIN" _serve --no-open --port "$PORT"

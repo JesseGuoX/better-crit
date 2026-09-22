@@ -143,7 +143,7 @@ func (Provider) FetchFile(_ context.Context, _ forge.RepoContext, source forge.R
 }
 
 func (Provider) Invalidate(id forge.ChangeID) {
-	// Drop bare and project-qualified sibling keys (same as crit pull).
+	// Drop bare and project-qualified sibling keys (same as crit-plus pull).
 	InvalidatePRCache(id.Number)
 }
 

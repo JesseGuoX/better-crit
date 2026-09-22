@@ -14,8 +14,9 @@ a { color: var(--crit-brand); }
 [hidden] { display: none !important; }
 .muted { color: var(--crit-fg-secondary); }
 .topbar { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 14px clamp(20px, 3vw, 64px); border-bottom: 1px solid var(--crit-border); background: var(--crit-bg-page); }
+.brand-plus { color: var(--crit-brand); }
 .brand { color: var(--crit-fg-primary); text-decoration: none; font: 700 26px/1.2 var(--crit-font-mono); letter-spacing: -1.5px; }
-.brand span { display: inline-block; margin-left: 18px; border-left: 1px solid var(--crit-border-strong); padding-left: 18px; color: var(--crit-fg-secondary); font: 500 14px var(--crit-font-body); letter-spacing: 0; }
+.brand-label { display: inline-block; margin-left: 18px; border-left: 1px solid var(--crit-border-strong); padding-left: 18px; color: var(--crit-fg-secondary); font: 500 14px var(--crit-font-body); letter-spacing: 0; }
 .topbar-actions { display: flex; align-items: center; gap: 24px; font-size: 13px; }
 .theme-label { display: flex; gap: 8px; align-items: center; }
 select { padding: 5px 10px; }
@@ -94,7 +95,7 @@ button.primary:hover:not(:disabled) { background: var(--crit-brand-cta-hover); }
   .topbar-actions { gap: 12px; }
   .theme-label { font-size: 0; }
   .theme-label select { font-size: 12px; max-width: 100px; }
-  .brand span { margin-left: 10px; padding-left: 10px; }
+  .brand-label { margin-left: 10px; padding-left: 10px; }
   .submitbar { align-items: stretch; flex-direction: column; gap: 10px; padding-block: 12px; }
   .submitbar p { font-size: 11px; }
   .counts { gap: 18px; font-size: 12px; }

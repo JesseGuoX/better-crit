@@ -53,6 +53,14 @@ body {
   display: flex;
   align-items: center;
   color: var(--crit-fg-primary);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+
+.brand-plus {
+  color: var(--crit-brand);
 }
 
 .header-logo {

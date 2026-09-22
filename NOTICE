@@ -1,0 +1,11 @@
+Crit Plus (crit-plus)
+
+This is an enhanced fork of Crit, originally created by Tomasz Tomczyk.
+Upstream project: https://github.com/tomasz-tomczyk/crit
+Upstream website: https://crit.md
+Fork source: https://github.com/JesseGuoX/better-crit
+
+The original code, design, screenshots, and demo materials are credited to
+Crit and its contributors. Original copyright and MIT license terms are
+preserved in LICENSE. This fork adds Markdown layout improvements,
+wide-screen support, and structured human decisions.

@@ -158,7 +158,7 @@ function storyView(page: Page, pageId: string) {
 async function ingestStory(critBin: string, fixtureDir: string, fakeHome: string, opts: { refresh?: boolean; story?: Record<string, unknown> } = {}) {
   const storyFile = writeStoryFixtureFile(opts.story || STORY);
   // --refresh forces a re-ingest (and a story-updated SSE to a running daemon)
-  // even when a story is already present, where a bare `crit story` would
+  // even when a story is already present, where a bare `crit-plus story` would
   // instead resume the existing one.
   const refreshFlag = opts.refresh ? ' --refresh' : '';
   try {
@@ -717,7 +717,7 @@ test.describe('Story mode', () => {
     // POST /api/file/comments path used by the addComment() helper elsewhere
     // in this suite — that path mutates in-memory state directly and never
     // notifies comments-changed; only external review-file writes such as
-    // `crit comment` do, via the git-mode watcher's mergeExternalCritJSON).
+    // `crit-plus comment` do, via the git-mode watcher's mergeExternalCritJSON).
     // This exercises the real live-agent-edit path the story-aware
     // comments-changed re-render (web/app.js) is meant to serve.
     execSync(`"${critBin}" comment routes.go:55 "Live SSE comment while ch2 open"`, execOptsFor(fixtureDir, fakeHome));

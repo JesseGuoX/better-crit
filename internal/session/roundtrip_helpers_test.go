@@ -87,7 +87,7 @@ func newRoundtripEnv(t *testing.T) *roundtripEnv {
 	return env
 }
 
-// runCrit runs the crit binary inside the env workdir with the given args
+// runCrit runs the crit-plus binary inside the env workdir with the given args
 // and returns combined stdout+stderr. Fails the test on non-zero exit.
 func (e *roundtripEnv) runCrit(args ...string) string {
 	e.t.Helper()
@@ -98,7 +98,7 @@ func (e *roundtripEnv) runCrit(args ...string) string {
 	cmd.Stdout = &out
 	cmd.Stderr = &out
 	if err := cmd.Run(); err != nil {
-		e.t.Fatalf("crit %v failed: %v\noutput:\n%s",
+		e.t.Fatalf("crit-plus %v failed: %v\noutput:\n%s",
 			args, err, out.String())
 	}
 	return out.String()
@@ -116,13 +116,13 @@ func (e *roundtripEnv) runCritExpectExit(args ...string) (string, int) {
 	if exitErr, ok := err.(*exec.ExitError); ok {
 		code = exitErr.ExitCode()
 	} else if err != nil {
-		e.t.Fatalf("crit %v: %v", args, err)
+		e.t.Fatalf("crit-plus %v: %v", args, err)
 	}
 	return out.String(), code
 }
 
-// reviewFile reads and unmarshals the review file crit wrote for this branch
-// via `crit status --json`.
+// reviewFile reads and unmarshals the review file crit-plus wrote for this branch
+// via `crit-plus status --json`.
 func (e *roundtripEnv) reviewFile() CritJSON {
 	e.t.Helper()
 	out := e.runCrit("status", "--json")

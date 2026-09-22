@@ -7,7 +7,7 @@ import (
 // absPath is filepath.Abs in production; tests may replace it to exercise errors.
 var absPath = filepath.Abs
 
-// ReviewsDir returns the reviews directory under a crit data root:
+// ReviewsDir returns the reviews directory under a crit-plus data root:
 // {dataRoot}/reviews. dataRoot must be non-empty; the empty/default case is
 // daemon.ReviewsDir (~/.crit/reviews).
 func ReviewsDir(dataRoot string) (string, error) {
@@ -18,7 +18,7 @@ func ReviewsDir(dataRoot string) (string, error) {
 	return filepath.Join(abs, "reviews"), nil
 }
 
-// Identity resolves a session key under a crit data root to the review
+// Identity resolves a session key under a crit-plus data root to the review
 // identity folder: {dataRoot}/reviews/{key}.
 //
 // --output / config output means this data root (same role as ~/.crit for

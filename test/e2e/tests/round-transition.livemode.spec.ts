@@ -67,7 +67,7 @@ test.describe('live-mode round transition', () => {
     const pinId = await row.getAttribute('data-comment-id');
     expect(pinId).toBeTruthy();
 
-    // Reply via the API (mirrors `crit comment --reply-to`).
+    // Reply via the API (mirrors `crit-plus comment --reply-to`).
     const reply = await request.post(
       `/api/comment/${pinId}/replies?path=%2F`,
       { data: { body: 'reply before round bump' } },

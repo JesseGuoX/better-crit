@@ -6,7 +6,7 @@ import (
 )
 
 // WithShareLock runs fn while holding an exclusive advisory lock on the review
-// identity's share.lock file. Concurrent crit share invocations for the same
+// identity's share.lock file. Concurrent crit-plus share invocations for the same
 // review identity block here so only one POST/upsert+persist cycle runs at a
 // time. Callers must re-read share state after acquiring the lock.
 func WithShareLock(identity string, fn func() error) error {

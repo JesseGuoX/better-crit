@@ -5,14 +5,14 @@ const { create } = require('../crit-tab-ready.js');
 
 function fakeDocument(visibility) {
   return {
-    title: 'Crit Review',
+    title: 'Crit Plus Review',
     visibilityState: visibility || 'visible',
   };
 }
 
 test('notifyRoundReady badges when tab is hidden', () => {
   const doc = fakeDocument('hidden');
-  const ready = create({ document: doc, baseTitle: 'Crit Review' });
+  const ready = create({ document: doc, baseTitle: 'Crit Plus Review' });
   const result = ready.notifyRoundReady();
   assert.equal(result.badged, true);
   assert.equal(ready.isBadgeActive(), true);
@@ -21,16 +21,16 @@ test('notifyRoundReady badges when tab is hidden', () => {
 
 test('notifyRoundReady is a no-op when tab is visible', () => {
   const doc = fakeDocument('visible');
-  const ready = create({ document: doc, baseTitle: 'Crit Review' });
+  const ready = create({ document: doc, baseTitle: 'Crit Plus Review' });
   const result = ready.notifyRoundReady();
   assert.equal(result.badged, false);
   assert.equal(ready.isBadgeActive(), false);
-  assert.equal(doc.title, 'Crit Review');
+  assert.equal(doc.title, 'Crit Plus Review');
 });
 
 test('notifyRoundReady with force badges even when the tab is visible', () => {
   const doc = fakeDocument('visible');
-  const ready = create({ document: doc, baseTitle: 'Crit Review' });
+  const ready = create({ document: doc, baseTitle: 'Crit Plus Review' });
   const result = ready.notifyRoundReady({ force: true });
   assert.equal(result.badged, true);
   assert.equal(ready.isBadgeActive(), true);
@@ -46,7 +46,7 @@ test('no browser Notification is constructed, even when one is granted globally'
   const prior = globalThis.Notification;
   globalThis.Notification = FakeNotification;
   try {
-    const ready = create({ document: fakeDocument('hidden'), baseTitle: 'Crit Review' });
+    const ready = create({ document: fakeDocument('hidden'), baseTitle: 'Crit Plus Review' });
     ready.notifyRoundReady();
     assert.equal(constructed.length, 0);
     assert.equal(ready.requestPermission, undefined);
@@ -59,19 +59,19 @@ test('no browser Notification is constructed, even when one is granted globally'
 
 test('clearTabBadge restores title', () => {
   const doc = fakeDocument('hidden');
-  const ready = create({ document: doc, baseTitle: 'Crit Review' });
+  const ready = create({ document: doc, baseTitle: 'Crit Plus Review' });
   ready.notifyRoundReady();
   ready.clearTabBadge();
   assert.equal(ready.isBadgeActive(), false);
-  assert.equal(doc.title, 'Crit Review');
+  assert.equal(doc.title, 'Crit Plus Review');
 });
 
 test('setDocumentTitle keeps the badge prefix while the badge is active', () => {
   const doc = fakeDocument('hidden');
-  const ready = create({ document: doc, baseTitle: 'Crit Review' });
+  const ready = create({ document: doc, baseTitle: 'Crit Plus Review' });
   ready.notifyRoundReady();
-  ready.setDocumentTitle('Crit Review — app.js');
-  assert.equal(doc.title, ready.BADGE_PREFIX + 'Crit Review — app.js');
+  ready.setDocumentTitle('Crit Plus Review — app.js');
+  assert.equal(doc.title, ready.BADGE_PREFIX + 'Crit Plus Review — app.js');
   ready.clearTabBadge();
-  assert.equal(doc.title, 'Crit Review — app.js');
+  assert.equal(doc.title, 'Crit Plus Review — app.js');
 });

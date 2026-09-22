@@ -250,14 +250,14 @@ func TestRunComment_PlanAndOutputConflict(t *testing.T) {
 }
 
 func TestRunComment_JSONAndReplyToConflict(t *testing.T) {
-	err := RunComment([]string{"--json", "--reply-to", "c_6ab5c4", "--author", "Cursor", "Added crit install prompts"})
+	err := RunComment([]string{"--json", "--reply-to", "c_6ab5c4", "--author", "Cursor", "Added crit-plus install prompts"})
 	if err == nil {
 		t.Fatal("expected error")
 	}
 	if !strings.Contains(err.Error(), "--json and --reply-to cannot be used together") {
 		t.Errorf("got %v", err)
 	}
-	if !strings.Contains(err.Error(), "crit comment --reply-to <id>") {
+	if !strings.Contains(err.Error(), "crit-plus comment --reply-to <id>") {
 		t.Errorf("expected reply usage hint, got %v", err)
 	}
 }

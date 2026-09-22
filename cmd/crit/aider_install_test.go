@@ -39,13 +39,13 @@ func toStringSlice(t *testing.T, v any) []string {
 }
 
 func TestMergeAiderConfYAML_EmptyDocument(t *testing.T) {
-	out, err := mergeAiderConfYAML(nil, ".crit/aider-conventions.md")
+	out, err := mergeAiderConfYAML(nil, ".crit/crit-plus-aider-conventions.md")
 	if err != nil {
 		t.Fatal(err)
 	}
 	conf := decodeAiderConf(t, out)
 	got := toStringSlice(t, conf["read"])
-	if len(got) != 1 || got[0] != ".crit/aider-conventions.md" {
+	if len(got) != 1 || got[0] != ".crit/crit-plus-aider-conventions.md" {
 		t.Errorf("expected single entry, got %v", got)
 	}
 	if len(conf) != 1 {
@@ -60,7 +60,7 @@ read:
   - foo.md
   - bar.md
 `)
-	out, err := mergeAiderConfYAML(input, ".crit/aider-conventions.md")
+	out, err := mergeAiderConfYAML(input, ".crit/crit-plus-aider-conventions.md")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,7 +73,7 @@ read:
 		t.Errorf("auto-commits not preserved: got %v", conf["auto-commits"])
 	}
 	got := toStringSlice(t, conf["read"])
-	want := []string{"foo.md", "bar.md", ".crit/aider-conventions.md"}
+	want := []string{"foo.md", "bar.md", ".crit/crit-plus-aider-conventions.md"}
 	if strings.Join(got, ",") != strings.Join(want, ",") {
 		t.Errorf("read list mismatch:\n got:  %v\n want: %v", got, want)
 	}
@@ -84,11 +84,11 @@ func TestMergeAiderConfYAML_Idempotent(t *testing.T) {
 read:
   - foo.md
 `)
-	first, err := mergeAiderConfYAML(input, ".crit/aider-conventions.md")
+	first, err := mergeAiderConfYAML(input, ".crit/crit-plus-aider-conventions.md")
 	if err != nil {
 		t.Fatal(err)
 	}
-	second, err := mergeAiderConfYAML(first, ".crit/aider-conventions.md")
+	second, err := mergeAiderConfYAML(first, ".crit/crit-plus-aider-conventions.md")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -99,7 +99,7 @@ read:
 	got := toStringSlice(t, conf["read"])
 	count := 0
 	for _, s := range got {
-		if s == ".crit/aider-conventions.md" {
+		if s == ".crit/crit-plus-aider-conventions.md" {
 			count++
 		}
 	}
@@ -110,9 +110,9 @@ read:
 
 func TestMergeAiderConfYAML_AlreadyPresent(t *testing.T) {
 	input := []byte(`read:
-  - .crit/aider-conventions.md
+  - .crit/crit-plus-aider-conventions.md
 `)
-	out, err := mergeAiderConfYAML(input, ".crit/aider-conventions.md")
+	out, err := mergeAiderConfYAML(input, ".crit/crit-plus-aider-conventions.md")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -127,13 +127,13 @@ func TestMergeAiderConfYAML_ScalarReadPromotedToSequence(t *testing.T) {
 	input := []byte(`read: foo.md
 model: gpt-4
 `)
-	out, err := mergeAiderConfYAML(input, ".crit/aider-conventions.md")
+	out, err := mergeAiderConfYAML(input, ".crit/crit-plus-aider-conventions.md")
 	if err != nil {
 		t.Fatal(err)
 	}
 	conf := decodeAiderConf(t, out)
 	got := toStringSlice(t, conf["read"])
-	want := []string{"foo.md", ".crit/aider-conventions.md"}
+	want := []string{"foo.md", ".crit/crit-plus-aider-conventions.md"}
 	if strings.Join(got, ",") != strings.Join(want, ",") {
 		t.Errorf("got %v, want %v", got, want)
 	}
@@ -145,13 +145,13 @@ model: gpt-4
 func TestMergeAiderConfYAML_NoReadKey(t *testing.T) {
 	input := []byte(`model: gpt-4
 `)
-	out, err := mergeAiderConfYAML(input, ".crit/aider-conventions.md")
+	out, err := mergeAiderConfYAML(input, ".crit/crit-plus-aider-conventions.md")
 	if err != nil {
 		t.Fatal(err)
 	}
 	conf := decodeAiderConf(t, out)
 	got := toStringSlice(t, conf["read"])
-	if len(got) != 1 || got[0] != ".crit/aider-conventions.md" {
+	if len(got) != 1 || got[0] != ".crit/crit-plus-aider-conventions.md" {
 		t.Errorf("expected single entry, got %v", got)
 	}
 	if conf["model"] != "gpt-4" {
@@ -163,7 +163,7 @@ func TestMergeAiderConfFile_CreatesMissingFile(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, ".aider.conf.yml")
 
-	if err := mergeAiderConfFile(path, ".crit/aider-conventions.md"); err != nil {
+	if err := mergeAiderConfFile(path, ".crit/crit-plus-aider-conventions.md"); err != nil {
 		t.Fatal(err)
 	}
 	data, err := os.ReadFile(path)
@@ -172,7 +172,7 @@ func TestMergeAiderConfFile_CreatesMissingFile(t *testing.T) {
 	}
 	conf := decodeAiderConf(t, data)
 	got := toStringSlice(t, conf["read"])
-	if len(got) != 1 || got[0] != ".crit/aider-conventions.md" {
+	if len(got) != 1 || got[0] != ".crit/crit-plus-aider-conventions.md" {
 		t.Errorf("expected single entry, got %v", got)
 	}
 }
@@ -191,14 +191,14 @@ read:
 	}
 
 	// Run install twice — second call should be a no-op for content.
-	if err := mergeAiderConfFile(path, ".crit/aider-conventions.md"); err != nil {
+	if err := mergeAiderConfFile(path, ".crit/crit-plus-aider-conventions.md"); err != nil {
 		t.Fatal(err)
 	}
 	first, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := mergeAiderConfFile(path, ".crit/aider-conventions.md"); err != nil {
+	if err := mergeAiderConfFile(path, ".crit/crit-plus-aider-conventions.md"); err != nil {
 		t.Fatal(err)
 	}
 	second, err := os.ReadFile(path)
@@ -217,7 +217,7 @@ read:
 		t.Errorf("auto-commits not preserved: %v", conf["auto-commits"])
 	}
 	got := toStringSlice(t, conf["read"])
-	want := []string{"foo.md", "bar.md", ".crit/aider-conventions.md"}
+	want := []string{"foo.md", "bar.md", ".crit/crit-plus-aider-conventions.md"}
 	if strings.Join(got, ",") != strings.Join(want, ",") {
 		t.Errorf("read list mismatch:\n got:  %v\n want: %v", got, want)
 	}
@@ -228,24 +228,24 @@ func TestAiderPaths_ProjectVsGlobal(t *testing.T) {
 	home := "/home/me"
 
 	p := aiderPaths(cwd, home)
-	if p.conventionsDest != filepath.Join(cwd, ".crit", "aider-conventions.md") {
+	if p.conventionsDest != filepath.Join(cwd, ".crit", "crit-plus-aider-conventions.md") {
 		t.Errorf("project conventionsDest: %s", p.conventionsDest)
 	}
 	if p.confPath != filepath.Join(cwd, ".aider.conf.yml") {
 		t.Errorf("project confPath: %s", p.confPath)
 	}
-	if p.readEntry != ".crit/aider-conventions.md" {
+	if p.readEntry != ".crit/crit-plus-aider-conventions.md" {
 		t.Errorf("project readEntry: %s", p.readEntry)
 	}
 
 	g := aiderPaths(home, home)
-	if g.conventionsDest != filepath.Join(home, ".crit-conventions.md") {
+	if g.conventionsDest != filepath.Join(home, ".crit-plus-conventions.md") {
 		t.Errorf("global conventionsDest: %s", g.conventionsDest)
 	}
 	if g.confPath != filepath.Join(home, ".aider.conf.yml") {
 		t.Errorf("global confPath: %s", g.confPath)
 	}
-	if g.readEntry != "~/.crit-conventions.md" {
+	if g.readEntry != "~/.crit-plus-conventions.md" {
 		t.Errorf("global readEntry: %s", g.readEntry)
 	}
 }
@@ -266,11 +266,11 @@ func TestResolveGlobalDest(t *testing.T) {
 	home := "/home/me"
 
 	// Plain relative-to-home.
-	got, err := resolveGlobalDest(globalDestRelHome, ".agents/skills/crit/SKILL.md", home)
+	got, err := resolveGlobalDest(globalDestRelHome, ".agents/skills/crit-plus/SKILL.md", home)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got != filepath.Join(home, ".agents/skills/crit/SKILL.md") {
+	if got != filepath.Join(home, ".agents/skills/crit-plus/SKILL.md") {
 		t.Errorf("got %s", got)
 	}
 
@@ -289,12 +289,12 @@ func TestResolveGlobalDest(t *testing.T) {
 	xdgUserDirFn = func(string) (string, error) { return "/home/me/Docs", nil }
 	t.Cleanup(func() { xdgUserDirFn = prev })
 
-	got, err = resolveGlobalDest(globalDestDocuments, "Cline/Rules/crit.md", home)
+	got, err = resolveGlobalDest(globalDestDocuments, "Cline/Rules/crit-plus.md", home)
 	if err != nil {
 		t.Fatal(err)
 	}
 	docs := documentsDir(home)
-	want := filepath.Join(docs, "Cline/Rules/crit.md")
+	want := filepath.Join(docs, "Cline/Rules/crit-plus.md")
 	if got != want {
 		t.Errorf("documents kind: got %s want %s", got, want)
 	}
@@ -348,12 +348,12 @@ func TestInstallAider_ProjectMode(t *testing.T) {
 	}
 
 	// Conventions file written.
-	convPath := filepath.Join(dir, ".crit", "aider-conventions.md")
+	convPath := filepath.Join(dir, ".crit", "crit-plus-aider-conventions.md")
 	if _, err := os.Stat(convPath); err != nil {
 		t.Errorf("conventions file not written: %v", err)
 	}
 
-	// Conf merged: foo.md + .crit/aider-conventions.md, model preserved.
+	// Conf merged: foo.md + .crit/crit-plus-aider-conventions.md, model preserved.
 	data, err := os.ReadFile(confPath)
 	if err != nil {
 		t.Fatal(err)
@@ -363,7 +363,7 @@ func TestInstallAider_ProjectMode(t *testing.T) {
 		t.Errorf("model lost: %v", conf["model"])
 	}
 	got := toStringSlice(t, conf["read"])
-	want := []string{"foo.md", ".crit/aider-conventions.md"}
+	want := []string{"foo.md", ".crit/crit-plus-aider-conventions.md"}
 	if strings.Join(got, ",") != strings.Join(want, ",") {
 		t.Errorf("read list mismatch:\n got:  %v\n want: %v", got, want)
 	}
@@ -380,7 +380,7 @@ func TestInstallAider_ProjectMode(t *testing.T) {
 }
 
 func TestInstallAiderAt_GlobalMode(t *testing.T) {
-	// In global mode (cwd == home), conventions land at $HOME/.crit-conventions.md
+	// In global mode (cwd == home), conventions land at $HOME/.crit-plus-conventions.md
 	// and the conf is $HOME/.aider.conf.yml. Use a temp dir as both cwd and
 	// home so we don't touch the real home dir.
 	home := t.TempDir()
@@ -389,7 +389,7 @@ func TestInstallAiderAt_GlobalMode(t *testing.T) {
 		t.Fatalf("installAiderAt: %v", err)
 	}
 
-	convPath := filepath.Join(home, ".crit-conventions.md")
+	convPath := filepath.Join(home, ".crit-plus-conventions.md")
 	if _, err := os.Stat(convPath); err != nil {
 		t.Errorf("global conventions file not written: %v", err)
 	}
@@ -401,8 +401,8 @@ func TestInstallAiderAt_GlobalMode(t *testing.T) {
 	}
 	conf := decodeAiderConf(t, data)
 	got := toStringSlice(t, conf["read"])
-	if len(got) != 1 || got[0] != "~/.crit-conventions.md" {
-		t.Errorf("expected single ~/.crit-conventions.md entry, got %v", got)
+	if len(got) != 1 || got[0] != "~/.crit-plus-conventions.md" {
+		t.Errorf("expected single ~/.crit-plus-conventions.md entry, got %v", got)
 	}
 }
 
@@ -413,7 +413,7 @@ read:
 ---
 model: gpt-3
 `)
-	_, err := mergeAiderConfYAML(input, ".crit/aider-conventions.md")
+	_, err := mergeAiderConfYAML(input, ".crit/crit-plus-aider-conventions.md")
 	if err == nil {
 		t.Fatal("expected error for multi-doc YAML, got nil")
 	}
@@ -430,7 +430,7 @@ func TestMergeAiderConfFile_MultiDocLeavesFileUntouched(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err := mergeAiderConfFile(path, ".crit/aider-conventions.md")
+	err := mergeAiderConfFile(path, ".crit/crit-plus-aider-conventions.md")
 	if err == nil {
 		t.Fatal("expected error, got nil")
 	}
@@ -444,7 +444,7 @@ func TestMergeAiderConfFile_MultiDocLeavesFileUntouched(t *testing.T) {
 
 func TestMergeAiderConfYAML_StripsBOM(t *testing.T) {
 	input := append([]byte{0xEF, 0xBB, 0xBF}, []byte("model: gpt-4\nread:\n  - foo.md\n")...)
-	out, err := mergeAiderConfYAML(input, ".crit/aider-conventions.md")
+	out, err := mergeAiderConfYAML(input, ".crit/crit-plus-aider-conventions.md")
 	if err != nil {
 		t.Fatalf("BOM not handled: %v", err)
 	}
@@ -453,7 +453,7 @@ func TestMergeAiderConfYAML_StripsBOM(t *testing.T) {
 		t.Errorf("model not preserved through BOM: %v", conf["model"])
 	}
 	got := toStringSlice(t, conf["read"])
-	want := []string{"foo.md", ".crit/aider-conventions.md"}
+	want := []string{"foo.md", ".crit/crit-plus-aider-conventions.md"}
 	if strings.Join(got, ",") != strings.Join(want, ",") {
 		t.Errorf("read list mismatch:\n got:  %v\n want: %v", got, want)
 	}
@@ -462,7 +462,7 @@ func TestMergeAiderConfYAML_StripsBOM(t *testing.T) {
 func TestMergeAiderConfYAML_MalformedReturnsError(t *testing.T) {
 	// Tab indentation under a key is invalid in YAML.
 	input := []byte("model: gpt-4\nread:\n\t- foo.md\n")
-	_, err := mergeAiderConfYAML(input, ".crit/aider-conventions.md")
+	_, err := mergeAiderConfYAML(input, ".crit/crit-plus-aider-conventions.md")
 	if err == nil {
 		t.Fatal("expected error for malformed YAML, got nil")
 	}
@@ -476,7 +476,7 @@ func TestMergeAiderConfFile_MalformedLeavesFileUntouched(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := mergeAiderConfFile(path, ".crit/aider-conventions.md"); err == nil {
+	if err := mergeAiderConfFile(path, ".crit/crit-plus-aider-conventions.md"); err == nil {
 		t.Fatal("expected error, got nil")
 	}
 

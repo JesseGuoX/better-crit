@@ -8,7 +8,7 @@
 // POST). Subsequent reloads — `comments-changed` SSE after an agent reply,
 // or `live-round-start` after a round bump — therefore short-circuited
 // on `if (!files.length) return;` and left state.comments stale (most
-// visibly: replies posted via `crit comment --reply-to` between rounds
+// visibly: replies posted via `crit-plus comment --reply-to` between rounds
 // stayed invisible until a full browser refresh).
 //
 // Fix: refetch /api/session before reading the file list, so we always

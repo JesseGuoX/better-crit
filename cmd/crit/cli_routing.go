@@ -23,7 +23,7 @@ var (
 	runPreviewForPositionalCLI = runPreview
 )
 
-// routePositionalArgs classifies bare positional crit arguments (no subcommand).
+// routePositionalArgs classifies bare positional crit-plus arguments (no subcommand).
 func routePositionalArgs(args []string) positionalRoute {
 	if _, ok := changeReviewArgs(args); ok {
 		return positionalRouteChangeReview

@@ -59,9 +59,9 @@ func extractURL(t *testing.T, output string) string {
 }
 
 // TestShareSyncPreview publishes the test/fixtures/preview fixture to a live
-// crit-web via `crit share --preview` and verifies every asset round-trips
+// crit-web via `crit-plus share --preview` and verifies every asset round-trips
 // through the hosted raw endpoint. It proves that a preview shared to crit-web
-// serves the same bytes the local crit server would, including base64-decoded
+// serves the same bytes the local crit-plus server would, including base64-decoded
 // binary assets and the injected preview agent. Named TestShareSync* so the
 // e2e-share.sh `-run TestShareSync` filter picks it up.
 func TestShareSyncPreview(t *testing.T) {
@@ -75,7 +75,7 @@ func TestShareSyncPreview(t *testing.T) {
 	cmd.Dir = dir
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		t.Fatalf("crit share --preview failed: %s\n%s", err, out)
+		t.Fatalf("crit-plus share --preview failed: %s\n%s", err, out)
 	}
 	output := strings.TrimSpace(string(out))
 	token := extractToken(t, output)
@@ -106,7 +106,7 @@ func TestShareSyncPreview(t *testing.T) {
 		// with 403 InvalidCrossOriginRequestError. Other extensions (.css,
 		// .png, .html) serve fine. Skip — rather than weaken — so this subtest
 		// starts verifying the JS round-trip automatically once crit-web moves
-		// the raw route off the CSRF-protected pipeline. crit handed the JS to
+		// the raw route off the CSRF-protected pipeline. crit-plus handed the JS to
 		// crit-web correctly; the failure is purely on read-back.
 		status, body, _ := getPreviewRawStatus(t, baseURL, token, "app.js")
 		if status == http.StatusForbidden && bytes.Contains(body, []byte("CSRFProtection")) {

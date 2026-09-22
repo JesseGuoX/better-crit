@@ -51,8 +51,8 @@ func TestPrintHelpMentionsSession(t *testing.T) {
 	if !strings.Contains(out, "CRIT_ALLOW_UNAUTHENTICATED_NETWORK") {
 		t.Fatalf("help missing CRIT_ALLOW_UNAUTHENTICATED_NETWORK:\n%s", out)
 	}
-	if !strings.Contains(out, "crit story") {
-		t.Fatalf("help missing crit story:\n%s", out)
+	if !strings.Contains(out, "crit-plus story") {
+		t.Fatalf("help missing crit-plus story:\n%s", out)
 	}
 }
 
@@ -75,7 +75,7 @@ func TestHelperProcess_Help(t *testing.T) {
 		return
 	}
 	arg := os.Getenv("GO_TEST_HELP_ARG")
-	os.Args = []string{"crit", arg}
+	os.Args = []string{"crit-plus", arg}
 	var stderr strings.Builder
 	old := os.Stderr
 	r, w, _ := os.Pipe()
@@ -114,7 +114,7 @@ func TestHelperProcess_Version(t *testing.T) {
 	printVersion()
 }
 
-// TestSubcommandDispatch_Config verifies that "crit config --generate" produces output.
+// TestSubcommandDispatch_Config verifies that "crit-plus config --generate" produces output.
 func TestSubcommandDispatch_Config(t *testing.T) {
 	cmd := exec.Command(os.Args[0], "-test.run=TestHelperProcess_Config", "--")
 	cmd.Env = append(os.Environ(), "GO_TEST_HELPER=1")
@@ -455,7 +455,7 @@ func TestHelperProcess_CommentJSONMix(t *testing.T) {
 	runComment([]string{"--json", "--output", tmp, "--author", "TestBot"})
 }
 
-// TestFetch_PrintsReviewFilePath verifies that crit fetch prints the review
+// TestFetch_PrintsReviewFilePath verifies that crit-plus fetch prints the review
 // file path in both the "no new comments" and "fetched N comments" cases.
 func TestFetch_PrintsReviewFilePath(t *testing.T) {
 	tests := []struct {

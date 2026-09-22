@@ -106,7 +106,7 @@ esac
 // the successful ID must be drained from the neutral queue on disk and
 // the failed ID must remain queued for the next push. Combined with the
 // pushShouldExitFailure policy, a partial-success delete must NOT cause
-// `crit push` to exit non-zero when other work (posts, patches, drains)
+// `crit-plus push` to exit non-zero when other work (posts, patches, drains)
 // succeeded.
 func TestPushDeletedComments_PartialFailure(t *testing.T) {
 	if runtime.GOOS == "windows" {

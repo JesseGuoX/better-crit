@@ -529,7 +529,7 @@ func TestIsDaemonAlive_AcceptsCritResponse(t *testing.T) {
 	port, _ := strconv.Atoi(srv.URL[len("http://127.0.0.1:"):])
 	entry := SessionEntry{PID: os.Getpid(), Port: port}
 	if !isDaemonAlive(entry) {
-		t.Error("isDaemonAlive should return true for valid crit health response")
+		t.Error("isDaemonAlive should return true for valid crit-plus health response")
 	}
 }
 
@@ -546,7 +546,7 @@ func TestFindSessionForCWDBranch_MatchesByBranch(t *testing.T) {
 	defer ts.Close()
 	port, _ := strconv.Atoi(ts.URL[strings.LastIndex(ts.URL, ":")+1:])
 
-	// Write a session with file args (simulates "crit README.md")
+	// Write a session with file args (simulates "crit-plus README.md")
 	WriteSessionFile("abc123def456", SessionEntry{
 		PID:        os.Getpid(),
 		Port:       port,

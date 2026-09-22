@@ -10,6 +10,6 @@ PORT = "8080"
 WT_COPY_DIRS = "test/e2e/node_modules"
 
 [tasks.up]
-description = "Build and run crit"
-run = "make build && ./crit test/shell/notification-plan.md"
+description = "Build and run crit-plus"
+run = "make build && ./crit-plus test/shell/notification-plan.md"
 raw = true

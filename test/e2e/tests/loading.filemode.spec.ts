@@ -15,7 +15,7 @@ test.describe('File Mode — Page Loading', () => {
   });
 
   test('document title includes file names (no branch)', async ({ page }) => {
-    await expect(page).toHaveTitle(/Crit — .*plan\.md/);
+    await expect(page).toHaveTitle(/crit\+ — .*plan\.md/);
   });
 
   test('diff mode toggle is hidden in file mode', async ({ page }) => {

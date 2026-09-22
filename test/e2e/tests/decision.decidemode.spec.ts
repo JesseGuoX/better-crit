@@ -5,7 +5,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
-const binary = process.env.CRIT_BIN || resolve(__dirname, '../../..', process.platform === 'win32' ? 'crit.exe' : 'crit');
+const binary = process.env.CRIT_BIN || resolve(__dirname, '../../..', process.platform === 'win32' ? 'crit-plus.exe' : 'crit-plus');
 const checklist = () => ({
   id: 'release', title: '首版方案裁定', context: '请确认首版范围。**推荐仅供参考**，可以随时提交。',
   items: [

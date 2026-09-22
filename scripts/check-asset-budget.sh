@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # check-asset-budget.sh — fail CI when embedded assets or the binary blow past budget.
 #
-# crit ships every file in web/ inside the Go binary (embed.FS), so a heavy
+# crit-plus ships every file in web/ inside the Go binary (embed.FS), so a heavy
 # vendor bump or an accidentally committed fixture inflates both page weight
 # and binary size. This script checks gzip sizes from asset-budget.json
 # plus a linux/amd64 binary build. No bundler involved — plain file sizes.
@@ -76,10 +76,10 @@ if [ "$MODE" = "all" ] || [ "$MODE" = "--binary-only" ]; then
   rm -rf "$tmpdir"
   trap - EXIT
   if [ "$size" -gt "$bin_cap" ]; then
-    echo "OVER  crit binary (linux/amd64) ${size}B cap=${bin_cap}B (+$((size - bin_cap))B)"
+    echo "OVER  crit-plus binary (linux/amd64) ${size}B cap=${bin_cap}B (+$((size - bin_cap))B)"
     FAIL=1
   else
-    echo "ok    crit binary (linux/amd64) ${size}B cap=${bin_cap}B"
+    echo "ok    crit-plus binary (linux/amd64) ${size}B cap=${bin_cap}B"
   fi
 fi
 

@@ -265,15 +265,15 @@ jobs:
       - name: Run tests
         run: go test ./...
 
-      # Some tests spawn `crit.exe` daemons that may outlive the test process
+      # Some tests spawn `crit-plus.exe` daemons that may outlive the test process
       # by a few seconds (background goroutines, deferred file flushes). If
       # they're still alive when actions/setup-go's post step packs the cache
       # tar, the cache step fails because the binary is locked. Kill any
       # leftover processes before the implicit post-cache step runs.
-      - name: Kill leftover crit daemons
+      - name: Kill leftover crit-plus daemons
         if: always()
         shell: cmd
-        run: taskkill /F /IM crit.exe /T 2>nul || exit /b 0
+        run: taskkill /F /IM crit-plus.exe /T 2>nul || exit /b 0
 
   e2e:
     runs-on: ubuntu-latest
@@ -318,16 +318,16 @@ jobs:
         working-directory: test/e2e
         run: npx playwright install-deps chromium
 
-      - name: Build crit with coverage instrumentation
+      - name: Build crit-plus with coverage instrumentation
         run: |
           mkdir -p /tmp/crit-coverdir
-          go build -cover -o /tmp/crit-cover-bin ./cmd/crit
+          go build -cover -o /tmp/crit-plus-cover-bin ./cmd/crit
 
       - name: Run E2E tests
         working-directory: test/e2e
         run: bash run.sh
         env:
-          CRIT_BIN: /tmp/crit-cover-bin
+          CRIT_BIN: /tmp/crit-plus-cover-bin
           GOCOVERDIR: /tmp/crit-coverdir
 
       - name: Convert E2E coverage data
@@ -357,7 +357,7 @@ jobs:
     runs-on: windows-2025-vs2026
     env:
       # Stop Git Bash from auto-converting POSIX-looking arguments to Windows
-      # paths when invoking native binaries (crit.exe, taskkill, powershell).
+      # paths when invoking native binaries (crit-plus.exe, taskkill, powershell).
       MSYS_NO_PATHCONV: 1
     steps:
       - uses: actions/checkout@v7
@@ -395,18 +395,18 @@ jobs:
         working-directory: test/e2e
         run: npx playwright install chromium
 
-      - name: Build crit with coverage instrumentation
+      - name: Build crit-plus with coverage instrumentation
         shell: bash
         run: |
           mkdir -p "${RUNNER_TEMP}/crit-coverdir"
-          go build -cover -o crit-cover-bin.exe ./cmd/crit
+          go build -cover -o crit-plus-cover-bin.exe ./cmd/crit
 
       - name: Run E2E tests
         working-directory: test/e2e
         shell: bash
         run: bash run.sh
         env:
-          CRIT_BIN: ${{ github.workspace }}/crit-cover-bin.exe
+          CRIT_BIN: ${{ github.workspace }}/crit-plus-cover-bin.exe
           GOCOVERDIR: ${{ runner.temp }}/crit-coverdir
 
       - name: Convert E2E coverage data
@@ -433,12 +433,12 @@ jobs:
           path: test/e2e/test-results/
           retention-days: 7
 
-      # Some tests spawn `crit.exe` daemons that may outlive the test process
+      # Some tests spawn `crit-plus.exe` daemons that may outlive the test process
       # by a few seconds. If they're still alive when actions/setup-* post
       # steps pack their caches, the cache step fails because the binary is
       # locked. Kill any leftover processes before the implicit post-cache
       # steps run. Mirrors the unit-windows job pattern.
-      - name: Kill leftover crit daemons
+      - name: Kill leftover crit-plus daemons
         if: always()
         shell: cmd
-        run: taskkill /F /IM crit.exe /T 2>nul || exit /b 0
+        run: taskkill /F /IM crit-plus.exe /T 2>nul || exit /b 0

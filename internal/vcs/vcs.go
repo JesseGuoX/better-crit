@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 )
 
-// VCS abstracts version control operations so crit can support multiple backends
+// VCS abstracts version control operations so crit-plus can support multiple backends
 // (git, Sapling, Jujutsu, etc.). Each method corresponds to an existing
 // package-level function in git.go; the interface lets callers work with any VCS uniformly.
 type VCS interface {

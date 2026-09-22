@@ -1,15 +1,15 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "crit",
+  "name": "crit-plus",
   "owner": {
-    "name": "Tomasz Tomczyk"
+    "name": "JesseGuoX"
   },
   "plugins": [
     {
-      "name": "crit",
-      "description": "Close the feedback loop on AI coding: review plans and code changes with GitHub-style inline comments, then let the agent address them.",
+      "name": "crit-plus",
+      "description": "Crit Plus: an enhanced fork of Crit by Tomasz Tomczyk, with inline review and structured human decisions.",
       "source": "./integrations/claude-code",
-      "homepage": "https://crit.md",
+      "homepage": "https://github.com/JesseGuoX/better-crit",
       "category": "development"
     }
   ]

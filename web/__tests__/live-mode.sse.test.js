@@ -61,7 +61,7 @@ test('applyRoundStart falls back to currentRoute then "/" for path', () => {
 
 test('applyRoundStart re-fetches comments so replies posted mid-round appear', async () => {
   // Regression for Bug D: replies posted during round N (e.g. by the agent
-  // via `crit comment --reply-to`) didn't appear when round N+1 started.
+  // via `crit-plus comment --reply-to`) didn't appear when round N+1 started.
   // Round-start re-rendered the panel from stale state; comments-changed
   // SSE listener exists but events emitted during the round transition
   // were lost (panel re-renders before the reload lands). Round-start
@@ -187,7 +187,7 @@ test('applyCommentsChanged swallows reloadComments rejections', async () => {
 
 test('round transition surfaces a reply that landed between rounds (DOM-asserted)', async () => {
   // User-visible regression for Bug B: a reply posted via
-  // `crit comment --reply-to` between round N's finish and round N+1's
+  // `crit-plus comment --reply-to` between round N's finish and round N+1's
   // start did NOT appear in the panel after the round flipped, even though
   // the reply was already on disk. The previous agent's fetch-count test
   // passed despite the user-visible bug — so this asserts the rendered

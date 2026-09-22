@@ -26,7 +26,7 @@ function makeShared(routes) {
 test('loadAllComments refetches /api/session so freshly-added files are picked up', async () => {
   // Reproduces the user-visible bug: live daemon boots with no FileEntry
   // (files: []), so state.session captured at boot has files: []. The user
-  // creates a pin, the agent posts a reply via crit comment --reply-to, the
+  // creates a pin, the agent posts a reply via crit-plus comment --reply-to, the
   // user advances to round 2. The reply is in the daemon's data — visible
   // at GET /api/file/comments?path=/ — but state.comments stayed empty
   // because the old loadAllComments early-returned on

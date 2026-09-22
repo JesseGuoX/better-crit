@@ -117,7 +117,7 @@ func init() {
 	forge.ReviewFn = session.RunReview
 	session.InvalidatePRCache = func(number int, _, _ string) {
 		// Drop bare and project-qualified sibling keys for this number —
-		// matching crit pull — so a focus switch cannot leave a stale twin.
+		// matching crit-plus pull — so a focus switch cannot leave a stale twin.
 		github.InvalidatePRCache(number)
 	}
 	session.FetchMRFileContent = func(f session.Focus, sha, path string) ([]byte, error) {

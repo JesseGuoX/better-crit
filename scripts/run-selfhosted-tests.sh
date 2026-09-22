@@ -80,7 +80,7 @@ cleanup() {
     kill -9 "$SERVER_PID" 2>/dev/null || true
   fi
   # Stray beams from `mix phx.server` sometimes outlive their parent.
-  pkill -f "beam.smp.*--name.*crit" 2>/dev/null || true
+  pkill -f "beam.smp.*--name.*crit-plus" 2>/dev/null || true
 }
 trap cleanup EXIT INT TERM
 

@@ -43,7 +43,7 @@ type Output struct {
 //   - file hooks exec the resolved path directly (its shebang/interpreter applies)
 //
 // Hook stdout/stderr are captured for auditability — they are NOT forwarded to
-// the blocking crit client's stdout (that channel carries the agent prompt).
+// the blocking crit-plus client's stdout (that channel carries the agent prompt).
 // A non-zero exit or timeout returns an error so the caller can log a warning,
 // but finish is never blocked by a hook failure.
 func Run(ctx context.Context, ec ExecutableCommand, in Input) (*Output, error) {

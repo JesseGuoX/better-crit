@@ -17,8 +17,8 @@ import (
 )
 
 // TestClientExitsOnFinish verifies the agent-integration contract: an agent
-// runs `crit`, the process blocks until the user clicks Finish in the
-// browser (here we simulate via POST /api/finish), then `crit` exits with
+// runs `crit-plus`, the process blocks until the user clicks Finish in the
+// browser (here we simulate via POST /api/finish), then `crit-plus` exits with
 // code 0 and its stdout contains the review summary the agent reads.
 //
 // This is the core workflow every agent integration relies on. It must run
@@ -26,7 +26,7 @@ import (
 // finish-and-exit handshake, agent integrations break.
 //
 // Unlike TestDaemonLifecycle this test never invokes proc.Kill on the
-// spawned process: we POST /api/finish and let crit exit naturally. cmd.Wait
+// spawned process: we POST /api/finish and let crit-plus exit naturally. cmd.Wait
 // is bounded by a select with a 15s timeout so a hang fails fast.
 func TestClientExitsOnFinish(t *testing.T) {
 	if testing.Short() {
@@ -34,9 +34,9 @@ func TestClientExitsOnFinish(t *testing.T) {
 	}
 
 	binDir := t.TempDir()
-	binaryName := "crit"
+	binaryName := "crit-plus"
 	if runtime.GOOS == "windows" {
-		binaryName = "crit.exe"
+		binaryName = "crit-plus.exe"
 	}
 	binary := filepath.Join(binDir, binaryName)
 	_, testFile, _, _ := runtime.Caller(0)
@@ -44,10 +44,10 @@ func TestClientExitsOnFinish(t *testing.T) {
 	build := exec.Command("go", "build", "-o", binary, "./cmd/crit")
 	build.Dir = moduleRoot
 	if out, err := build.CombinedOutput(); err != nil {
-		t.Fatalf("build crit: %v\n%s", err, out)
+		t.Fatalf("build crit-plus: %v\n%s", err, out)
 	}
 	if err := os.Chmod(binary, 0o755); err != nil {
-		t.Fatalf("chmod crit: %v", err)
+		t.Fatalf("chmod crit-plus: %v", err)
 	}
 
 	// Repo with a tracked file change so git mode has something to review.
@@ -95,10 +95,10 @@ func TestClientExitsOnFinish(t *testing.T) {
 	t.Cleanup(group.Close)
 
 	if err := group.StartInGroup(cmd); err != nil {
-		t.Fatalf("start crit: %v", err)
+		t.Fatalf("start crit-plus: %v", err)
 	}
 
-	// `crit` spawns a daemon, registers a session file, then connects to it.
+	// `crit-plus` spawns a daemon, registers a session file, then connects to it.
 	// Pick the port out of the session file rather than parsing stdout/stderr.
 	entry := waitForDaemonSession(t, resolvedHome, resolvedRepo)
 	port := entry.Port

@@ -602,10 +602,10 @@ auth:
   enabled: true
 EOF
 
-# Build crit binary outside the repo (skip if CRIT_BIN is set)
+# Build crit-plus binary outside the repo (skip if CRIT_BIN is set)
 if [ -z "${CRIT_BIN:-}" ]; then
   CRIT_BIN="$BIN_DIR/$(e2e_bin_name)"
-  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit)
+  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit-plus)
 fi
 
 # Isolate from user's ~/.crit.config.json — use a separate HOME so config
@@ -625,5 +625,5 @@ STATE_FILE="$(e2e_state_file "$PORT")"
 # Configure agent_cmd for E2E testing (echo just prints stdin and exits)
 echo '{"agent_cmd": "echo"}' > "$FAKE_HOME/.crit.config.json"
 
-# Run crit in the fixture repo
+# Run crit-plus in the fixture repo
 exec "$CRIT_BIN" _serve --no-open --port "$PORT"

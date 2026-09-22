@@ -1,18 +1,20 @@
 # Command hooks
 
-Crit can run **your** shell scripts when a review finishes or is approved — deterministic, auditable side effects, no LLM in the loop. This is the executable counterpart to [agent prompts](agent-prompts.md): prompts feed the agent *text*; command hooks *do* things.
+Crit Plus (`crit-plus`) is an enhanced fork of [Crit](https://github.com/tomasz-tomczyk/crit), originally created by **Tomasz Tomczyk**. The upstream MIT license and copyright are preserved.
+
+Crit Plus can run **your** shell scripts when a review finishes or is approved — deterministic, auditable side effects, no LLM in the loop. This is the executable counterpart to [agent prompts](agent-prompts.md): prompts feed the agent *text*; command hooks *do* things.
 
 ## At a glance
 
 - **What:** user-defined shell commands/scripts executed at the same finish lifecycle points as prompt templates (`on_finish_unresolved` / `on_finish_approved`, optionally mode-suffixed `:files` / `:diff` / `:live` / `:preview`).
 - **Why:** deterministic side effects the agent prompt can't reliably do itself — snapshot commented-on files to a dataset, write an audit log, notify Slack, etc.
-- **How:** `inline:<cmd>` (run via `sh -c`) or `file:<path>` (exec'd directly, shebang respected). Crit pipes a JSON payload to the hook's stdin and sets `CRIT_*` env vars (review path, session key, mode, counts, files-with-comments, …).
-- **Opt-in:** Crit runs zero command hooks by default. You configure them in the `hooks` map of `~/.crit.config.json` / `.crit.config.json` or drop scripts at `.crit/hooks/*.sh`.
+- **How:** `inline:<cmd>` (run via `sh -c`) or `file:<path>` (exec'd directly, shebang respected). Crit Plus pipes a JSON payload to the hook's stdin and sets `CRIT_*` env vars (review path, session key, mode, counts, files-with-comments, …).
+- **Opt-in:** Crit Plus runs zero command hooks by default. You configure them in the `hooks` map of `~/.crit.config.json` / `.crit.config.json` or drop scripts at `.crit/hooks/*.sh`.
 - **Trust:** project-level hooks run arbitrary code and go through the same trust gate as project prompts — Finish is blocked until you trust the project's hook config/files. Global hooks (user-installed) run without the gate.
 - **Timeout:** each hook is capped at 60 seconds (killed and warned on timeout). Network-bound or long-running work should fork-and-detach from the hook.
 - **Failure never blocks finish:** a hook that errors, times out, or exits non-zero is logged as a warning; the review flow proceeds regardless.
 
-Command hooks are **opt-in and not used by default** — Crit runs zero command hooks out of the box. Config lives under the `hooks` map (`~/.crit.config.json` and/or `.crit.config.json`) and/or conventional files under `.crit/hooks/` (project) and `~/.crit/hooks/` (global). They reuse the same hook names, mode suffixes, resolution order, and project trust flow as prompt templates.
+Command hooks are **opt-in and not used by default** — Crit Plus runs zero command hooks out of the box. Config lives under the `hooks` map (`~/.crit.config.json` and/or `.crit.config.json`) and/or conventional files under `.crit/hooks/` (project) and `~/.crit/hooks/` (global). They reuse the same hook names, mode suffixes, resolution order, and project trust flow as prompt templates.
 
 ## When hooks fire
 
@@ -59,7 +61,7 @@ You do **not** need a `hooks` map entry when the script already lives at the con
 
 The example scripts are **reference material** — copying them does not enable behavior until you edit them (or add a `hooks` config map entry) to opt in.
 
-**Discovered** hook files under `.crit/hooks/` must be named `on_finish_*.sh` (mode suffix uses `.` not `:`). For other extensions or paths, use an explicit `file:` entry in the `hooks` config map — Crit execs the script directly and respects its shebang.
+**Discovered** hook files under `.crit/hooks/` must be named `on_finish_*.sh` (mode suffix uses `.` not `:`). For other extensions or paths, use an explicit `file:` entry in the `hooks` config map — Crit Plus execs the script directly and respects its shebang.
 
 Explicit `hooks` config still wins over conventional files and is useful for non-standard paths or `inline:` overrides.
 
@@ -115,8 +117,8 @@ All `CRIT_*` env vars are strings (shell env vars can only carry strings). Numer
 | `CRIT_FILES_WITH_COMMENTS_COUNT` | Count of the above |
 | `CRIT_PLAN_SLUG` | Plan slug when reviewing a plan file |
 | `CRIT_INTERNAL_SESSION_MODE` | `files`, `git`, or `plan` |
-| `CRIT_COMMENTS_CMD` | `crit comments --json '<review>'` — retrieve unresolved comments |
-| `CRIT_COMMENTS_ALL_CMD` | `crit comments --json --all '<review>'` — all comments |
+| `CRIT_COMMENTS_CMD` | `crit-plus comments --json '<review>'` — retrieve unresolved comments |
+| `CRIT_COMMENTS_ALL_CMD` | `crit-plus comments --json --all '<review>'` — all comments |
 | `CRIT_NEXT_ROUND_CMD` | Command to start the next round |
 | `CRIT_COMMENTS_UNRESOLVED_JSON` | Unresolved comment threads as a JSON array |
 | `CRIT_COMMENTS_JSON` | All comments in the session as a JSON array |
@@ -135,7 +137,7 @@ echo "$payload" | jq -r '.files_with_comments[]'
 
 ### stdout / stderr
 
-Hook **stdout and stderr are captured, not forwarded to the agent.** The agent-facing prompt (Crit's blocking `stdout`) is untouched — prompts and command hooks are independent. Crit logs a one-line summary on success (`exit=N stdout=NB stderr=NB`) and prints captured stderr on failure so you can debug. Hook stdout is recorded in the daemon log but not echoed to the terminal by default.
+Hook **stdout and stderr are captured, not forwarded to the agent.** The agent-facing prompt (Crit Plus's blocking `stdout`) is untouched — prompts and command hooks are independent. Crit Plus logs a one-line summary on success (`exit=N stdout=NB stderr=NB`) and prints captured stderr on failure so you can debug. Hook stdout is recorded in the daemon log but not echoed to the terminal by default.
 
 ### Timeout
 
@@ -147,9 +149,9 @@ Project-level **command hooks run arbitrary code**, so they are gated by the *sa
 
 1. Everything else works normally — browse, comment, reply, Send now.
 2. **Finish / Approve is blocked** until you choose:
-   - **Trust until prompts change** (recommended) — re-prompt if `.crit.config.json`, any `file:` hook path in the config map, or any discovered `.crit/hooks/*.sh` changes. Crit hashes the **full file contents** of every referenced/discovered hook script (same as prompt templates), so editing a `.sh` body invalidates trust even when the filename stays the same.
+   - **Trust until prompts change** (recommended) — re-prompt if `.crit.config.json`, any `file:` hook path in the config map, or any discovered `.crit/hooks/*.sh` changes. Crit Plus hashes the **full file contents** of every referenced/discovered hook script (same as prompt templates), so editing a `.sh` body invalidates trust even when the filename stays the same.
    - **Always trust this project** — use project prompts + hooks on future changes without re-prompting
-   - **Use Crit defaults** — ignore project prompts *and* project hooks for this repo
+   - **Use Crit Plus defaults** — ignore project prompts *and* project hooks for this repo
 3. The trust dialog lists every source file (including `.crit/hooks/*.sh`).
 
 The trust decision is stored in global config under `trusted_project_prompts` (keyed by repo root hash) — the same store already used for prompt trust, extended to cover hooks. **Global** hooks (`~/.crit.config.json` / `~/.crit/hooks/`) are user-installed and run without the trust dialog.
@@ -178,7 +180,7 @@ printf '%s\n' "$CRIT_FILES_WITH_COMMENTS" | while IFS= read -r f; do
   cp "$f" "$dest/files/$f"
 done
 
-echo "crit: snapshotted $CRIT_UNRESOLVED_COUNT comment(s) to $dest" >&2
+echo "crit-plus: snapshotted $CRIT_UNRESOLVED_COUNT comment(s) to $dest" >&2
 ```
 
 This mirrors the example shipped at `docs/example-hooks/on_finish_unresolved.sh` — copy it into `.crit/hooks/` or `~/.crit/hooks/` and edit to taste.
@@ -203,7 +205,7 @@ printf '%s\t%s\t%s\t%s\n' \
 ```json
 {
   "hooks": {
-    "on_finish_unresolved:diff": "inline:~/.crit/hooks/post-to-slack \"crit review finished\" \"unresolved=$CRIT_UNRESOLVED_COUNT mode=$CRIT_MODE\""
+    "on_finish_unresolved:diff": "inline:~/.crit/hooks/post-to-slack \"crit-plus review finished\" \"unresolved=$CRIT_UNRESOLVED_COUNT mode=$CRIT_MODE\""
   }
 }
 ```
@@ -217,4 +219,4 @@ printf '%s\t%s\t%s\t%s\n' \
 ## See also
 
 - [Agent prompts](agent-prompts.md) — the template-based counterpart that feeds the agent text
-- [Configuration](../README.md#configuration) — `crit config --generate`, global vs project keys
+- [Configuration](../README.md#configuration) — `crit-plus config --generate`, global vs project keys

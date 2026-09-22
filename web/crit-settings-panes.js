@@ -142,7 +142,7 @@
         }
 
         if (isReservedBinding(binding)) {
-          showError(binding + ' is reserved by Crit.');
+          showError(binding + ' is reserved by crit+.');
           return;
         }
         var conflict = shortcuts.findConflict(id, binding);
@@ -164,7 +164,8 @@
 
     // Version header
     html += '<div class="about-header">';
-    html += '<h2>Crit</h2>';
+    html += '<h2>crit<span class="brand-plus">+</span></h2>';
+    html += '<p>An enhanced fork of <a href="https://github.com/tomasz-tomczyk/crit" target="_blank" rel="noopener">Crit</a> by Tomasz Tomczyk and contributors. Original MIT license and copyright preserved.</p>';
     var ver = cfg.version || 'dev';
     html += '<div class="about-version">' + escapeHTML(ver) + '</div>';
     html += '</div>';
@@ -195,9 +196,9 @@
     // Links
     html += '<div class="settings-section-label">Links</div>';
     html += '<div class="about-links">';
-    html += '<a class="about-link" href="https://crit.md" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1v4M5.5 3h5M3 7h10v6.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7Z"/></svg>Homepage</a>';
-    html += '<a class="about-link" href="https://github.com/tomasz-tomczyk/crit" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>GitHub</a>';
-    html += '<a class="about-link" href="https://github.com/tomasz-tomczyk/crit/releases" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>Changelog</a>';
+    html += '<a class="about-link" href="https://crit.md" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1v4M5.5 3h5M3 7h10v6.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7Z"/></svg>Upstream Crit website</a>';
+    html += '<a class="about-link" href="https://github.com/tomasz-tomczyk/crit" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>Upstream Crit source</a>';
+    html += '<a class="about-link" href="https://github.com/JesseGuoX/better-crit/releases" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>Changelog</a>';
     html += '</div>';
 
     pane.innerHTML = html;
@@ -370,7 +371,7 @@
   }
 
   // ============================================================
-  // Updates tab. This is the single home for Crit releases and AI integration
+  // Updates tab. This is the single home for crit+ releases and AI integration
   // maintenance, keeping the main Settings and About tabs focused.
   // ============================================================
   function commandCopyIcon() {
@@ -400,16 +401,10 @@
   }
 
   function critUpdateInstructions(source) {
-    if (source === 'homebrew') {
-      return '<div class="updates-row-note">Update Crit with Homebrew.</div>' + updateCommandHTML('brew upgrade crit', '');
-    }
-    if (source === 'go') {
-      return '<div class="updates-row-note">Update Crit with Go.</div>' + updateCommandHTML('go install github.com/tomasz-tomczyk/crit/cmd/crit@latest', '');
-    }
     if (source === 'nix') {
-      return '<div class="updates-row-note">Update the Nix profile or flake that provides Crit.</div>';
+      return '<div class="updates-row-note">Update the Nix profile or flake that provides crit+.</div>';
     }
-    return '<div class="updates-row-note">Download the latest binary for your platform from the release notes.</div>';
+    return '<div class="updates-row-note">Download crit-plus from this fork’s releases, or run the following in your updated crit+ checkout.</div>' + updateCommandHTML('make build', 'Build from source');
   }
 
   function renderUpdatesPane(pane, cfg, hooks) {
@@ -421,10 +416,10 @@
 
     html += '<div class="updates-pane">';
     if (cfg.latest_version && cfg.version && cfg.latest_version !== cfg.version && !cfg.no_update_check) {
-      var releaseUrl = 'https://github.com/tomasz-tomczyk/crit/releases/tag/v' + esc(cfg.latest_version);
+      var releaseUrl = 'https://github.com/JesseGuoX/better-crit/releases/tag/v' + esc(cfg.latest_version);
       var alreadyDismissed = getSetting('updatesDismissed', '') === cfg.latest_version;
-      html += '<div class="updates-section-head"><span class="settings-section-label">Crit</span><span class="updates-section-state">Update available</span></div>';
-      html += '<div class="updates-crit-row updates-crit-row--open"><span class="updates-row-icon updates-row-icon--status updates-row-icon--warning" aria-hidden="true">&#11014;</span><span class="updates-row-name">Crit</span><span class="updates-version">v' + esc(cfg.version) + '</span><span class="updates-status updates-status--stale">v' + esc(cfg.latest_version) + '</span></div>';
+      html += '<div class="updates-section-head"><span class="settings-section-label">crit+</span><span class="updates-section-state">Update available</span></div>';
+      html += '<div class="updates-crit-row updates-crit-row--open"><span class="updates-row-icon updates-row-icon--status updates-row-icon--warning" aria-hidden="true">&#11014;</span><span class="updates-row-name">crit+</span><span class="updates-version">v' + esc(cfg.version) + '</span><span class="updates-status updates-status--stale">v' + esc(cfg.latest_version) + '</span></div>';
       html += '<div class="updates-crit-detail" id="updateCardBody">' + critUpdateInstructions(cfg.installation_source) + '</div>';
       html += '<div class="config-card-actions"><a class="updates-release-notes" href="' + releaseUrl + '" target="_blank" rel="noopener">Release notes and downloads</a>';
       if (alreadyDismissed) {
@@ -434,8 +429,8 @@
       }
       html += '</div>';
     } else {
-      html += '<div class="updates-section-head"><span class="settings-section-label">Crit</span><span class="updates-section-state">Current</span></div>';
-      html += '<div class="updates-crit-row"><span class="updates-row-icon updates-row-icon--status updates-row-icon--ok" aria-hidden="true">&#10003;</span><span class="updates-row-name">Crit</span><span class="updates-version">v' + esc(cfg.version || 'dev') + '</span><a class="updates-release-notes updates-release-link" href="https://github.com/tomasz-tomczyk/crit/releases" target="_blank" rel="noopener">Release notes</a><span class="updates-status updates-status--ok">Up to date</span></div>';
+      html += '<div class="updates-section-head"><span class="settings-section-label">crit+</span><span class="updates-section-state">Current</span></div>';
+      html += '<div class="updates-crit-row"><span class="updates-row-icon updates-row-icon--status updates-row-icon--ok" aria-hidden="true">&#10003;</span><span class="updates-row-name">crit+</span><span class="updates-version">v' + esc(cfg.version || 'dev') + '</span><a class="updates-release-notes updates-release-link" href="https://github.com/JesseGuoX/better-crit/releases" target="_blank" rel="noopener">Release notes</a><span class="updates-status updates-status--ok">Up to date</span></div>';
     }
 
     if (!cfg.no_integration_check) {
@@ -454,7 +449,7 @@
           copyAll.push((parts.length === 2 ? parts[1] : line).replace(/^Run:\s*/i, ''));
         });
       });
-      missing.forEach(function (entry) { if (!entry.muted) copyAll.push('crit install ' + entry.agent); });
+      missing.forEach(function (entry) { if (!entry.muted) copyAll.push('crit-plus install ' + entry.agent); });
       html += '<div class="updates-section-head"><span class="settings-section-label">AI integrations</span>' + (copyAll.length ? '<button type="button" class="updates-copy-all" data-copy-all>Copy all commands</button>' : '') + '</div><div class="updates-list">';
       stale.forEach(function (entry) {
         var si = entry.item;
@@ -476,10 +471,10 @@
       mutedMissing.concat(uninstalled).forEach(function (entry) {
         var agent = entry.agent;
         var name = formatAgentName(agent);
-        var installCommand = 'crit install ' + agent;
+        var installCommand = 'crit-plus install ' + agent;
         var missingStatus = entry.muted ? 'Muted' : 'Not installed';
         html += '<div class="updates-list-item" data-update-status="' + (entry.muted ? 'muted' : 'missing') + '"><button type="button" class="updates-row" data-updates-row aria-expanded="false"><span class="updates-row-icon">' + integrationIconHTML(agent) + '</span><span class="updates-row-name">' + esc(name) + '</span><span class="updates-row-preview">' + esc(installCommand) + '</span><span class="updates-status updates-status--' + (entry.muted ? 'muted' : 'missing') + '">' + missingStatus + '</span></button>';
-        html += '<div class="updates-row-detail" hidden><div class="updates-row-note">' + esc(name) + ' is installed on your system but does not have the Crit integration yet.</div>' + updateCommandHTML(installCommand, '') + '<div class="config-card-actions config-card-actions--end"><button type="button" class="config-card-dismiss" data-dismiss-missing="' + esc(agent) + '">Don\'t show again</button></div></div></div>';
+        html += '<div class="updates-row-detail" hidden><div class="updates-row-note">' + esc(name) + ' is installed on your system but does not have the crit+ integration yet.</div>' + updateCommandHTML(installCommand, '') + '<div class="config-card-actions config-card-actions--end"><button type="button" class="config-card-dismiss" data-dismiss-missing="' + esc(agent) + '">Don\'t show again</button></div></div></div>';
       });
       if (!stale.length && !missing.length) html += '<div class="updates-empty">All integrations are up to date.</div>';
       html += '</div>';
@@ -646,7 +641,7 @@
           html += '<span class="config-card-title">Account</span>';
           html += '</div>';
           html += '<div class="config-card-body">Not logged in. Sign in to link reviews to your account and track review history.</div>';
-          html += '<div class="config-card-cmd"><span>$ crit auth login</span><button class="config-card-copy" data-copy="crit auth login">Copy</button></div>';
+          html += '<div class="config-card-cmd"><span>$ crit-plus auth login</span><button class="config-card-copy" data-copy="crit-plus auth login">Copy</button></div>';
           html += '</div>';
         }
       }

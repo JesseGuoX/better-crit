@@ -1022,8 +1022,8 @@ func TestMatchingLiveSessionsBranchFilterAndAmbiguity(t *testing.T) {
 	}
 }
 
-// A review created headlessly by `crit comment` must record its directory too,
-// otherwise `crit resume` would restart its daemon wherever the user happens to
+// A review created headlessly by `crit-plus comment` must record its directory too,
+// otherwise `crit-plus resume` would restart its daemon wherever the user happens to
 // be standing and then overwrite the recorded directory with that wrong value.
 func TestLoadCritJSON_NewReviewRecordsCWD(t *testing.T) {
 	testutil.SetHome(t, t.TempDir())

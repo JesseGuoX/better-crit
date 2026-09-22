@@ -93,7 +93,7 @@ type Reply struct {
 
 	// LastPushedBodyHash is a short stable digest of Body at the time of
 	// the most recent successful push (POST or PATCH) to GitHub. Used by
-	// `crit push` to detect locally-edited replies that need a PATCH.
+	// `crit-plus push` to detect locally-edited replies that need a PATCH.
 	// Empty means "not yet pushed" — divergence detection treats hash("")
 	// as the prior value, so a record with GitHubID != 0 and empty hash
 	// will PATCH on next push (the local body is canonical).
@@ -164,7 +164,7 @@ type Comment struct {
 
 	// LastPushedBodyHash is a short stable digest of Body at the time of
 	// the most recent successful push (POST or PATCH) to GitHub. Used by
-	// `crit push` to detect locally-edited comments that need a PATCH.
+	// `crit-plus push` to detect locally-edited comments that need a PATCH.
 	// Empty means "not yet pushed" — a record with GitHubID != 0 and empty
 	// hash will PATCH on next push (the local body is canonical).
 	LastPushedBodyHash string `json:"last_pushed_body_hash,omitempty"`
@@ -418,8 +418,8 @@ type Session struct {
 	Files          []*FileEntry
 	Mode           string   // "files" (explicit markdown files) or "git" (auto-detected from git)
 	CLIArgs        []string // original file arguments passed on the command line (empty for git mode)
-	SessionKey     string   // stable ID for reconnect via crit --session (set by daemon)
-	CWD            string   // daemon working directory, recorded in review.json for crit resume (set by daemon)
+	SessionKey     string   // stable ID for reconnect via crit-plus --session (set by daemon)
+	CWD            string   // daemon working directory, recorded in review.json for crit-plus resume (set by daemon)
 	Branch         string
 	BaseRef        string
 	BaseBranchName string // display name of the base branch (e.g. "production", "master")
@@ -455,7 +455,7 @@ type Session struct {
 
 	reviewComments []Comment
 
-	// story is the loaded narrative from review.json (nil unless `crit story`
+	// story is the loaded narrative from review.json (nil unless `crit-plus story`
 	// ingested one). Read/write under s.mu; surfaced via GetSessionInfo.
 	story *Story
 
@@ -555,13 +555,13 @@ type CritJSON struct {
 	Files           map[string]CritJSONFile `json:"files"`
 
 	// CWD is the directory the daemon ran in. The session key is a hash of it,
-	// so it cannot be recovered from the key alone — `crit resume` reads it to
+	// so it cannot be recovered from the key alone — `crit-plus resume` reads it to
 	// restart a review from a different directory. Absent in reviews written
 	// before this field existed; such reviews resume in the current directory.
 	CWD string `json:"cwd,omitempty"`
 
 	// ActiveDiffScope is the most recent focus diff_scope from this session.
-	// Read by `crit push` to gate full-stack pushes; "" indicates working-tree mode.
+	// Read by `crit-plus push` to gate full-stack pushes; "" indicates working-tree mode.
 	ActiveDiffScope string `json:"active_diff_scope,omitempty"`
 
 	PendingRemoteDeletes []RemoteRef `json:"pending_remote_deletes,omitempty"`
@@ -575,7 +575,7 @@ type CritJSON struct {
 	Origin string `json:"origin,omitempty"`
 
 	// Story is the optional LLM-authored narrative grouping of diff hunks into
-	// chapters. Nil unless `crit story` has ingested one. Preserved across the
+	// chapters. Nil unless `crit-plus story` has ingested one. Preserved across the
 	// daemon's read-merge-modify write cycle by being a field on CritJSON (see
 	// buildCritJSON): as long as the field exists here, an externally-set story
 	// survives the debounced writes.
@@ -1103,7 +1103,7 @@ func (s *Session) captureBaselineAndPersist() {
 //
 // Ordering: at each depth, recurse into subdirectories (alphabetical) before
 // listing files (alphabetical). This matches the "directories before files at
-// each depth" grouping users expect when passing a directory like `crit .` —
+// each depth" grouping users expect when passing a directory like `crit-plus .` —
 // and the frontend now preserves backend order in files mode, so this is the
 // single source of truth for display order.
 func walkDirectory(dir string, ignorePatterns []string) []string {
@@ -2796,7 +2796,7 @@ func (s *Session) GetFileSnapshot(path string) (map[string]any, bool) {
 
 // GetFileSnapshotFromDisk reads a file directly from the repo root.
 // Used as a fallback when a scoped view references a file not in the session's file list
-// (e.g. a file changed after crit started).
+// (e.g. a file changed after crit-plus started).
 func (s *Session) GetFileSnapshotFromDisk(path string) (map[string]any, bool) {
 	s.mu.RLock()
 	repoRoot := s.RepoRoot

@@ -18,7 +18,7 @@ import (
 // orphans that hold handles on inherited resources (notably, the cwd
 // directory handle that blocks t.TempDir's RemoveAll).
 //
-// Used by Windows-sensitive tests that spawn `crit`. Production code
+// Used by Windows-sensitive tests that spawn `crit-plus`. Production code
 // does not use this — daemons are intentionally detached on Windows.
 type processGroup struct {
 	job windows.Handle

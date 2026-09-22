@@ -1,7 +1,9 @@
 # Story mode
 
+Crit Plus (`crit-plus`) is an enhanced fork of [Crit](https://github.com/tomasz-tomczyk/crit), originally created by **Tomasz Tomczyk**. The upstream MIT license and copyright are preserved.
+
 Story mode adds an optional narrative layer to a diff review. Instead of
-showing only a flat file list, Crit can show a prologue and ordered chapters
+showing only a flat file list, Crit Plus can show a prologue and ordered chapters
 that group changed hunks by theme: routing, persistence, tests, generated
 files, and so on.
 
@@ -15,30 +17,30 @@ Use story mode for branch, PR, MR, or range reviews where the diff is large
 enough that a thematic overview helps. It is diff-scoped only — not for
 positional file reviews, live, preview, or plan reviews.
 
-### Recommended: `/crit-story` skill
+### Recommended: `/crit-plus-story` skill
 
-After `crit install <tool>`, invoke the story skill explicitly (for example
-`/crit-story`, `$crit-story`, or `/skill:crit-story`). The agent:
+After `crit-plus install <tool>`, invoke the story skill explicitly (for example
+`/crit-plus-story`, `$crit-plus-story`, or `/skill:crit-plus-story`). The agent:
 
-1. Runs `crit story --guide` and `crit story --prep <path>`
+1. Runs `crit-plus story --guide` and `crit-plus story --prep <path>`
 2. Authors `prologue` / `chapters` / `support` JSON
-3. Ingests with `crit story --story-file <path>` and opens the story view
-4. Runs bare `crit` to wait for Finish Review, then addresses comments on
-   source files and loops rounds — the same cycle as `/crit`
+3. Ingests with `crit-plus story --story-file <path>` and opens the story view
+4. Runs bare `crit-plus` to wait for Finish Review, then addresses comments on
+   source files and loops rounds — the same cycle as `/crit-plus`
 
-Agents must not infer story generation from a generic review or `/crit`
+Agents must not infer story generation from a generic review or `/crit-plus`
 request — only from an explicit story invoke or a direct ask to generate a
-crit story.
+crit-plus story.
 
-### Alternative: `crit story` + `agent_cmd`
+### Alternative: `crit-plus story` + `agent_cmd`
 
 From the terminal (no skill):
 
 ```bash
-crit story
-crit story --pr 123
-crit story --mr 123
-crit story --range main..HEAD
+crit-plus story
+crit-plus story --pr 123
+crit-plus story --mr 123
+crit-plus story --range main..HEAD
 ```
 
 This uses your global `agent_cmd` to author the story (separate LLM spend),
@@ -52,15 +54,15 @@ and opens the browser at the story view.
 ```
 
 `agent_cmd` must be an agentic CLI that can read files from disk. Story
-generation is prompt-by-reference: Crit writes the full prep file to disk and
+generation is prompt-by-reference: Crit Plus writes the full prep file to disk and
 tells the agent to read it. The diff is not pasted into the prompt.
 
 ## Token cost
 
 Story generation is **LLM-driven exploration**: the agent reads the prep file,
 may open related source for context, and writes the chapter JSON. That uses
-your agent's tokens (in-session with `/crit-story`, or a separate spawn with
-`agent_cmd`). Crit itself does not bill for stories.
+your agent's tokens (in-session with `/crit-plus-story`, or a separate spawn with
+`agent_cmd`). Crit Plus itself does not bill for stories.
 
 Spend depends more on **how complex and multi-theme the change is** — and how
 much the model explores — than on raw file count or diff size. Cost does
@@ -69,26 +71,26 @@ large multi-theme PRs cost more, but two big diffs can land in a similar
 ballpark if exploration depth is similar.
 
 In our experience, complex PRs (~20–50 files, ~2k–5k lines changed) cost about
-**$1–$1.40** with Claude Opus 5 via `/crit-story`.
+**$1–$1.40** with Claude Opus 5 via `/crit-plus-story`.
 
 ## Common commands
 
 | Command | Use |
 | ------- | --- |
-| `crit story` | Generate a story for the current branch diff |
-| `crit story --refresh` | Regenerate an existing story |
-| `crit story --no-spend` | Reopen an existing story without calling `agent_cmd` |
-| `crit story --clear` | Remove the story and return to the flat diff view |
-| `crit story --no-open` | Save or resume without opening a browser tab |
-| `crit story --skip-llm` | Save a support-only stub story for testing the renderer |
-| `crit story --guide` | Print the resolved authoring guide and JSON shape |
-| `crit story --prep /tmp/crit-story-prep.txt` | Write the full prep file for manual authoring |
-| `crit story --story-file /tmp/crit-story.json` | Ingest pre-authored story JSON |
+| `crit-plus story` | Generate a story for the current branch diff |
+| `crit-plus story --refresh` | Regenerate an existing story |
+| `crit-plus story --no-spend` | Reopen an existing story without calling `agent_cmd` |
+| `crit-plus story --clear` | Remove the story and return to the flat diff view |
+| `crit-plus story --no-open` | Save or resume without opening a browser tab |
+| `crit-plus story --skip-llm` | Save a support-only stub story for testing the renderer |
+| `crit-plus story --guide` | Print the resolved authoring guide and JSON shape |
+| `crit-plus story --prep /tmp/crit-story-prep.txt` | Write the full prep file for manual authoring |
+| `crit-plus story --story-file /tmp/crit-plus-story.json` | Ingest pre-authored story JSON |
 
-If a story already exists, `crit story` reopens it. Use `--refresh` to replace
+If a story already exists, `crit-plus story` reopens it. Use `--refresh` to replace
 it or `--clear` to remove it.
 
-## What Crit saves
+## What Crit Plus saves
 
 The story is stored on the existing review file under `story`:
 
@@ -134,7 +136,7 @@ Agents should emit only the editable story fields:
 }
 ```
 
-Crit fills `version`, `generated_at`, `base_sha`, `head_sha`,
+Crit Plus fills `version`, `generated_at`, `base_sha`, `head_sha`,
 `scope_fingerprint`, and `coverage` during ingest. Do not include them in
 agent-authored JSON.
 
@@ -143,18 +145,18 @@ agent-authored JSON.
 Manual authoring uses the same validation path as LLM generation:
 
 ```bash
-crit story --guide > /tmp/crit-story-guide.md
-crit story --prep /tmp/crit-story-prep.txt
+crit-plus story --guide > /tmp/crit-story-guide.md
+crit-plus story --prep /tmp/crit-story-prep.txt
 ```
 
 Read both files, then write a JSON object with `prologue`, `chapters`, and
 `support` to a temp file:
 
 ```bash
-crit story --story-file /tmp/crit-story.json
+crit-plus story --story-file /tmp/crit-plus-story.json
 ```
 
-On every ingest attempt, Crit prints a coverage report to stdout:
+On every ingest attempt, Crit Plus prints a coverage report to stdout:
 
 ```json
 {"ok":true,"indexed":12,"placed":12}
@@ -165,7 +167,7 @@ saved, usually because the JSON did not parse, a hunk was duplicated, fewer
 than half of the hunks were placed, or the diff changed since the prep file was
 written.
 
-If `auto_repaired` is true, Crit saved the story but back-filled omitted hunks
+If `auto_repaired` is true, Crit Plus saved the story but back-filled omitted hunks
 into `support[]`:
 
 ```json
@@ -180,7 +182,7 @@ in a real chapter.
 A useful story follows a few constraints:
 
 - Group by theme, not by file. Cross-file chapters are expected.
-- Keep chapter titles short. Crit truncates titles beyond 48 characters.
+- Keep chapter titles short. Crit Plus truncates titles beyond 48 characters.
 - Use chapter array order as the reading order. There is no separate `order`
   field.
 - Put generated files, lockfiles, vendored data, and other mechanical changes
@@ -204,7 +206,7 @@ integrations/prompts/on_story_generate.md
 Install a copy to edit:
 
 ```bash
-crit install story-prompts
+crit-plus install story-prompts
 ```
 
 Run that from a repo root to create a project prompt:
@@ -236,7 +238,7 @@ diff scopes. Resolution order is:
 2. Global `~/.crit.config.json` `prompts.on_story_generate`
 3. Project `.crit/prompts/on_story_generate.md`
 4. Global `~/.crit/prompts/on_story_generate.md`
-5. Stock Crit template
+5. Stock Crit Plus template
 
 Overrides replace the entire prompt. If you customize
 `on_story_generate`, keep the operational requirements in your prompt:
@@ -247,14 +249,14 @@ Overrides replace the entire prompt. If you customize
 - Include `{{.story_schema_json}}` or an equivalent schema.
 - Preserve the hunk coverage rule: every hunk appears exactly once in
   `chapters[]` or `support[]`.
-- Tell the agent not to call `crit comment`, `crit push`, or `crit share`.
+- Tell the agent not to call `crit-plus comment`, `crit-plus push`, or `crit-plus share`.
 
 Useful template variables:
 
 | Variable | Meaning |
 | -------- | ------- |
 | `{{.prep_path}}` | Path to the full prep file the agent must read |
-| `{{.story_schema_json}}` | JSON shape Crit can ingest |
+| `{{.story_schema_json}}` | JSON shape Crit Plus can ingest |
 | `{{.commit_messages}}` | Commit messages over the diff scope |
 | `{{.diff_scope_kind}}` | `committed` or `workingTree` |
 | `{{.base_sha}}` / `{{.head_sha}}` / `{{.merge_base_sha}}` | Scope SHAs when available |
@@ -264,8 +266,8 @@ Useful template variables:
 | `{{.review_path}}` | Path to the review JSON file |
 
 Project-level story prompts use the same project prompt trust flow as other
-agent prompts. If a project prompt is untrusted, `crit story` will refuse to
-use it until you trust project prompts from the Crit UI or choose to use Crit
+agent prompts. If a project prompt is untrusted, `crit-plus story` will refuse to
+use it until you trust project prompts from the Crit Plus UI or choose to use Crit Plus
 defaults.
 
 See [Agent prompts](agent-prompts.md) for the full prompt hook reference.

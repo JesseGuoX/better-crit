@@ -24,8 +24,8 @@ import (
 	"github.com/tomasz-tomczyk/crit/internal/decision"
 )
 
-const decideHelp = `Usage: crit decide [options] <checklist.json|->
-       crit decide --guide
+const decideHelp = `Usage: crit-plus decide [options] <checklist.json|->
+       crit-plus decide --guide
 
 Open a decision checklist and wait for an explicit submission.
 Prints one JSON result to stdout; diagnostics and the page URL go to stderr.
@@ -54,7 +54,7 @@ func decide(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
 		return err
 	}
 	if flags.NArg() != 1 || *port < 0 || *port > 65535 {
-		return errors.New("expected one checklist file (or -), and a port between 0 and 65535; see crit decide --help")
+		return errors.New("expected one checklist file (or -), and a port between 0 and 65535; see crit-plus decide --help")
 	}
 	checklist, err := readDecisionChecklist(flags.Arg(0), stdin)
 	if err != nil {
@@ -91,7 +91,7 @@ func collectDecision(checklist decision.Checklist, port int, newRound, noOpen bo
 	if round == nil {
 		return errors.New("decision server returned no checklist")
 	}
-	fmt.Fprintf(stderr, "crit decide: %s/decide (session %s, revision %d)\n", entry.BaseURL(), key, round.Revision)
+	fmt.Fprintf(stderr, "crit-plus decide: %s/decide (session %s, revision %d)\n", entry.BaseURL(), key, round.Revision)
 	if round.Submission != nil {
 		return json.NewEncoder(stdout).Encode(round.Submission)
 	}
@@ -226,7 +226,7 @@ func waitForDecision(ctx context.Context, client *http.Client, base string, revi
 		var result decision.Result
 		err := decisionRequest(ctx, client, base+"/api/decision/wait?revision="+strconv.Itoa(revision), http.MethodGet, nil, &result)
 		if errors.Is(err, decision.ErrConflict) {
-			return decision.Result{}, errors.New("checklist was updated before submission; run crit decide with the latest input")
+			return decision.Result{}, errors.New("checklist was updated before submission; run crit-plus decide with the latest input")
 		}
 		if err != nil {
 			if ctx.Err() != nil {

@@ -273,9 +273,9 @@
         '</div>' +
         '<div class="crit-live-context" id="liveUnavailableFlash" data-kind="flash" hidden role="status">' +
         '<span class="crit-live-context-primary">' +
-        '<span><strong>Commenting unavailable</strong> — Crit could not connect to this page.</span>' +
+        '<span><strong>Commenting unavailable</strong> — crit+ could not connect to this page.</span>' +
         '</span>' +
-        '<p class="crit-live-context-help">You can still browse. Crit cannot inject its commenting agent. ' +
+        '<p class="crit-live-context-help">You can still browse. crit+ cannot inject its commenting agent. ' +
         '<a class="crit-live-context-guide" id="liveUnavailableGuide" href="https://github.com/tomasz-tomczyk/crit/blob/main/docs/live-mode.md" target="_blank" rel="noopener noreferrer">Troubleshooting guide</a>' +
         '</p>' +
         '</div>' +
@@ -446,9 +446,9 @@
     if (state.isPreview) {
       var firstFile = (state.session.files && state.session.files.length)
         ? state.session.files[0].path : 'preview';
-      setDocumentTitle('Crit — ' + firstFile);
+      setDocumentTitle('crit+ — ' + firstFile);
     } else {
-      setDocumentTitle('Crit — ' + (state.session.origin || 'live'));
+      setDocumentTitle('crit+ — ' + (state.session.origin || 'live'));
     }
 
     // Extract initial route from the origin URL path (e.g.
@@ -689,7 +689,7 @@
       setActiveModeButton();
     }
     if (s === 'connecting') {
-      announce('Connecting to Crit');
+      announce('Connecting to crit+');
     } else if (s === 'ready') {
       announce('Ready to comment');
     } else {
@@ -1131,7 +1131,7 @@
   // loader refetches /api/session before reading files so a stale cached
   // `files: []` (the live daemon's pre-first-pin state captured at boot)
   // doesn't suppress every subsequent reload. Without that refresh, a
-  // reply posted via `crit comment --reply-to` between rounds was
+  // reply posted via `crit-plus comment --reply-to` between rounds was
   // invisible until a full browser refresh — see the module header for
   // the full failure mode.
   var _commentsLoader = null;
@@ -2551,7 +2551,7 @@
     announceLive: announceLive,
     setUIState: setUIState,
     // comments-changed handler: re-fetch the canonical comment list so
-    // CLI-driven mutations (`crit comment --reply-to`, etc.) and other
+    // CLI-driven mutations (`crit-plus comment --reply-to`, etc.) and other
     // client edits surface live without a manual refresh. refreshPanel
     // already does granular DOM upsert (see commit 93b19fe), so this
     // preserves scroll/focus inside open reply composers.

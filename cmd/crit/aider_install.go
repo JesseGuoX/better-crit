@@ -21,25 +21,25 @@ type aiderInstallPaths struct {
 }
 
 // aiderPaths returns the install paths for aider given a cwd and home dir.
-// In global mode (cwd == home) we write ~/.crit-conventions.md and update
-// ~/.aider.conf.yml. In project mode we write .crit/aider-conventions.md
+// In global mode (cwd == home) we write ~/.crit-plus-conventions.md and update
+// ~/.aider.conf.yml. In project mode we write .crit/crit-plus-aider-conventions.md
 // and update ./.aider.conf.yml.
 func aiderPaths(cwd, home string) aiderInstallPaths {
 	if isGlobalInstall(cwd, home) {
 		return aiderInstallPaths{
-			conventionsDest: filepath.Join(home, ".crit-conventions.md"),
+			conventionsDest: filepath.Join(home, ".crit-plus-conventions.md"),
 			confPath:        filepath.Join(home, ".aider.conf.yml"),
-			readEntry:       "~/.crit-conventions.md",
+			readEntry:       "~/.crit-plus-conventions.md",
 		}
 	}
 	return aiderInstallPaths{
-		conventionsDest: filepath.Join(cwd, ".crit", "aider-conventions.md"),
+		conventionsDest: filepath.Join(cwd, ".crit", "crit-plus-aider-conventions.md"),
 		confPath:        filepath.Join(cwd, ".aider.conf.yml"),
-		readEntry:       ".crit/aider-conventions.md",
+		readEntry:       ".crit/crit-plus-aider-conventions.md",
 	}
 }
 
-// installAider implements `crit install aider`. Thin wrapper that resolves
+// installAider implements `crit-plus install aider`. Thin wrapper that resolves
 // cwd/home and delegates to installAiderAt for testability. Returns an error
 // suitable for printing to stderr; the caller decides whether to exit.
 func installAider(force bool) error {
@@ -85,7 +85,7 @@ func installAiderAt(cwd, home string, force bool) error {
 		return fmt.Errorf("updating %s: %w", paths.confPath, err)
 	}
 	fmt.Printf("  Updated:   %s (added %s under read:)\n", paths.confPath, paths.readEntry)
-	fmt.Println("  Aider will load the crit conventions on next start")
+	fmt.Println("  Aider will load the crit-plus conventions on next start")
 	fmt.Println()
 	return nil
 }
@@ -134,7 +134,7 @@ func mergeAiderConfYAML(existing []byte, readEntry string) ([]byte, error) {
 	// Reject multi-document YAML before we silently destroy the trailing
 	// docs by re-marshaling only the first.
 	if isMultiDocYAML(existing) {
-		return nil, fmt.Errorf("multi-document YAML in .aider.conf.yml is not supported by crit install — please consolidate or skip")
+		return nil, fmt.Errorf("multi-document YAML in .aider.conf.yml is not supported by crit-plus install — please consolidate or skip")
 	}
 
 	// Empty or whitespace-only file: produce a fresh document.

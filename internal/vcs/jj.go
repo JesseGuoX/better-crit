@@ -16,7 +16,7 @@ const (
 	jjTrunkRevset  = "trunk()"
 )
 
-// JJVCS implements VCS for Jujutsu repositories. Crit treats JJ's working-copy
+// JJVCS implements VCS for Jujutsu repositories. Crit Plus treats JJ's working-copy
 // commit as the review head and uses trunk()/bookmark resolution only to choose
 // the base revision; staged/unstaged scopes are intentionally unavailable.
 type JJVCS struct {

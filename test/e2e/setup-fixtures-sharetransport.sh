@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fixture for the share-transport Playwright project: a crit daemon in file mode
+# Fixture for the share-transport Playwright project: a crit-plus daemon in file mode
 # pointed at stub crit-web backends (fixtures/sharetransport-crit-web) so the
 # browser Share flow — share, pull comments, re-share, unpublish, and
 # multi-target routing — can be driven for real without a Postgres-backed
@@ -108,7 +108,7 @@ if [ -n "${CRIT_BIN:-}" ] && [ -f "$CRIT_BIN" ]; then
   echo "Using pre-built binary: $CRIT_BIN"
 else
   CRIT_BIN="$BIN_DIR/$(e2e_bin_name)"
-  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit)
+  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit-plus)
 fi
 
 # 3. Isolate from the user's ~/.crit.config.json and configure two live stubs

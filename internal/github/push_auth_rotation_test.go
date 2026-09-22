@@ -27,7 +27,7 @@ import (
 //     and never duplicates already-posted replies on GitHub.
 //
 // Property (5) is the key safety guarantee — duplicates would be visible
-// on GitHub and unrecoverable from `crit push` alone.
+// on GitHub and unrecoverable from `crit-plus push` alone.
 func TestRunPushLive_AuthRotationMidPush(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip("fake-gh shim is a POSIX shell script; not portable to Windows")
@@ -136,7 +136,7 @@ esac
 	}
 
 	// --- Second run: the user has refreshed their token. The fake gh now
-	// returns 201 for everything. crit push must only retry r2 and r3 —
+	// returns 201 for everything. crit-plus push must only retry r2 and r3 —
 	// re-posting r1 would create a duplicate on GitHub. The dedup
 	// guarantee comes from collectNewRepliesForPush skipping replies
 	// whose GitHubID is non-zero; this leg is a regression test against

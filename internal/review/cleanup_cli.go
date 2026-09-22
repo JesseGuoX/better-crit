@@ -33,7 +33,7 @@ func RunCleanup(args []string) error {
 		case "--force":
 			force = true
 		default:
-			fmt.Fprintf(os.Stderr, "Usage: crit cleanup [--days N] [--force]\n")
+			fmt.Fprintf(os.Stderr, "Usage: crit-plus cleanup [--days N] [--force]\n")
 			return clicmd.ExitError{Code: 1, Err: errors.New("exit")}
 		}
 	}
@@ -137,7 +137,7 @@ func findStaleReviews(revDir string, days int) []staleReview {
 
 		// MIGRATION-REMOVAL: legacy v3 flat *.json file. Treat as a stale
 		// candidate so cleanup wipes it (and any sibling sidecar) the next
-		// time crit runs. After the migration removal release this branch
+		// time crit-plus runs. After the migration removal release this branch
 		// goes away.
 		if !strings.HasSuffix(name, ".json") {
 			continue

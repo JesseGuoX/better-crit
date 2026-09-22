@@ -1,6 +1,6 @@
-# Crit decision checklists
+# Crit Plus decision checklists
 
-Use `crit decide checklist.json` (or `crit decide -` for stdin) to ask a human
+Use `crit-plus decide checklist.json` (or `crit-plus decide -` for stdin) to ask a human
 for structured choices. Run it in the project directory and wait for stdout.
 The browser may submit at any time, including with every item pending.
 Normal output is exactly one JSON object; logs and the URL go to stderr.
@@ -73,7 +73,7 @@ Drafts save automatically but only Submit releases the waiting agent. The
 submitted page is read-only until the agent sends the next version. Persisted
 history and snapshots live in `~/.crit/decisions/<session_id>/state.json`.
 Closing a tab, disconnecting, or pressing Ctrl+C is not approval. Rerun the
-same input after interruption to recover. `crit stop` stops local daemons.
+same input after interruption to recover. `crit-plus stop` stops local daemons.
 
 Use `--no-open` for headless use, `--port N` to select a loopback port. This
 mode is local and single-user. It does not execute changes, agent commands,

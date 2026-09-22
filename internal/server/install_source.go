@@ -39,11 +39,11 @@ func installationSourceForPath(path, goBin, goPath, home string) string {
 	if strings.HasPrefix(portablePath, "/nix/store/") {
 		return installationSourceNix
 	}
-	// Homebrew layouts embed "/opt/crit/" (e.g. /opt/homebrew/opt/crit/) or
-	// "/Cellar/crit/". Exclude a bare /opt/crit/... prefix so a manual FHS
+	// Homebrew layouts embed "/opt/crit-plus/" (e.g. /opt/homebrew/opt/crit-plus/) or
+	// "/Cellar/crit-plus/". Exclude a bare /opt/crit-plus/... prefix so a manual FHS
 	// install is not mislabeled as Homebrew.
-	if strings.Contains(portablePath, "/Cellar/crit/") ||
-		(strings.Contains(portablePath, "/opt/crit/") && !strings.HasPrefix(portablePath, "/opt/crit/")) {
+	if strings.Contains(portablePath, "/Cellar/crit-plus/") ||
+		(strings.Contains(portablePath, "/opt/crit-plus/") && !strings.HasPrefix(portablePath, "/opt/crit-plus/")) {
 		return installationSourceHomebrew
 	}
 

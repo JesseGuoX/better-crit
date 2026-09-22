@@ -1,37 +1,38 @@
-# Crit
+# Crit Plus (`crit-plus`)
 
-[![CI](https://github.com/tomasz-tomczyk/crit/actions/workflows/test.yml/badge.svg)](https://github.com/tomasz-tomczyk/crit/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/tomasz-tomczyk/crit/graph/badge.svg)](https://codecov.io/gh/tomasz-tomczyk/crit)
-[![Release](https://img.shields.io/github/release/tomasz-tomczyk/crit.svg)](https://github.com/tomasz-tomczyk/crit/releases)
+Crit Plus (`crit-plus`) is an enhanced fork of [Crit](https://github.com/tomasz-tomczyk/crit), originally created by **Tomasz Tomczyk**. The upstream MIT license and copyright are preserved.
+
+[![CI](https://github.com/JesseGuoX/better-crit/actions/workflows/test.yml/badge.svg)](https://github.com/JesseGuoX/better-crit/actions/workflows/test.yml)
+[![Release](https://img.shields.io/github/release/JesseGuoX/better-crit.svg)](https://github.com/JesseGuoX/better-crit/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Review and comment on plans, code diffs, frontend elements and send feedback directly to your agent.
 
-![Crit UI for "notification-plan.md" showing comment left on "Queue - Redis Streams, SQS, RabbitMQ" line saying "Just use SQS - we're in AWS"](docs/images/demo-overview.png)
+![Upstream Crit UI for "notification-plan.md" showing comment left on "Queue - Redis Streams, SQS, RabbitMQ" line saying "Just use SQS - we're in AWS"](docs/images/demo-overview.png)
 
 ## Adaptive UI for each type of output
 
 For agents, plans and code are all the same - it's just text, but for us, humans, reviewing generated plans and reviewing web application are two very different activities.
 
-Crit adds a proper interface for each type of output and lets you point at the exact thing that is wrong and leave a comment for the agent to fix:
+Crit Plus adds a proper interface for each type of output and lets you point at the exact thing that is wrong and leave a comment for the agent to fix:
 
-- `crit plan.md` renders a markdown file with proper formatting and review UI
-- `crit` auto-detects git changes and shows syntax-highlighted diffs for local review.
-- `crit http://localhost:3000` proxies your running app and adds a review interface to it
-- `crit landing.html` renders a static HTML artifact to review
-- `crit decide checklist.json` opens a structured decision checklist with choices, recommendations, and revision feedback
+- `crit-plus plan.md` renders a markdown file with proper formatting and review UI
+- `crit-plus` auto-detects git changes and shows syntax-highlighted diffs for local review.
+- `crit-plus http://localhost:3000` proxies your running app and adds a review interface to it
+- `crit-plus landing.html` renders a static HTML artifact to review
+- `crit-plus decide checklist.json` opens a structured decision checklist with choices, recommendations, and revision feedback
 
 Everything runs locally via one single binary.
 
 ## Decision checklists
 
-`crit install <tool>` includes the `crit-decide` skill (or equivalent workflow)
+`crit-plus install <tool>` includes the `crit-plus-decide` skill (or equivalent workflow)
 to teach agents how to prepare and run decision checklists. To update an existing
-installation, use `crit install <tool> --force`. Ask the agent to use Crit for
-decisions, or invoke `$crit-decide` in Codex or `/crit-decide` in Claude Code.
+installation, use `crit-plus install <tool> --force`. Ask the agent to use Crit Plus for
+decisions, or invoke `$crit-plus-decide` in Codex or `/crit-plus-decide` in Claude Code.
 
-Agents can run `crit decide --guide` for the input schema and a complete example,
-then `crit decide checklist.json` (or pipe JSON to `crit decide -`). The page
+Agents can run `crit-plus decide --guide` for the input schema and a complete example,
+then `crit-plus decide checklist.json` (or pipe JSON to `crit-plus decide -`). The page
 supports single and multiple choices, Markdown context, recommendations,
 autosaved drafts, and modification requests. Recommendations are not preselected.
 
@@ -48,65 +49,80 @@ commands or review approval hooks. See the [agent guide](internal/decision/guide
 
 ## Quickstart
 
-### 1. Install Crit binary
-Brew:
-```bash
-brew install crit
-```
-<details>
-<summary>Also available via Go, Nix, Windows</summary>
+### 1. Build and install `crit-plus`
 
-Go:
+Build this fork from its checkout (Go and Make are required):
+
 ```bash
-go install github.com/tomasz-tomczyk/crit/cmd/crit@latest
+git clone https://github.com/JesseGuoX/better-crit.git crit-plus
+cd crit-plus
+make build
+./crit-plus --version
 ```
 
-Nix:
+To put it on your PATH on macOS or Linux:
+
 ```bash
-nix profile install github:tomasz-tomczyk/crit
+mkdir -p "$HOME/.local/bin"
+install -m 755 crit-plus "$HOME/.local/bin/crit-plus"
 ```
 
-Windows:
-```bash
-iwr https://github.com/tomasz-tomczyk/crit/releases/latest/download/crit-windows-amd64.exe -OutFile crit.exe
-```
-> Note: Then move crit.exe somewhere on your PATH. ARM64 users: swap amd64 for arm64. WSL users: use the Linux binary instead.
+Ensure `$HOME/.local/bin` is on your PATH. On Windows, build with
+`go build -o crit-plus.exe ./cmd/crit` and put `crit-plus.exe` on your PATH.
+`make build-all` produces `dist/crit-plus-<os>-<arch>` binaries, with `.exe`
+for Windows. Release binaries belong to [this fork's releases](https://github.com/JesseGuoX/better-crit/releases).
 
-</details>
+Nix users can run `nix build .` or `nix run . -- --help` from this checkout.
+The original `brew install crit` and upstream Go install commands install
+**Crit**, not this fork.
 
-Or download the latest release from [GitHub](https://github.com/tomasz-tomczyk/crit/releases/latest).
+### Compatibility and provenance
 
-## 2. Integrate with your agent
+Crit Plus adds an improved Markdown reading layout, wide-screen support, and
+structured human decision checklists to Crit. The original code and design
+come from [Crit](https://github.com/tomasz-tomczyk/crit) by Tomasz Tomczyk and
+its contributors; see [LICENSE](LICENSE) and [NOTICE](NOTICE).
+
+The web interface displays the brand as `crit+`.
+The executable, skills, workflows, and plugin IDs use `crit-plus` (including
+`crit-plus-cli`, `crit-plus-story`, and `crit-plus-decide`). Existing upstream
+skills remain separate. Configuration and saved reviews still use `.crit`,
+`.crit.config.json`, and `CRIT_*` environment variables for compatibility.
+The Go module path and internal source directory `cmd/crit` retain their
+upstream names; they are not the installed executable name. Hosted sharing
+at [crit.md](https://crit.md) is an upstream service.
+
+### 2. Integrate with your agent
 Claude Code:
 ```
-claude plugin marketplace add tomasz-tomczyk/crit
-claude plugin install crit@crit
+claude plugin marketplace add /absolute/path/to/crit-plus
+claude plugin install crit-plus@crit-plus
 ```
 
-Crit also works with Cursor, GitHub Copilot, OpenCode, Codex, Gemini, Qwen, Hermes, Windsurf, Cline, Grok, Aider, and Pi — any agent that can read a file and run a command. See [`integrations/`](integrations/) for all install methods and details.
+Crit Plus also works with Cursor, GitHub Copilot, OpenCode, Codex, Gemini, Qwen, Hermes, Windsurf, Cline, Grok, Aider, and Pi — any agent that can read a file and run a command. See [`integrations/`](integrations/) for all install methods and details.
 
-### 3. Tell your agent to use `crit`
+### 3. Tell your agent to use `crit-plus`
 
-Most integrations include a `/crit` slash command that automates the full review loop.
-Agent launches Crit, waits for your review and acts on the feedback.
+Most integrations include a `/crit-plus` slash command that automates the full review loop.
+Agent launches Crit Plus, waits for your review and acts on the feedback.
 Repeat the process until you approve the changes.
 
-Here's a 2-minute demo walkthrough of plan review and branch review:
-[![Crit demo](docs/images/video-thumbnail.png)](https://www.youtube.com/watch?v=LHwfdvePf5A)
+The following upstream Crit demo illustrates the inherited plan and branch review workflow:
+[![Upstream Crit demo](docs/images/video-thumbnail.png)](https://www.youtube.com/watch?v=LHwfdvePf5A)
 
 ## Usage
 
-The recommended way is to use `/crit` command with your agent after any piece of work - whether it wrote a plan or made some code changes. You can however, launch it in your terminal by yourself and paste the prompt when you finish to your agent.
+The recommended way is to use `/crit-plus` command with your agent after any piece of work - whether it wrote a plan or made some code changes. You can however, launch it in your terminal by yourself and paste the prompt when you finish to your agent.
 
 ```bash
-crit                              # auto-detect changed files in your repo
-crit plan.md                      # review a specific file
-crit plan.md api-spec.md          # review multiple files
-crit http://localhost:3000        # review a running dev server
-crit landing.html                 # review a static HTML file
+crit-plus                              # auto-detect changed files in your repo
+crit-plus plan.md                      # review a specific file
+crit-plus plan.md api-spec.md          # review multiple files
+crit-plus http://localhost:3000        # review a running dev server
+crit-plus landing.html                 # review a static HTML file
 ```
 
-If talking to an agent, you can invoke the `/crit` command and optionally provide arguments like the above examples or the agent will try to launch the right thing based on the context of the conversation.
+If talking to an agent, you can invoke the `/crit-plus` command and optionally provide arguments like the above examples or the agent will try to launch the right thing based on the context of the conversation.
 
 ### Story mode
 
@@ -115,12 +131,12 @@ overview of the diff — thematic chapters, a prologue, and a support bucket for
 noise — so you can understand the shape of the change before line-by-line
 review. It is an explainer, not a reviewer.
 
-**Recommended:** invoke `/crit-story` (or `$crit-story`, `/skill:crit-story`,
-depending on your agent) after `crit install <tool>`. Your agent authors the
-story in-session via `crit story --prep` / `--story-file`. Only run it when you
-explicitly ask — agents will not infer it from a normal `/crit` review.
+**Recommended:** invoke `/crit-plus-story` (or `$crit-plus-story`, `/skill:crit-plus-story`,
+depending on your agent) after `crit-plus install <tool>`. Your agent authors the
+story in-session via `crit-plus story --prep` / `--story-file`. Only run it when you
+explicitly ask — agents will not infer it from a normal `/crit-plus` review.
 
-**Alternative:** `crit story` from the terminal uses your global `agent_cmd`
+**Alternative:** `crit-plus story` from the terminal uses your global `agent_cmd`
 (separate LLM spend). Generation is LLM-driven exploration — cost depends on
 change complexity more than raw file/diff size, and does not scale linearly.
 In our experience, complex PRs (~20–50 files, ~2k–5k lines) land around
@@ -129,20 +145,20 @@ for commands, custom prompts, JSON shape, and token-cost notes.
 
 ### Live mode
 
-`crit live <url>` (or `crit <url>`) proxies a running dev server through Crit's review UI. Crit's iframe loads the app on a different origin/port than your browser tab, so **host-scoped session cookies are not shared automatically**. If the direct URL works but Crit shows a login page or hydration mismatch, forward the upstream cookies:
+`crit-plus live <url>` (or `crit-plus <url>`) proxies a running dev server through Crit Plus's review UI. Crit Plus's iframe loads the app on a different origin/port than your browser tab, so **host-scoped session cookies are not shared automatically**. If the direct URL works but Crit Plus shows a login page or hydration mismatch, forward the upstream cookies:
 
 ```bash
 # one-off
-crit live http://localhost:4000/dashboard --cookie "_crit_key=..."
+crit-plus live http://localhost:4000/dashboard --cookie "_crit_key=..."
 
 # repeatable (Netscape jar or raw Cookie header lines)
-crit live http://localhost:4000/dashboard --cookie-file .crit/live-cookies.txt
+crit-plus live http://localhost:4000/dashboard --cookie-file .crit/live-cookies.txt
 
 # reuse cookies from a Chrome session with remote debugging enabled
-crit live http://localhost:4000/dashboard --cdp-url http://127.0.0.1:9222
+crit-plus live http://localhost:4000/dashboard --cdp-url http://127.0.0.1:9222
 ```
 
-**Getting cookies:** log in to the app in your browser, then copy the session cookie from DevTools (Application → Cookies), export a cookie jar, or start Chrome with `--remote-debugging-port=9222` and pass `--cdp-url` so Crit reads cookies for the target origin automatically.
+**Getting cookies:** log in to the app in your browser, then copy the session cookie from DevTools (Application → Cookies), export a cookie jar, or start Chrome with `--remote-debugging-port=9222` and pass `--cdp-url` so Crit Plus reads cookies for the target origin automatically.
 
 **Config** (global or project `.crit.config.json`; project overrides global):
 
@@ -153,26 +169,26 @@ crit live http://localhost:4000/dashboard --cdp-url http://127.0.0.1:9222
 }
 ```
 
-Relative paths resolve from the repo root. Prefer a gitignored file under `.crit/` over committing `live_cookie` inline. Run `crit live --help` for all flags.
+Relative paths resolve from the repo root. Prefer a gitignored file under `.crit/` over committing `live_cookie` inline. Run `crit-plus live --help` for all flags.
 
 If Comment/Pin stays unavailable, or a framework needs local CSP / iframe
 tweaks, see the **[live mode guide](docs/live-mode.md)** (injection model,
 common failures, Phoenix / Vite / Next.js recipes).
 
 ```bash
-crit status                       # show review file path and daemon status
-crit resume                       # pick a previous review to reopen
-crit stats                        # show lifetime review statistics
-crit cleanup                      # delete stale review files
+crit-plus status                       # show review file path and daemon status
+crit-plus resume                       # pick a previous review to reopen
+crit-plus stats                        # show lifetime review statistics
+crit-plus cleanup                      # delete stale review files
 ```
 
-`crit resume` lists every review in `~/.crit/reviews`, newest first, with its branch or files, directory, age, and open comment count. Choosing one reconnects to its daemon, or restarts the daemon in the directory the review came from when it has stopped — so you can resume a review from anywhere. Pass `--list` to print the list instead, or a session ID to skip the picker.
+`crit-plus resume` lists every review in `~/.crit/reviews`, newest first, with its branch or files, directory, age, and open comment count. Choosing one reconnects to its daemon, or restarts the daemon in the directory the review came from when it has stopped — so you can resume a review from anywhere. Pass `--list` to print the list instead, or a session ID to skip the picker.
 
 ## Features
 
 ### Round-to-round diff
 
-After your agent edits the file, Crit shows a split or unified diff of what changed - toggle it in the header.
+After your agent edits the file, Crit Plus shows a split or unified diff of what changed - toggle it in the header.
 
 #### Split view
 
@@ -190,19 +206,19 @@ Click a line number to comment. Drag to select a range. Comments are rendered in
 
 ### Programmatic comments
 
-AI agents can use `crit comment` to add inline review comments without opening the browser UI or constructing JSON manually:
+AI agents can use `crit-plus comment` to add inline review comments without opening the browser UI or constructing JSON manually:
 
 ```bash
-crit comment src/auth.go:42 'Missing null check'
-crit comment src/handler.go:15-28 'Error handling issue'
-crit comment --session 839f3b4cd5d6 src/auth.go:42 'Target this review'
-echo '[{"body":"Overall feedback"}]' | crit comment --session 839f3b4cd5d6 --json
-crit comment --output ~/.crit src/auth.go:42 'comment'  # same as default (~/.crit/reviews/<key>/)
-crit comment --output .crit src/auth.go:42 'comment'    # in-repo: .crit/reviews/<key>/
-crit comment --clear   # remove the review file
+crit-plus comment src/auth.go:42 'Missing null check'
+crit-plus comment src/handler.go:15-28 'Error handling issue'
+crit-plus comment --session 839f3b4cd5d6 src/auth.go:42 'Target this review'
+echo '[{"body":"Overall feedback"}]' | crit-plus comment --session 839f3b4cd5d6 --json
+crit-plus comment --output ~/.crit src/auth.go:42 'comment'  # same as default (~/.crit/reviews/<key>/)
+crit-plus comment --output .crit src/auth.go:42 'comment'    # in-repo: .crit/reviews/<key>/
+crit-plus comment --clear   # remove the review file
 ```
 
-Comments are appended to the review file (stored in `~/.crit/reviews/`) and created automatically if it doesn't exist. Run `crit status` to see active review session IDs and paths. If multiple sessions match the same directory and branch, select one with `--session <id>` on `crit comment`, `crit comments`, `crit share`, `crit push`, or `crit pull`; an unqualified command fails instead of guessing.
+Comments are appended to the review file (stored in `~/.crit/reviews/`) and created automatically if it doesn't exist. Run `crit-plus status` to see active review session IDs and paths. If multiple sessions match the same directory and branch, select one with `--session <id>` on `crit-plus comment`, `crit-plus comments`, `crit-plus share`, `crit-plus push`, or `crit-plus pull`; an unqualified command fails instead of guessing.
 
 ### Share for Async Review
 
@@ -211,11 +227,11 @@ Want a second opinion before handing off to the agent? Click the Share button to
 You can also share directly from the CLI without starting the browser UI:
 
 ```bash
-crit share plan.md                    # share files and print the URL
-crit share plan.md --qr               # also print a QR code in the terminal
-crit share plan.md --org acme         # share under an organization
-crit share plan.md --org acme --visibility unlisted  # org share with explicit visibility
-crit unpublish                        # remove the shared review
+crit-plus share plan.md                    # share files and print the URL
+crit-plus share plan.md --qr               # also print a QR code in the terminal
+crit-plus share plan.md --org acme         # share under an organization
+crit-plus share plan.md --org acme --visibility unlisted  # org share with explicit visibility
+crit-plus unpublish                        # remove the shared review
 ```
 
 When sharing under an org, visibility defaults to `organization` (members only). Override with `--visibility` (`organization`, `unlisted`, or `public`). The browser UI shows an org picker when you're signed in and belong to an organization.
@@ -224,12 +240,12 @@ Sharing uses [crit.md](https://crit.md) when no sharing key exists. To use sever
 
 ```json
 {"share_targets":[
-  {"name":"Acme Crit","url":"https://crit.acme.com","default":true,"proxy_auth":true},
+  {"name":"Acme Crit Plus","url":"https://crit.acme.com","default":true,"proxy_auth":true},
   {"name":"crit.md","url":"https://crit.md"}
 ]}
 ```
 
-Run `crit auth login --share-url https://crit.acme.com` to add or authenticate a target, and add `--set-default` to make it the CLI default. `crit auth status` lists every target. An explicit `"share_targets": []` disables sharing and never injects crit.md. Legacy `share_url` remains readable; `crit config --migrate` converts it atomically. `--share-url` and `CRIT_SHARE_URL` are process-only overrides and never persist a new target; an explicitly empty `CRIT_SHARE_URL` disables sharing for that process.
+Run `crit-plus auth login --share-url https://crit.acme.com` to add or authenticate a target, and add `--set-default` to make it the CLI default. `crit-plus auth status` lists every target. An explicit `"share_targets": []` disables sharing and never injects crit.md. Legacy `share_url` remains readable; `crit-plus config --migrate` converts it atomically. `--share-url` and `CRIT_SHARE_URL` are process-only overrides and never persist a new target; an explicitly empty `CRIT_SHARE_URL` disables sharing for that process.
 
 If a target sits behind an SSO reverse proxy, set `proxy_auth: true` on that target. Browser-driven Share / Pull / Re-share / Unpublish then use its popup relay; terminal operations remain unavailable for that target.
 
@@ -238,49 +254,49 @@ If a target sits behind an SSO reverse proxy, set `proxy_auth: true` on that tar
 You can share anonymously or you can create a free crit.md account (using GitHub oAuth). To authenticate with crit-web (for sharing and other features that require an account):
 
 ```bash
-crit auth login                    # opens browser to log in
-crit auth login --share-url https://crit.acme.com --set-default
-crit auth status                   # list targets and identities
-crit auth logout --share-url https://crit.md
+crit-plus auth login                    # opens browser to log in
+crit-plus auth login --share-url https://crit.acme.com --set-default
+crit-plus auth status                   # list targets and identities
+crit-plus auth logout --share-url https://crit.md
 ```
 
-`crit auth login` uses the OAuth Device Flow - it opens your browser, you confirm, and the CLI receives a token automatically. The token is stored in your global config (`~/.crit.config.json`).
+`crit-plus auth login` uses the OAuth Device Flow - it opens your browser, you confirm, and the CLI receives a token automatically. The token is stored in your global config (`~/.crit.config.json`).
 
 ### GitHub PR and GitLab MR Sync
 
-Crit can review and sync comments bidirectionally with GitHub pull requests and GitLab merge requests. Install and authenticate the CLI for your forge: [GitHub CLI](https://cli.github.com) (`gh auth login`) or [GitLab CLI](https://gitlab.com/gitlab-org/cli) (`glab auth login`). GitLab.com, self-managed GitLab hosts, nested groups, and cross-project merge requests are supported.
+Crit Plus can review and sync comments bidirectionally with GitHub pull requests and GitLab merge requests. Install and authenticate the CLI for your forge: [GitHub CLI](https://cli.github.com) (`gh auth login`) or [GitLab CLI](https://gitlab.com/gitlab-org/cli) (`glab auth login`). GitLab.com, self-managed GitLab hosts, nested groups, and cross-project merge requests are supported.
 
-Crit auto-detects GitHub or GitLab from the repository remote. Set `"forge": "github"` or `"forge": "gitlab"` in config to override ambiguous/self-managed remotes, or pass `--forge` to `crit pull` and `crit push`. GitLab's base URL is configured once with `gitlab_url` and defaults to `https://gitlab.com`; set it to your self-managed instance in `.crit.config.json`. MR URLs remain valid change identifiers, but their host must match the configured `gitlab_url`.
+Crit Plus auto-detects GitHub or GitLab from the repository remote. Set `"forge": "github"` or `"forge": "gitlab"` in config to override ambiguous/self-managed remotes, or pass `--forge` to `crit-plus pull` and `crit-plus push`. GitLab's base URL is configured once with `gitlab_url` and defaults to `https://gitlab.com`; set it to your self-managed instance in `.crit.config.json`. MR URLs remain valid change identifiers, but their host must match the configured `gitlab_url`.
 
 #### Open a remote change for review
 
 ```bash
-crit pr 42                                  # GitHub pull request
-crit mr 42                                  # GitLab MR in the current project
-crit mr https://gitlab.com/group/sub/project/-/merge_requests/42
-crit review --mr 42 --remote                # read MR files via GitLab instead of local git
+crit-plus pr 42                                  # GitHub pull request
+crit-plus mr 42                                  # GitLab MR in the current project
+crit-plus mr https://gitlab.com/group/sub/project/-/merge_requests/42
+crit-plus review --mr 42 --remote                # read MR files via GitLab instead of local git
 ```
 
 #### Pull comments
 
 ```bash
-crit pull                                  # auto-detect from current branch and remote
-crit pull 42                               # explicit PR number or MR IID
-crit pull --forge gitlab 42                # explicit provider
-crit pull https://gitlab.com/group/project/-/merge_requests/42
+crit-plus pull                                  # auto-detect from current branch and remote
+crit-plus pull 42                               # explicit PR number or MR IID
+crit-plus pull --forge gitlab 42                # explicit provider
+crit-plus pull https://gitlab.com/group/project/-/merge_requests/42
 ```
 
 #### Push comments and review outcomes
 
 ```bash
-crit push                                      # auto-detect PR/MR from current branch
-crit push --dry-run                            # preview without posting
-crit push --message "Round 2"                  # add a review summary
-crit push --event approve 42                   # approve
-crit push --event request-changes --forge gitlab 42
+crit-plus push                                      # auto-detect PR/MR from current branch
+crit-plus push --dry-run                            # preview without posting
+crit-plus push --message "Round 2"                  # add a review summary
+crit-plus push --event approve 42                   # approve
+crit-plus push --event request-changes --forge gitlab 42
 ```
 
-GitLab inline comments are published as a single review using Draft Notes. `request-changes` requires GitLab support for the `reviewer_state=requested_changes` bulk-publish option; Crit reports an error instead of silently downgrading the outcome. Pulling again imports replies, edits, deletes, and discussion resolution without duplicating local comments.
+GitLab inline comments are published as a single review using Draft Notes. `request-changes` requires GitLab support for the `reviewer_state=requested_changes` bulk-publish option; Crit Plus reports an error instead of silently downgrading the outcome. Pulling again imports replies, edits, deletes, and discussion resolution without duplicating local comments.
 
 ### Send to agent (experimental)
 
@@ -314,7 +330,7 @@ Agents need tool permissions to edit files on your behalf. How you grant them de
 
 1. The agent receives the comment text, quoted text (if text was selected), file path, and line range on **stdin**.
 2. The agent's **stdout** is captured and posted as a reply to the comment automatically.
-3. If the agent edits files, Crit detects the changes via **file watching** and updates the UI.
+3. If the agent edits files, Crit Plus detects the changes via **file watching** and updates the UI.
 
 #### Live threads
 
@@ -347,15 +363,15 @@ After the first agent interaction, the comment becomes a **live thread**:
 - **Syntax highlighting.** Code blocks are highlighted and split per-line, so you can comment on individual lines inside a fence.
 - **Live file watching.** The browser reloads automatically when the source file changes.
 - **Dark/light/system theme.** Three-button pill in the header, persisted to localStorage.
-- **Configurable code font.** Code-review Settings → Display → Code font lists coding/monospace fonts detected by the local Crit daemon, plus Default, System monospace, and a custom `font-family` fallback. Applies to code and diffs, and persists across sessions.
-- **Local by default.** Server binds to `127.0.0.1`. Your files stay on your machine unless you explicitly share. Non-loopback listen hosts and `public_url` require `--allow-unauthenticated-network` (or `CRIT_ALLOW_UNAUTHENTICATED_NETWORK=1`) because Crit has no network authentication — prefer SSH forwarding, Tailscale Serve to loopback, or Docker `-p 127.0.0.1:…`.
+- **Configurable code font.** Code-review Settings → Display → Code font lists coding/monospace fonts detected by the local Crit Plus daemon, plus Default, System monospace, and a custom `font-family` fallback. Applies to code and diffs, and persists across sessions.
+- **Local by default.** Server binds to `127.0.0.1`. Your files stay on your machine unless you explicitly share. Non-loopback listen hosts and `public_url` require `--allow-unauthenticated-network` (or `CRIT_ALLOW_UNAUTHENTICATED_NETWORK=1`) because Crit Plus has no network authentication — prefer SSH forwarding, Tailscale Serve to loopback, or Docker `-p 127.0.0.1:…`.
 - **Collapsing generated files.** Honors `linguist-generated` in `.gitattributes` — matching files appear collapsed by default.
-- **No analytics or tracking.** Crit collects zero telemetry. No usage stats, no crash reports, no phone-home. If we ever add anonymous usage statistics in the future, they will be explicitly opt-in.
-- **Update check.** On startup, Crit makes one network request to check for a newer version and prints a notice if one is available. Set `CRIT_NO_UPDATE_CHECK=1` to disable it.
+- **No analytics or tracking.** Crit Plus collects zero telemetry. No usage stats, no crash reports, no phone-home. If we ever add anonymous usage statistics in the future, they will be explicitly opt-in.
+- **Update check.** On startup, Crit Plus makes one network request to check for a newer version and prints a notice if one is available. Set `CRIT_NO_UPDATE_CHECK=1` to disable it.
 
 ## Configuration
 
-Crit supports persistent configuration via JSON files so you don't have to pass the same flags every time.
+Crit Plus supports persistent configuration via JSON files so you don't have to pass the same flags every time.
 
 | File                  | Scope   | Location                                         |
 | --------------------- | ------- | ------------------------------------------------ |
@@ -365,8 +381,8 @@ Crit supports persistent configuration via JSON files so you don't have to pass 
 Project config overrides global. CLI flags and env vars override both.
 
 ```bash
-crit config --generate > ~/.crit.config.json   # scaffold a starter config file
-crit config                                    # view resolved config (merged global + project)
+crit-plus config --generate > ~/.crit.config.json   # scaffold a starter config file
+crit-plus config                                    # view resolved config (merged global + project)
 ```
 
 ### Config keys
@@ -379,7 +395,7 @@ All keys are optional — omit any you don't need.
 | `host`                 | string   | `"127.0.0.1"`              | Listen host (global/CLI/env only). Non-loopback values also require `--allow-unauthenticated-network` / `CRIT_ALLOW_UNAUTHENTICATED_NETWORK=1`. Prefer loopback + SSH/Tailscale/Docker host-loopback publish. |
 | `no_open`              | bool     | `false`                    | Don't auto-open the browser when starting a review.                                                                                                                                     |
 | `quiet`                | bool     | `false`                    | On success, suppress daemon connect/start lines, integration tips, and the session summary. Errors, `approved:`, and the finish prompt are unchanged. |
-| `output`               | string   | `~/.crit`                  | Crit data root for reviews. Reviews live in `<root>/reviews/<key>/` (same layout as the default). |
+| `output`               | string   | `~/.crit`                  | Crit Plus data root for reviews. Reviews live in `<root>/reviews/<key>/` (same layout as the default). |
 | `author`               | string   | VCS user name              | Author name shown on comments. Falls back to your configured VCS user name.                                                                                                            |
 | `forge`                | string   | `"auto"`                   | Remote review provider: `"auto"`, `"github"`, or `"gitlab"`. Auto-detection uses the repository remote; set this for ambiguous self-managed hosts. |
 | `gitlab_url`           | string   | `"https://gitlab.com"`     | GitLab base URL used for every MR operation. Set once for a self-managed instance; MR URL arguments must use the same host. |
@@ -391,22 +407,22 @@ All keys are optional — omit any you don't need.
 | `notify_on_round_ready`| bool     | `false`                    | Opt in to a desktop notification when a review round becomes ready for you (after the agent finishes addressing comments). On macOS, install [`terminal-notifier`](https://github.com/julienXX/terminal-notifier) (`brew install terminal-notifier`) so clicking the notification opens the review URL — without it, clicking falls back to AppleScript's `display notification`, which macOS attributes to Script Editor and activates that instead of your browser. |
 | `no_update_check`      | bool     | `false`                    | Don't check for new versions on startup.                                                                                                                                                |
 | `no_integration_check` | bool     | `false`                    | Skip the integration config freshness check on startup.                                                                                                                                 |
-| `vcs`                  | string   | auto-detected              | Preferred VCS backend: `"git"`, `"sl"`, or `"jj"`. When set, crit uses this VCS instead of auto-detecting. Falls back to git if the configured VCS isn't available. Can also be set via `--vcs` CLI flag (flag takes precedence over config). |
+| `vcs`                  | string   | auto-detected              | Preferred VCS backend: `"git"`, `"sl"`, or `"jj"`. When set, crit-plus uses this VCS instead of auto-detecting. Falls back to git if the configured VCS isn't available. Can also be set via `--vcs` CLI flag (flag takes precedence over config). |
 | `live_cookie`          | string   | `""`                       | Cookie header value forwarded to the upstream app in live mode (e.g. `"_crit_key=..."`). Global or project. Prefer `live_cookie_file` for secrets. |
 | `live_cookie_file`     | string   | `""`                       | Path to a file with upstream cookies for live mode (raw header lines or Netscape jar). Global or project; relative paths resolve from repo root. |
 | `live_cdp_url`         | string   | `""`                       | Chrome DevTools URL (e.g. `http://127.0.0.1:9222`) to reuse browser cookies for the live upstream. Global or project. |
 | `prompts`              | object   | `{}`                       | Custom finish-hook templates (project overrides global per key). See [Agent prompts](docs/agent-prompts.md). |
-| `hooks`                | object   | `{}`                       | Custom finish-hook **commands** executed at Finish/Approve (project overrides global per key). Deterministic side effects — `crit` pipes a JSON payload to stdin and sets `CRIT_*` env vars. See [Command hooks](docs/agent-hooks.md). |
+| `hooks`                | object   | `{}`                       | Custom finish-hook **commands** executed at Finish/Approve (project overrides global per key). Deterministic side effects — `crit-plus` pipes a JSON payload to stdin and sets `CRIT_*` env vars. See [Command hooks](docs/agent-hooks.md). |
 
 ### Agent prompts
 
-Customize what Crit tells your agent when you **Finish Review** or **Approve**. Hooks are templates in global or project config (`prompts` map) and `.crit/prompts/*.md` files.
+Customize what Crit Plus tells your agent when you **Finish Review** or **Approve**. Hooks are templates in global or project config (`prompts` map) and `.crit/prompts/*.md` files.
 
 See the **[agent prompts guide](docs/agent-prompts.md)** for hook reference, template variables, trust flow, and examples.
 
 ### Command hooks
 
-Run your own scripts when you **Finish Review** or **Approve** — deterministic side effects, no LLM in the loop. Crit pipes a JSON payload to the hook's stdin and sets `CRIT_*` env vars (review path, session key, mode, unresolved count, files-with-comments, …). Keys and resolution mirror the prompt system (`on_finish_unresolved` / `on_finish_approved`, optionally `:files` / `:diff` / `:live` / `:preview`), and project hooks go through the same trust gate as project prompts.
+Run your own scripts when you **Finish Review** or **Approve** — deterministic side effects, no LLM in the loop. Crit Plus pipes a JSON payload to the hook's stdin and sets `CRIT_*` env vars (review path, session key, mode, unresolved count, files-with-comments, …). Keys and resolution mirror the prompt system (`on_finish_unresolved` / `on_finish_approved`, optionally `:files` / `:diff` / `:live` / `:preview`), and project hooks go through the same trust gate as project prompts.
 
 ```bash
 # ~/.crit.config.json
@@ -418,7 +434,7 @@ Run your own scripts when you **Finish Review** or **Approve** — deterministic
 }
 ```
 
-See the **[command hooks guide](docs/agent-hooks.md)** for the full env-var/stdin reference, trust flow, and examples (including the “snapshot commented-on files” recipe). Reference example hook scripts live under [`docs/example-hooks/`](https://github.com/tomasz-tomczyk/crit/tree/main/docs/example-hooks) in the repo — they're documentation, not installed by `crit install` and not tracked among the integrations (hooks are opt-in and not used by default).
+See the **[command hooks guide](docs/agent-hooks.md)** for the full env-var/stdin reference, trust flow, and examples (including the “snapshot commented-on files” recipe). Reference example hook scripts live under [`docs/example-hooks/`](https://github.com/tomasz-tomczyk/crit/tree/main/docs/example-hooks) in the repo — they're documentation, not installed by `crit-plus install` and not tracked among the integrations (hooks are opt-in and not used by default).
 
 ### Global-only config keys
 
@@ -427,14 +443,14 @@ These keys can only be set in `~/.crit.config.json` (global). Project-level `.cr
 | Key                    | Type     | Default                    | Description                                                                                                                                                                             |
 | ---------------------- | -------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `agent_cmd`            | string   | `""`                       | Shell command for "Send to agent" (e.g. `"claude -p"`). See [Send to agent](#send-to-agent-experimental). |
-| `open_cmd`             | string   | `""`                       | Custom command to open review URLs — receives the URL as its only argument (must be a single executable, no flags). Use when the browser isn't on the machine running crit, e.g. crit runs on a remote host over SSH and a small wrapper script opens the URL on your local machine. When unset, crit uses the platform default opener. |
+| `open_cmd`             | string   | `""`                       | Custom command to open review URLs — receives the URL as its only argument (must be a single executable, no flags). Use when the browser isn't on the machine running crit-plus, e.g. crit-plus runs on a remote host over SSH and a small wrapper script opens the URL on your local machine. When unset, crit-plus uses the platform default opener. |
 | `share_targets`        | array    | implicit crit.md when absent | Deployment list with per-target `name`, `url`, `default`, `proxy_auth`, nested `auth`, and public `share_consented`. An explicit empty array disables sharing. |
 | `auth_token`           | string   | `""`                       | Legacy singleton token; read only while `share_targets` is absent. |
-| `share_url`            | string   | implicit `"https://crit.md"` | Legacy singleton URL. An explicitly empty value disables sharing; migrate with `crit config --migrate`. |
+| `share_url`            | string   | implicit `"https://crit.md"` | Legacy singleton URL. An explicitly empty value disables sharing; migrate with `crit-plus config --migrate`. |
 | `public_url`           | string   | `""`                       | Advertised base URL for stderr and browser-open (e.g. `https://machine.ts.net` via tailscale serve). Listen address unchanged. Requires `--allow-unauthenticated-network` / `CRIT_ALLOW_UNAUTHENTICATED_NETWORK=1`. |
 | `share_consented`      | bool     | `false`                    | Written automatically to `true` after you confirm the first-time share prompt. Reset to `false` to see the prompt again. Not used when `share_url` is a custom (self-hosted) URL. |
 | `proxy_auth`           | bool     | `false`                    | When `true`, share / pull / unpublish / re-share use the browser popup relay instead of the local Go server contacting crit-web directly. Use when crit-web is behind an SSO reverse proxy that the terminal cannot authenticate against. No flag or env var — this is a property of the deployment, not a per-invocation choice. |
-| `plan_approve_mode`    | string   | unset                      | Claude Code permission mode after Crit approves an `ExitPlanMode` hook: `default`, `manual`, `acceptEdits`, `plan`, `auto`, `dontAsk`, or `bypassPermissions`. The update uses `destination: "session"`, so it lasts only for the current Claude Code session. See [Claude Code plan approval mode](integrations/README.md#claude-code-plan-approval-mode). |
+| `plan_approve_mode`    | string   | unset                      | Claude Code permission mode after Crit Plus approves an `ExitPlanMode` hook: `default`, `manual`, `acceptEdits`, `plan`, `auto`, `dontAsk`, or `bypassPermissions`. The update uses `destination: "session"`, so it lasts only for the current Claude Code session. See [Claude Code plan approval mode](integrations/README.md#claude-code-plan-approval-mode). |
 | `close_on_approve_after_ms` | int | unset (disabled)          | Auto-close the review tab this many milliseconds after you Approve with no unresolved comments. Unset means no auto-close (current behavior); negative values are treated as unset. A Cancel button during the countdown skips the close for that approval. |
 
 ### CLI flags
@@ -447,14 +463,14 @@ These keys can only be set in `~/.crit.config.json` (global). Project-level `.cr
 | `--allow-unauthenticated-network` | | — | Required with non-loopback `--host` or any `--public-url` |
 | `--no-open`     |       | `no_open`             | Don't auto-open browser                |
 | `--share-url`   |       | `share_url`           | Share service URL                      |
-| `--output`      | `-o`  | `output`              | Crit data root for reviews (`<root>/reviews/<key>/`). |
+| `--output`      | `-o`  | `output`              | Crit Plus data root for reviews (`<root>/reviews/<key>/`). |
 | `--quiet`       | `-q`  | `quiet`               | On success, suppress connect/start status, tips, and session summary                 |
 | `--base-branch` |       | `base_branch`         | Base branch to diff against            |
 | `--vcs`         |       | `vcs`                 | VCS backend (`git`, `sl`, or `jj`)     |
 | `--no-ignore`   |       |                       | Temporarily bypass all ignore patterns |
 | `--version`     | `-v`  |                       | Print version and exit                 |
 
-**Live mode only** (`crit live <url>` — see `crit live --help`):
+**Live mode only** (`crit-plus live <url>` — see `crit-plus live --help`):
 
 | Flag            | Equivalent config key | Description |
 | --------------- | --------------------- | ----------- |
@@ -476,7 +492,7 @@ Patterns from global and project configs are merged. Supported syntax:
 Use `--no-ignore` to temporarily bypass all patterns:
 
 ```bash
-crit --no-ignore
+crit-plus --no-ignore
 ```
 
 ### Environment variables
@@ -488,7 +504,7 @@ crit --no-ignore
 | `CRIT_PUBLIC_URL`           | Advertised review URL (e.g. tailscale serve)      |
 | `CRIT_ALLOW_UNAUTHENTICATED_NETWORK` | Allow non-loopback host / public_url (`1`/`true`/`yes`/`on`) |
 | `CRIT_SHARE_URL`            | Override the share service URL                    |
-| `CRIT_AUTH_TOKEN`           | Override the auth token (skips `crit auth login`) |
+| `CRIT_AUTH_TOKEN`           | Override the auth token (skips `crit-plus auth login`) |
 | `CRIT_NO_UPDATE_CHECK`      | Disable the update check on startup               |
 | `CRIT_NO_INTEGRATION_CHECK` | Skip integration config freshness checks          |
 
@@ -499,47 +515,50 @@ crit --no-ignore
 Requires Go 1.26+:
 
 ```bash
-git clone https://github.com/tomasz-tomczyk/crit.git
-cd crit
-go build -o crit ./cmd/crit
-mv crit /usr/local/bin/
+git clone https://github.com/JesseGuoX/better-crit.git crit-plus
+cd crit-plus
+go build -o crit-plus ./cmd/crit
+mkdir -p "$HOME/.local/bin"
+install -m 755 crit-plus "$HOME/.local/bin/crit-plus"
 ```
 
 ### Go
 
+From this fork’s checkout, choose the output name explicitly:
+
 ```bash
-go install github.com/tomasz-tomczyk/crit/cmd/crit@latest
+go build -o crit-plus ./cmd/crit
 ```
 
 ### Nix
 
 ```bash
-nix run github:tomasz-tomczyk/crit -- --help
+nix run github:JesseGuoX/better-crit -- --help
 ```
 
 Or add it to a `flake.nix`:
 
 ```nix
-inputs.crit.url = "github:tomasz-tomczyk/crit";
+inputs.crit-plus.url = "github:JesseGuoX/better-crit";
 ```
 
 ### Download Binary
 
-Grab the latest binary for your platform from [Releases](https://github.com/tomasz-tomczyk/crit/releases).
+Grab the latest binary for your platform from [Releases](https://github.com/JesseGuoX/better-crit/releases).
 
 ### Windows
 
-Native Windows: download `crit-windows-amd64.exe` (or `crit-windows-arm64.exe`) from [Releases](https://github.com/tomasz-tomczyk/crit/releases), rename to `crit.exe`, and place it on your `PATH`.
+Native Windows: download `crit-plus-windows-amd64.exe` (or `crit-plus-windows-arm64.exe`) from [Releases](https://github.com/JesseGuoX/better-crit/releases), rename to `crit-plus.exe`, and place it on your `PATH`.
 
-WSL: install the Linux binary as you would on Linux (`go install`, `nix run`, or download `crit-linux-amd64` from Releases). Crit detects WSL and opens URLs in your Windows host browser via `wslview` / `powershell.exe` / `cmd.exe`.
+WSL: install the Linux binary as you would on Linux (`make build`, `nix run`, or download `crit-plus-linux-amd64` from Releases). Crit Plus detects WSL and opens URLs in your Windows host browser via `wslview` / `powershell.exe` / `cmd.exe`.
 
 ### Docker (sandboxed agents)
 
-For running crit alongside an AI agent inside a container, with the review UI reachable from your host browser, see [`integrations/docker/`](integrations/docker/). Includes a working `Dockerfile` + `entrypoint.sh` that bridges crit's loopback-bound server via `socat`. Publish with `-p 127.0.0.1:8080:8080` so the host mapping stays on loopback.
+For running crit-plus alongside an AI agent inside a container, with the review UI reachable from your host browser, see [`integrations/docker/`](integrations/docker/). Includes a working `Dockerfile` + `entrypoint.sh` that bridges crit-plus's loopback-bound server via `socat`. Publish with `-p 127.0.0.1:8080:8080` so the host mapping stays on loopback.
 
 ## Acknowledgements
 
-Crit embeds the following open-source libraries:
+Crit Plus embeds the following open-source libraries:
 
 - [markdown-it](https://github.com/markdown-it/markdown-it): Markdown parser
 - [highlight.js](https://github.com/highlightjs/highlight.js): Syntax highlighting

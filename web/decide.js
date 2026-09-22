@@ -190,7 +190,7 @@
     generation = 0; savedGeneration = 0; conflict = false; submissionID = null;
     $('error').hidden = true;
     $('title').textContent = round.checklist.title;
-    document.title = round.checklist.title + ' · Crit 裁定';
+    document.title = round.checklist.title + ' · crit+ 裁定';
     $('context').replaceChildren(markdown(round.checklist.context));
     $('revision').textContent = '第 ' + round.revision + ' 轮';
     $('items').replaceChildren(...round.checklist.items.map(renderItem));

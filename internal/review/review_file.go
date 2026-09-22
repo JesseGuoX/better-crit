@@ -29,7 +29,7 @@ var errReviewFileAmbiguousForBranch = errors.New("multiple review files match br
 // ResolveReviewPath returns the review identity path for the current context.
 // In v4 the identity is a folder; review.json and snapshots.json live inside.
 // Resolution order:
-//  1. If outputDir is set, return {outputDir}/reviews/<key> (crit data root)
+//  1. If outputDir is set, return {outputDir}/reviews/<key> (crit-plus data root)
 //  2. Check daemon registry for running sessions matching this cwd
 //  3. If one daemon matches, use its ReviewPath
 //  4. If multiple daemons match, use the one matching current branch
@@ -135,7 +135,7 @@ func ResolveReviewPathWithArgs(outputDir string, fileArgs []string) (string, err
 	return daemon.ReviewFilePath(key)
 }
 
-// identityUnderDataRoot maps --output / config output (a crit data root) to
+// identityUnderDataRoot maps --output / config output (a crit-plus data root) to
 // {dataRoot}/reviews/<key>, matching default ~/.crit/reviews/<key> layout.
 //
 // When a daemon is alive for this cwd, its session key wins — file/live/PR/range
@@ -190,7 +190,7 @@ func sessionKeyForArgs(cwd string, fileArgs []string) string {
 
 // AmbiguousSessionsError is returned when multiple live sessions match cwd+branch.
 func AmbiguousSessionsError(keys []string) error {
-	return fmt.Errorf("multiple active review sessions match this directory and branch (%s); choose one with --session <id> (run `crit status` to list them)", strings.Join(keys, ", "))
+	return fmt.Errorf("multiple active review sessions match this directory and branch (%s); choose one with --session <id> (run `crit-plus status` to list them)", strings.Join(keys, ", "))
 }
 
 // MatchingLiveSessions returns alive sessions for cwd (falling back to the VCS
@@ -200,7 +200,7 @@ func AmbiguousSessionsError(keys []string) error {
 // they are narrowed with SessionsForBranch; if none match the current branch,
 // all unfiltered candidates are returned so the caller can surface ambiguity
 // rather than silently falling through. A RepoRoot failure is treated as
-// "no repo-root sessions" rather than a hard error, matching `crit status`.
+// "no repo-root sessions" rather than a hard error, matching `crit-plus status`.
 func MatchingLiveSessions(cwd, branch string, backend vcs.VCS) ([]daemon.SessionEntry, []string, error) {
 	sessions, keys, err := daemon.ListSessionsForCWDWithKeys(cwd)
 	if err != nil {
@@ -212,7 +212,7 @@ func MatchingLiveSessions(cwd, branch string, backend vcs.VCS) ([]daemon.Session
 	}
 	repoRoot, rootErr := backend.RepoRoot()
 	if rootErr != nil {
-		// Soft-fail like `crit status`: missing repo root is "no repo sessions".
+		// Soft-fail like `crit-plus status`: missing repo root is "no repo sessions".
 		return nil, nil, nil //nolint:nilerr // intentional soft-fail
 	}
 	if repoRoot == "" || repoRoot == cwd {
@@ -241,7 +241,7 @@ func narrowMatchingSessions(sessions []daemon.SessionEntry, keys []string, branc
 // ResolveReviewPathFromDaemon checks the daemon registry for a running session
 // and returns its review path. Tries exact CWD match first, then falls back to
 // matching by git repo root (handles subdirectory mismatch — e.g. daemon started
-// from repo/api but crit comment run from repo/).
+// from repo/api but crit-plus comment run from repo/).
 // Returns an error when multiple same-branch sessions match.
 func ResolveReviewPathFromDaemon(cwd string) (string, error) {
 	branch := ""
@@ -269,7 +269,7 @@ func ResolveReviewPathFromSessions(sessions []daemon.SessionEntry, keys []string
 }
 
 // SnapshotsFile is the per-round-content sidecar inside a review folder. Lives
-// at <folder>/snapshots.json. The crit server reads/writes it; agents do not.
+// at <folder>/snapshots.json. The crit-plus server reads/writes it; agents do not.
 type SnapshotsFile struct {
 	RoundSnapshots map[string]map[int]RoundSnapshot `json:"round_snapshots"`
 }
@@ -343,8 +343,8 @@ func LoadCritJSON(critPath string) (CritJSON, error) {
 			base = vcs.DefaultBaseRef()
 		}
 		baseRef, _ := vcs.MergeBase(base)
-		// Record the directory so `crit resume` can restart this review's
-		// daemon here. Headless `crit comment` often creates the review file
+		// Record the directory so `crit-plus resume` can restart this review's
+		// daemon here. Headless `crit-plus comment` often creates the review file
 		// before any daemon runs, and this is the same cwd the review's
 		// identity was derived from.
 		cwd, _ := daemon.ResolvedCWD()
@@ -417,7 +417,7 @@ func walkReviewIdentities(visit func(identity string, data []byte) error) error 
 			data, readErr := session.ReadFileShared(filepath.Join(folder, "review.json"))
 			if readErr != nil {
 				if !os.IsNotExist(readErr) {
-					fmt.Fprintf(os.Stderr, "crit: warning: could not read %s/review.json: %v\n", folder, readErr)
+					fmt.Fprintf(os.Stderr, "crit-plus: warning: could not read %s/review.json: %v\n", folder, readErr)
 				}
 				continue
 			}
@@ -460,7 +460,7 @@ func findReviewFileByCommentID(commentID string, excludePath string) (string, er
 		if err := json.Unmarshal(data, &cj); err != nil {
 			// Malformed review file; warn and skip so a single corrupt
 			// file doesn't abort the scan or silently hide regressions.
-			fmt.Fprintf(os.Stderr, "crit: warning: malformed review JSON at %s: %v\n", identity, err)
+			fmt.Fprintf(os.Stderr, "crit-plus: warning: malformed review JSON at %s: %v\n", identity, err)
 			return nil //nolint:nilerr // intentional skip on parse failure
 		}
 		if !cjContainsCommentID(&cj, commentID) {
@@ -483,10 +483,10 @@ func findReviewFileByCommentID(commentID string, excludePath string) (string, er
 
 // findReviewFileByBranch scans all review files in ~/.crit/reviews/ for one
 // whose top-level "branch" field equals branch, skipping excludePath. Returns
-// the path if exactly one match is found. Used by `crit pull`/`crit push` to
+// the path if exactly one match is found. Used by `crit-plus pull`/`crit-plus push` to
 // route explicit-PR operations to the review file that owns the PR's branch
 // when the cwd-resolved review file is for a different branch — same class
-// of cwd-vs-intent mismatch that PR #424 fixed for `crit comment`.
+// of cwd-vs-intent mismatch that PR #424 fixed for `crit-plus comment`.
 //
 // Cross-repo safety: matching is purely on the "branch" field, so two repos
 // with reviews on the same branch name could theoretically collide. In
@@ -508,7 +508,7 @@ func findReviewFileByBranch(branch, excludePath string) (string, error) {
 		if err := json.Unmarshal(data, &cj); err != nil {
 			// Malformed review file; skip rather than aborting. Warn once
 			// per malformed file so corruption isn't silently invisible.
-			fmt.Fprintf(os.Stderr, "crit: warning: malformed review JSON at %s: %v\n", identity, err)
+			fmt.Fprintf(os.Stderr, "crit-plus: warning: malformed review JSON at %s: %v\n", identity, err)
 			return nil //nolint:nilerr // intentional skip on parse failure
 		}
 		if cj.Branch != branch {

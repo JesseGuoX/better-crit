@@ -28,18 +28,18 @@ func TestInstallOpencodePluginEntry(t *testing.T) {
 			expectPlugin: []interface{}{projectEntry},
 		},
 		{
-			name:         "existing plugins, no crit entry",
+			name:         "existing plugins, no crit-plus entry",
 			initial:      `{"plugin":["some-other-plugin"]}`,
 			expectPlugin: []interface{}{"some-other-plugin", projectEntry},
 		},
 		{
 			name:         "already registered as string (idempotent)",
-			initial:      `{"plugin":["./.opencode/plugins/crit.ts"]}`,
+			initial:      `{"plugin":["./.opencode/plugins/crit-plus.ts"]}`,
 			expectPlugin: []interface{}{projectEntry},
 		},
 		{
 			name:         "already registered as tuple",
-			initial:      `{"plugin":[["./.opencode/plugins/crit.ts",{}]]}`,
+			initial:      `{"plugin":[["./.opencode/plugins/crit-plus.ts",{}]]}`,
 			expectPlugin: []interface{}{[]interface{}{projectEntry, map[string]interface{}{}}},
 		},
 		{
@@ -183,10 +183,10 @@ func TestLooksLikeJSONC(t *testing.T) {
 }
 
 func TestOpencodePluginEntryPath(t *testing.T) {
-	if got := opencodePluginEntry(false); got != "./.opencode/plugins/crit.ts" {
+	if got := opencodePluginEntry(false); got != "./.opencode/plugins/crit-plus.ts" {
 		t.Errorf("project entry = %q", got)
 	}
-	if got := opencodePluginEntry(true); got != "./plugins/crit.ts" {
+	if got := opencodePluginEntry(true); got != "./plugins/crit-plus.ts" {
 		t.Errorf("global entry = %q", got)
 	}
 }
@@ -223,19 +223,19 @@ func TestInstallOpencodeIncludesPluginFile(t *testing.T) {
 		t.Fatal("opencode integration missing from map")
 	}
 	wantSources := map[string]bool{
-		"integrations/opencode/plugin/crit.ts":                 false,
-		"integrations/opencode/plugin/lib/crit-wait-notify.js": false,
+		"integrations/opencode/plugin/crit-plus.ts":                 false,
+		"integrations/opencode/plugin/lib/crit-plus-wait-notify.js": false,
 	}
 	for _, f := range files {
 		if _, ok := wantSources[f.source]; ok {
 			wantSources[f.source] = true
 		}
-		if f.source == "integrations/opencode/plugin/crit.ts" {
-			if f.dest != ".opencode/plugins/crit.ts" {
-				t.Errorf("project dest = %q want .opencode/plugins/crit.ts", f.dest)
+		if f.source == "integrations/opencode/plugin/crit-plus.ts" {
+			if f.dest != ".opencode/plugins/crit-plus.ts" {
+				t.Errorf("project dest = %q want .opencode/plugins/crit-plus.ts", f.dest)
 			}
-			if f.globalDest != ".config/opencode/plugins/crit.ts" {
-				t.Errorf("global dest = %q want .config/opencode/plugins/crit.ts", f.globalDest)
+			if f.globalDest != ".config/opencode/plugins/crit-plus.ts" {
+				t.Errorf("global dest = %q want .config/opencode/plugins/crit-plus.ts", f.globalDest)
 			}
 		}
 	}
@@ -247,7 +247,7 @@ func TestInstallOpencodeIncludesPluginFile(t *testing.T) {
 		if err != nil {
 			t.Fatalf("read embedded %s: %v", src, err)
 		}
-		if src == "integrations/opencode/plugin/crit.ts" {
+		if src == "integrations/opencode/plugin/crit-plus.ts" {
 			if !strings.Contains(string(data), "experimental.chat.system.transform") {
 				t.Error("embedded plugin does not reference the system-prompt hook")
 			}

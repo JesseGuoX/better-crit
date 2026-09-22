@@ -475,7 +475,7 @@ func TestLoadConfigRuntimeDefaultsOverriddenByEmptyValues(t *testing.T) {
 
 func TestLoadConfigShareURLProjectIgnored(t *testing.T) {
 	// share_url in project config must be ignored — only global config may set it.
-	// Prevents a malicious repo from redirecting crit share (and the auth token)
+	// Prevents a malicious repo from redirecting crit-plus share (and the auth token)
 	// to an attacker-controlled host.
 	homeDir := t.TempDir()
 	testutil.SetHome(t, homeDir)
@@ -1111,7 +1111,7 @@ func TestLoadConfig_CloseOnApproveAfterMs_GlobalWorks(t *testing.T) {
 }
 
 func TestDefaultConfig_DoesNotIncludeCloseOnApproveAfterMs(t *testing.T) {
-	// Scaffolding (`crit config --generate`) must not accidentally enable
+	// Scaffolding (`crit-plus config --generate`) must not accidentally enable
 	// auto-close — the generated template omits this key entirely.
 	s := DefaultConfigString()
 	if strings.Contains(s, "close_on_approve_after_ms") {

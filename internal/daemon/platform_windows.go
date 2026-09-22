@@ -63,7 +63,7 @@ func processExists(proc *os.Process) bool {
 // GetExitCodeProcess probe. ERROR_ACCESS_DENIED tells us our own token is too
 // restricted to query the process, not that the process is gone — a sandboxed
 // or AppContainer daemon would keep running while every probe was denied.
-// Treating it as dead would make crit believe its own live daemon died and
+// Treating it as dead would make crit-plus believe its own live daemon died and
 // spawn a duplicate on every review round. ERROR_INVALID_PARAMETER is what
 // OpenProcess documents for a PID that does not exist, so that — and any other
 // unrecognised error — still reports dead. The /api/health probe in

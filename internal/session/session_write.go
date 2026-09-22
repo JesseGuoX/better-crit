@@ -65,7 +65,7 @@ type writeFilesSnapshot struct {
 	cliArgs         []string
 	cwd             string
 	// story is the session's in-memory narrative (nil if none). Carried into
-	// CritJSON like the other daemon-managed fields above so `crit story`'s
+	// CritJSON like the other daemon-managed fields above so `crit-plus story`'s
 	// daemon-side mutators (set via s.SetStory) are actually persisted —
 	// buildCritJSON otherwise only preserves whatever was already on disk.
 	story                   *Story
@@ -107,7 +107,7 @@ func (s *Session) handleExternalDeletion(critPath string) bool {
 // Caller must NOT hold s.mu.
 //
 // ReviewRound is also reset to 1: this function runs when the review file
-// is deleted out from under the daemon (`crit cleanup`, manual `rm`,
+// is deleted out from under the daemon (`crit-plus cleanup`, manual `rm`,
 // hosted-side unpublish). Without the reset, a long-lived daemon (idle
 // timeout 1h) keeps an in-memory ReviewRound from a prior life, and the
 // next pin authored after the disk wipe ships against that stale round —
@@ -331,7 +331,7 @@ func (s *Session) writeFilesErr() error {
 		s.deletedCommentIDs = nil // written to disk, no longer needed
 		// Sync in-memory pending-delete state to what we just wrote, so the
 		// next snapshot does not re-include IDs that a concurrent
-		// `crit push` already drained. See reconcilePendingRemoteDeletes.
+		// `crit-plus push` already drained. See reconcilePendingRemoteDeletes.
 		s.pendingRemoteDeletes = append(s.pendingRemoteDeletes[:0:0], cj.PendingRemoteDeletes...)
 		s.lastLoadedPendingDeletes = make(map[RemoteRef]struct{}, len(cj.PendingRemoteDeletes))
 		for _, ref := range cj.PendingRemoteDeletes {

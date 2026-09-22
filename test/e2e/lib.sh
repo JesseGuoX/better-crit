@@ -64,9 +64,9 @@ e2e_native_tempdir() {
 # spawn the binary from Node need the .exe suffix in CRIT_BIN.
 e2e_bin_name() {
   if [ "$E2E_IS_WINDOWS" -eq 1 ]; then
-    printf 'crit.exe'
+    printf 'crit-plus.exe'
   else
-    printf 'crit'
+    printf 'crit-plus'
   fi
 }
 
@@ -92,7 +92,7 @@ e2e_kill_port() {
   fi
 }
 
-# Set HOME (and USERPROFILE on Windows) so crit picks up our isolated config.
+# Set HOME (and USERPROFILE on Windows) so crit-plus picks up our isolated config.
 # Go's os.UserHomeDir on Windows uses USERPROFILE, not HOME. Callers MUST
 # pass a path produced by e2e_native_path / e2e_native_tempdir so that
 # USERPROFILE is a drive-letter-prefixed path (e.g. C:/Users/...) — Go's
@@ -107,11 +107,11 @@ e2e_export_fake_home() {
   fi
 }
 
-# Kill all stray crit processes — used by run.sh cleanup on Windows where
-# `kill $PID` only kills the bash subshell, not the spawned crit.exe.
+# Kill all stray crit-plus processes — used by run.sh cleanup on Windows where
+# `kill $PID` only kills the bash subshell, not the spawned crit-plus.exe.
 e2e_kill_stray_crit() {
   if [ "$E2E_IS_WINDOWS" -eq 1 ]; then
-    taskkill.exe /F /IM crit.exe /T >/dev/null 2>&1 || true
+    taskkill.exe /F /IM crit-plus.exe /T >/dev/null 2>&1 || true
   fi
 }
 

@@ -1,6 +1,8 @@
 # Performance: benchmarks, budgets, and guardrails
 
-crit has no production profiler running anywhere — it's a localhost CLI — so
+Crit Plus (`crit-plus`) is an enhanced fork of [Crit](https://github.com/tomasz-tomczyk/crit), originally created by **Tomasz Tomczyk**. The upstream MIT license and copyright are preserved.
+
+crit-plus has no production profiler running anywhere — it's a localhost CLI — so
 perf is guarded by benchmarks and budgets in CI, not by dashboards. This doc
 lists what exists, how to run it, and when to recalibrate.
 
@@ -87,7 +89,7 @@ Measured steady state: 25 mounted bodies, ~12k DOM nodes, 0ms TBT.
 
 ## Asset + binary budgets
 
-crit embeds all of `web/` in the binary, so a vendor bump inflates page
+crit-plus embeds all of `web/` in the binary, so a vendor bump inflates page
 weight and binary size together. Caps live in `asset-budget.json`
 (~15–20% above measured); `scripts/check-asset-budget.sh` enforces them in
 the `asset-budget` CI job:

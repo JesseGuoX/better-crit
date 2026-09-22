@@ -46,12 +46,12 @@ func parseInstallArgs(args []string) (target string, force bool) {
 }
 
 func printInstallUsage() {
-	fmt.Fprintln(os.Stderr, "Usage: crit install [--force|-f] <agent|all|prompts|story-prompts>")
+	fmt.Fprintln(os.Stderr, "Usage: crit-plus install [--force|-f] <agent|all|prompts|story-prompts>")
 	fmt.Fprintln(os.Stderr, "")
 	fmt.Fprintln(os.Stderr, "Options:")
 	fmt.Fprintln(os.Stderr, "  -f, --force  Overwrite existing integration files")
 	fmt.Fprintln(os.Stderr, "")
-	fmt.Fprintln(os.Stderr, "Agent integrations include structured decisions via crit-decide (crit decide).")
+	fmt.Fprintln(os.Stderr, "Agent integrations include structured decisions via crit-plus-decide (crit-plus decide).")
 	fmt.Fprintln(os.Stderr, "")
 	fmt.Fprintln(os.Stderr, "Available agents:")
 	for _, a := range availableIntegrations() {
@@ -62,12 +62,12 @@ func printInstallUsage() {
 	fmt.Fprintln(os.Stderr, "  story-prompts")
 	fmt.Fprintln(os.Stderr, "")
 	fmt.Fprintln(os.Stderr, "Install stock finish templates:")
-	fmt.Fprintln(os.Stderr, "  cd ~ && crit install prompts     # ~/.crit/prompts/")
-	fmt.Fprintln(os.Stderr, "  crit install prompts             # .crit/prompts/ in cwd (from repo root)")
+	fmt.Fprintln(os.Stderr, "  cd ~ && crit-plus install prompts     # ~/.crit/prompts/")
+	fmt.Fprintln(os.Stderr, "  crit-plus install prompts             # .crit/prompts/ in cwd (from repo root)")
 	fmt.Fprintln(os.Stderr, "")
 	fmt.Fprintln(os.Stderr, "Install the stock on_story_generate template:")
-	fmt.Fprintln(os.Stderr, "  cd ~ && crit install story-prompts   # ~/.crit/prompts/")
-	fmt.Fprintln(os.Stderr, "  crit install story-prompts           # .crit/prompts/ in cwd (from repo root)")
+	fmt.Fprintln(os.Stderr, "  cd ~ && crit-plus install story-prompts   # ~/.crit/prompts/")
+	fmt.Fprintln(os.Stderr, "  crit-plus install story-prompts           # .crit/prompts/ in cwd (from repo root)")
 }
 
 func runInstallTarget(target string, force bool) error {
@@ -155,131 +155,131 @@ type integration struct {
 
 var integrationMap = map[string][]integration{
 	"claude-code": {
-		{source: "integrations/claude-code/skills/crit/SKILL.md", dest: ".claude/skills/crit/SKILL.md", hint: "Run /crit in Claude Code to start a review loop"},
-		{source: "integrations/claude-code/skills/crit-cli/SKILL.md", dest: ".claude/skills/crit-cli/SKILL.md", hint: "The crit-cli skill is available to Claude Code agents when needed"},
-		{source: "integrations/claude-code/skills/crit-story/SKILL.md", dest: ".claude/skills/crit-story/SKILL.md", hint: "Run /crit-story in Claude Code to author a story and continue the review loop"},
-		{source: "integrations/claude-code/skills/crit-decide/SKILL.md", dest: ".claude/skills/crit-decide/SKILL.md", hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
+		{source: "integrations/claude-code/skills/crit-plus/SKILL.md", dest: ".claude/skills/crit-plus/SKILL.md", hint: "Run /crit-plus in Claude Code to start a review loop"},
+		{source: "integrations/claude-code/skills/crit-plus-cli/SKILL.md", dest: ".claude/skills/crit-plus-cli/SKILL.md", hint: "The crit-plus-cli skill is available to Claude Code agents when needed"},
+		{source: "integrations/claude-code/skills/crit-plus-story/SKILL.md", dest: ".claude/skills/crit-plus-story/SKILL.md", hint: "Run /crit-plus-story in Claude Code to author a story and continue the review loop"},
+		{source: "integrations/claude-code/skills/crit-plus-decide/SKILL.md", dest: ".claude/skills/crit-plus-decide/SKILL.md", hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
 	},
 	"cursor": {
-		{source: "integrations/cursor/skills/crit/SKILL.md", dest: ".cursor/skills/crit/SKILL.md", hint: "Run /crit in Cursor to start a review loop"},
-		{source: "integrations/cursor/skills/crit-cli/SKILL.md", dest: ".cursor/skills/crit-cli/SKILL.md", hint: "The crit-cli skill is available to Cursor agents when needed"},
-		{source: "integrations/cursor/skills/crit-story/SKILL.md", dest: ".cursor/skills/crit-story/SKILL.md", hint: "Run /crit-story in Cursor to author a story and continue the review loop"},
-		{source: "integrations/cursor/skills/crit-decide/SKILL.md", dest: ".cursor/skills/crit-decide/SKILL.md", hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
+		{source: "integrations/cursor/skills/crit-plus/SKILL.md", dest: ".cursor/skills/crit-plus/SKILL.md", hint: "Run /crit-plus in Cursor to start a review loop"},
+		{source: "integrations/cursor/skills/crit-plus-cli/SKILL.md", dest: ".cursor/skills/crit-plus-cli/SKILL.md", hint: "The crit-plus-cli skill is available to Cursor agents when needed"},
+		{source: "integrations/cursor/skills/crit-plus-story/SKILL.md", dest: ".cursor/skills/crit-plus-story/SKILL.md", hint: "Run /crit-plus-story in Cursor to author a story and continue the review loop"},
+		{source: "integrations/cursor/skills/crit-plus-decide/SKILL.md", dest: ".cursor/skills/crit-plus-decide/SKILL.md", hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
 	},
 	"opencode": {
 		// opencode reads commands from `.opencode/commands/` (project) and
 		// `~/.config/opencode/commands/` (global) — NOT `~/.opencode/commands/`.
 		// Without the globalDest redirect a global install lands in a dir
-		// opencode never scans, so `/crit` silently never appears.
-		{source: "integrations/opencode/crit.md", dest: ".opencode/commands/crit.md", globalDest: ".config/opencode/commands/crit.md", globalDestKind: globalDestRelHome, hint: "Run /crit in OpenCode to start a review loop"},
+		// opencode never scans, so `/crit-plus` silently never appears.
+		{source: "integrations/opencode/crit-plus.md", dest: ".opencode/commands/crit-plus.md", globalDest: ".config/opencode/commands/crit-plus.md", globalDestKind: globalDestRelHome, hint: "Run /crit-plus in OpenCode to start a review loop"},
 		// opencode does NOT read ~/.opencode/skills/ globally — redirect to ~/.agents/skills/
-		{source: "integrations/opencode/skills/crit-cli/SKILL.md", dest: ".opencode/skills/crit-cli/SKILL.md", globalDest: ".agents/skills/crit-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-cli skill is available to OpenCode agents when needed"},
-		{source: "integrations/opencode/crit-story.md", dest: ".opencode/commands/crit-story.md", globalDest: ".config/opencode/commands/crit-story.md", globalDestKind: globalDestRelHome, hint: "Run /crit-story in OpenCode to author a story and continue the review loop"},
-		{source: "integrations/opencode/crit-decide.md", dest: ".opencode/commands/crit-decide.md", globalDest: ".config/opencode/commands/crit-decide.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
-		{source: "integrations/opencode/skills/crit-story/SKILL.md", dest: ".opencode/skills/crit-story/SKILL.md", globalDest: ".agents/skills/crit-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-story skill is available to OpenCode agents when needed"},
-		{source: "integrations/opencode/skills/crit-decide/SKILL.md", dest: ".opencode/skills/crit-decide/SKILL.md", globalDest: ".agents/skills/crit-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
+		{source: "integrations/opencode/skills/crit-plus-cli/SKILL.md", dest: ".opencode/skills/crit-plus-cli/SKILL.md", globalDest: ".agents/skills/crit-plus-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-plus-cli skill is available to OpenCode agents when needed"},
+		{source: "integrations/opencode/crit-plus-story.md", dest: ".opencode/commands/crit-plus-story.md", globalDest: ".config/opencode/commands/crit-plus-story.md", globalDestKind: globalDestRelHome, hint: "Run /crit-plus-story in OpenCode to author a story and continue the review loop"},
+		{source: "integrations/opencode/crit-plus-decide.md", dest: ".opencode/commands/crit-plus-decide.md", globalDest: ".config/opencode/commands/crit-plus-decide.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
+		{source: "integrations/opencode/skills/crit-plus-story/SKILL.md", dest: ".opencode/skills/crit-plus-story/SKILL.md", globalDest: ".agents/skills/crit-plus-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-plus-story skill is available to OpenCode agents when needed"},
+		{source: "integrations/opencode/skills/crit-plus-decide/SKILL.md", dest: ".opencode/skills/crit-plus-decide/SKILL.md", globalDest: ".agents/skills/crit-plus-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
 		// Plugin files auto-loaded from project `.opencode/plugins/` or global
 		// `~/.config/opencode/plugins/`. Injects sharing instructions by default
 		// (share_url defaults to https://crit.md); docs cover how to disable.
-		// Also toasts when the agent starts a blocking crit wait.
-		{source: "integrations/opencode/plugin/crit.ts", dest: ".opencode/plugins/crit.ts", globalDest: ".config/opencode/plugins/crit.ts", globalDestKind: globalDestRelHome},
+		// Also toasts when the agent starts a blocking crit-plus wait.
+		{source: "integrations/opencode/plugin/crit-plus.ts", dest: ".opencode/plugins/crit-plus.ts", globalDest: ".config/opencode/plugins/crit-plus.ts", globalDestKind: globalDestRelHome},
 		// Helper (not a plugin entrypoint) — kept under plugins/lib so OpenCode
 		// does not auto-load it as a separate plugin module.
-		{source: "integrations/opencode/plugin/lib/crit-wait-notify.js", dest: ".opencode/plugins/lib/crit-wait-notify.js", globalDest: ".config/opencode/plugins/lib/crit-wait-notify.js", globalDestKind: globalDestRelHome},
+		{source: "integrations/opencode/plugin/lib/crit-plus-wait-notify.js", dest: ".opencode/plugins/lib/crit-plus-wait-notify.js", globalDest: ".config/opencode/plugins/lib/crit-plus-wait-notify.js", globalDestKind: globalDestRelHome},
 	},
 	"windsurf": {
-		{source: "integrations/windsurf/crit.md", dest: ".windsurf/workflows/crit.md", globalDest: ".codeium/windsurf/global_workflows/crit.md", globalDestKind: globalDestRelHome, hint: "Run /crit in Windsurf to start a review loop"},
-		{source: "integrations/windsurf/skills/crit-cli/SKILL.md", dest: ".windsurf/skills/crit-cli/SKILL.md", globalDest: ".codeium/windsurf/skills/crit-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-cli skill is available to Windsurf agents when needed"},
-		{source: "integrations/windsurf/crit-story.md", dest: ".windsurf/workflows/crit-story.md", globalDest: ".codeium/windsurf/global_workflows/crit-story.md", globalDestKind: globalDestRelHome, hint: "Run /crit-story in Windsurf to author a story and continue the review loop"},
-		{source: "integrations/windsurf/crit-decide.md", dest: ".windsurf/workflows/crit-decide.md", globalDest: ".codeium/windsurf/global_workflows/crit-decide.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
-		{source: "integrations/windsurf/skills/crit-story/SKILL.md", dest: ".windsurf/skills/crit-story/SKILL.md", globalDest: ".codeium/windsurf/skills/crit-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-story skill is available to Windsurf agents when needed"},
-		{source: "integrations/windsurf/skills/crit-decide/SKILL.md", dest: ".windsurf/skills/crit-decide/SKILL.md", globalDest: ".codeium/windsurf/skills/crit-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
+		{source: "integrations/windsurf/crit-plus.md", dest: ".windsurf/workflows/crit-plus.md", globalDest: ".codeium/windsurf/global_workflows/crit-plus.md", globalDestKind: globalDestRelHome, hint: "Run /crit-plus in Windsurf to start a review loop"},
+		{source: "integrations/windsurf/skills/crit-plus-cli/SKILL.md", dest: ".windsurf/skills/crit-plus-cli/SKILL.md", globalDest: ".codeium/windsurf/skills/crit-plus-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-plus-cli skill is available to Windsurf agents when needed"},
+		{source: "integrations/windsurf/crit-plus-story.md", dest: ".windsurf/workflows/crit-plus-story.md", globalDest: ".codeium/windsurf/global_workflows/crit-plus-story.md", globalDestKind: globalDestRelHome, hint: "Run /crit-plus-story in Windsurf to author a story and continue the review loop"},
+		{source: "integrations/windsurf/crit-plus-decide.md", dest: ".windsurf/workflows/crit-plus-decide.md", globalDest: ".codeium/windsurf/global_workflows/crit-plus-decide.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
+		{source: "integrations/windsurf/skills/crit-plus-story/SKILL.md", dest: ".windsurf/skills/crit-plus-story/SKILL.md", globalDest: ".codeium/windsurf/skills/crit-plus-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-plus-story skill is available to Windsurf agents when needed"},
+		{source: "integrations/windsurf/skills/crit-plus-decide/SKILL.md", dest: ".windsurf/skills/crit-plus-decide/SKILL.md", globalDest: ".codeium/windsurf/skills/crit-plus-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
 	},
 	"github-copilot": {
 		// Copilot does NOT read ~/.github/skills/ globally — redirect to ~/.agents/skills/
-		{source: "integrations/github-copilot/skills/crit/SKILL.md", dest: ".github/skills/crit/SKILL.md", globalDest: ".agents/skills/crit/SKILL.md", globalDestKind: globalDestRelHome, hint: "Run /crit in GitHub Copilot to start a review loop"},
-		{source: "integrations/github-copilot/skills/crit-cli/SKILL.md", dest: ".github/skills/crit-cli/SKILL.md", globalDest: ".agents/skills/crit-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-cli skill is available to GitHub Copilot agents when needed"},
-		{source: "integrations/github-copilot/skills/crit-story/SKILL.md", dest: ".github/skills/crit-story/SKILL.md", globalDest: ".agents/skills/crit-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "Run /crit-story in GitHub Copilot to author a story and continue the review loop"},
-		{source: "integrations/github-copilot/skills/crit-decide/SKILL.md", dest: ".github/skills/crit-decide/SKILL.md", globalDest: ".agents/skills/crit-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
+		{source: "integrations/github-copilot/skills/crit-plus/SKILL.md", dest: ".github/skills/crit-plus/SKILL.md", globalDest: ".agents/skills/crit-plus/SKILL.md", globalDestKind: globalDestRelHome, hint: "Run /crit-plus in GitHub Copilot to start a review loop"},
+		{source: "integrations/github-copilot/skills/crit-plus-cli/SKILL.md", dest: ".github/skills/crit-plus-cli/SKILL.md", globalDest: ".agents/skills/crit-plus-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-plus-cli skill is available to GitHub Copilot agents when needed"},
+		{source: "integrations/github-copilot/skills/crit-plus-story/SKILL.md", dest: ".github/skills/crit-plus-story/SKILL.md", globalDest: ".agents/skills/crit-plus-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "Run /crit-plus-story in GitHub Copilot to author a story and continue the review loop"},
+		{source: "integrations/github-copilot/skills/crit-plus-decide/SKILL.md", dest: ".github/skills/crit-plus-decide/SKILL.md", globalDest: ".agents/skills/crit-plus-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
 	},
 	"cline": {
-		{source: "integrations/cline/crit.md", dest: ".clinerules/workflows/crit.md", globalDest: ".cline/data/workflows/crit.md", globalDestKind: globalDestRelHome, hint: "Run /crit.md in Cline to start a review loop"},
-		{source: "integrations/cline/skills/crit-cli/SKILL.md", dest: ".cline/skills/crit-cli/SKILL.md", globalDest: ".cline/skills/crit-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-cli skill is available to Cline agents when needed"},
-		{source: "integrations/cline/crit-story.md", dest: ".clinerules/workflows/crit-story.md", globalDest: ".cline/data/workflows/crit-story.md", globalDestKind: globalDestRelHome, hint: "Run /crit-story in Cline to author a story and continue the review loop"},
-		{source: "integrations/cline/crit-decide.md", dest: ".clinerules/workflows/crit-decide.md", globalDest: ".cline/data/workflows/crit-decide.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
-		{source: "integrations/cline/skills/crit-story/SKILL.md", dest: ".cline/skills/crit-story/SKILL.md", globalDest: ".cline/skills/crit-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-story skill is available to Cline agents when needed"},
-		{source: "integrations/cline/skills/crit-decide/SKILL.md", dest: ".cline/skills/crit-decide/SKILL.md", globalDest: ".cline/skills/crit-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
+		{source: "integrations/cline/crit-plus.md", dest: ".clinerules/workflows/crit-plus.md", globalDest: ".cline/data/workflows/crit-plus.md", globalDestKind: globalDestRelHome, hint: "Run /crit-plus.md in Cline to start a review loop"},
+		{source: "integrations/cline/skills/crit-plus-cli/SKILL.md", dest: ".cline/skills/crit-plus-cli/SKILL.md", globalDest: ".cline/skills/crit-plus-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-plus-cli skill is available to Cline agents when needed"},
+		{source: "integrations/cline/crit-plus-story.md", dest: ".clinerules/workflows/crit-plus-story.md", globalDest: ".cline/data/workflows/crit-plus-story.md", globalDestKind: globalDestRelHome, hint: "Run /crit-plus-story in Cline to author a story and continue the review loop"},
+		{source: "integrations/cline/crit-plus-decide.md", dest: ".clinerules/workflows/crit-plus-decide.md", globalDest: ".cline/data/workflows/crit-plus-decide.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
+		{source: "integrations/cline/skills/crit-plus-story/SKILL.md", dest: ".cline/skills/crit-plus-story/SKILL.md", globalDest: ".cline/skills/crit-plus-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-plus-story skill is available to Cline agents when needed"},
+		{source: "integrations/cline/skills/crit-plus-decide/SKILL.md", dest: ".cline/skills/crit-plus-decide/SKILL.md", globalDest: ".cline/skills/crit-plus-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
 	},
 	"codex": {
-		{source: "integrations/codex/skills/crit/SKILL.md", dest: ".agents/skills/crit/SKILL.md", hint: "Use $crit in Codex to start a review loop"},
-		{source: "integrations/codex/skills/crit-cli/SKILL.md", dest: ".agents/skills/crit-cli/SKILL.md", hint: "The crit-cli skill is available to Codex agents when needed"},
-		{source: "integrations/codex/skills/crit-story/SKILL.md", dest: ".agents/skills/crit-story/SKILL.md", hint: "Use $crit-story in Codex to author a story and continue the review loop"},
-		{source: "integrations/codex/skills/crit-decide/SKILL.md", dest: ".agents/skills/crit-decide/SKILL.md", hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
+		{source: "integrations/codex/skills/crit-plus/SKILL.md", dest: ".agents/skills/crit-plus/SKILL.md", hint: "Use $crit-plus in Codex to start a review loop"},
+		{source: "integrations/codex/skills/crit-plus-cli/SKILL.md", dest: ".agents/skills/crit-plus-cli/SKILL.md", hint: "The crit-plus-cli skill is available to Codex agents when needed"},
+		{source: "integrations/codex/skills/crit-plus-story/SKILL.md", dest: ".agents/skills/crit-plus-story/SKILL.md", hint: "Use $crit-plus-story in Codex to author a story and continue the review loop"},
+		{source: "integrations/codex/skills/crit-plus-decide/SKILL.md", dest: ".agents/skills/crit-plus-decide/SKILL.md", hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
 	},
 	"codex-plugin": {
-		{source: "integrations/codex/plugin/crit/.codex-plugin/plugin.json", dest: "plugins/crit/.codex-plugin/plugin.json", globalDest: ".codex/plugins/crit/.codex-plugin/plugin.json", globalDestKind: globalDestRelHome, hint: "The Crit plugin is registered in the local Codex plugin marketplace"},
-		{source: "integrations/codex/plugin/crit/skills/crit/SKILL.md", dest: "plugins/crit/skills/crit/SKILL.md", globalDest: ".codex/plugins/crit/skills/crit/SKILL.md", globalDestKind: globalDestRelHome, hint: "The plugin-packaged crit skill is available to Codex as $crit:crit"},
-		{source: "integrations/codex/plugin/crit/skills/crit-cli/SKILL.md", dest: "plugins/crit/skills/crit-cli/SKILL.md", globalDest: ".codex/plugins/crit/skills/crit-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The plugin-packaged crit-cli skill is available to Codex agents when needed"},
-		{source: "integrations/codex/plugin/crit/skills/crit-story/SKILL.md", dest: "plugins/crit/skills/crit-story/SKILL.md", globalDest: ".codex/plugins/crit/skills/crit-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "The plugin-packaged crit-story skill is available to Codex as $crit-story"},
-		{source: "integrations/codex/plugin/crit/skills/crit-decide/SKILL.md", dest: "plugins/crit/skills/crit-decide/SKILL.md", globalDest: ".codex/plugins/crit/skills/crit-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
-		{source: "integrations/codex/plugin/crit/hooks/hooks.json", dest: "plugins/crit/hooks/hooks.json", globalDest: ".codex/plugins/crit/hooks/hooks.json", globalDestKind: globalDestRelHome, hint: "The Crit plugin includes a Codex Stop hook for proposed-plan review"},
+		{source: "integrations/codex/plugin/crit-plus/.codex-plugin/plugin.json", dest: "plugins/crit-plus/.codex-plugin/plugin.json", globalDest: ".codex/plugins/crit-plus/.codex-plugin/plugin.json", globalDestKind: globalDestRelHome, hint: "The Crit Plus plugin is registered in the local Codex plugin marketplace"},
+		{source: "integrations/codex/plugin/crit-plus/skills/crit-plus/SKILL.md", dest: "plugins/crit-plus/skills/crit-plus/SKILL.md", globalDest: ".codex/plugins/crit-plus/skills/crit-plus/SKILL.md", globalDestKind: globalDestRelHome, hint: "The plugin-packaged crit-plus skill is available to Codex as $crit-plus:crit-plus"},
+		{source: "integrations/codex/plugin/crit-plus/skills/crit-plus-cli/SKILL.md", dest: "plugins/crit-plus/skills/crit-plus-cli/SKILL.md", globalDest: ".codex/plugins/crit-plus/skills/crit-plus-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The plugin-packaged crit-plus-cli skill is available to Codex agents when needed"},
+		{source: "integrations/codex/plugin/crit-plus/skills/crit-plus-story/SKILL.md", dest: "plugins/crit-plus/skills/crit-plus-story/SKILL.md", globalDest: ".codex/plugins/crit-plus/skills/crit-plus-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "The plugin-packaged crit-plus-story skill is available to Codex as $crit-plus-story"},
+		{source: "integrations/codex/plugin/crit-plus/skills/crit-plus-decide/SKILL.md", dest: "plugins/crit-plus/skills/crit-plus-decide/SKILL.md", globalDest: ".codex/plugins/crit-plus/skills/crit-plus-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
+		{source: "integrations/codex/plugin/crit-plus/hooks/hooks.json", dest: "plugins/crit-plus/hooks/hooks.json", globalDest: ".codex/plugins/crit-plus/hooks/hooks.json", globalDestKind: globalDestRelHome, hint: "The Crit Plus plugin includes a Codex Stop hook for proposed-plan review"},
 	},
 	"qwen": {
 		// Qwen Code auto-discovers .qwen/skills/ project-locally and ~/.qwen/skills/ globally —
 		// same shape both modes, so no globalDest redirect is needed.
-		{source: "integrations/qwen/skills/crit/SKILL.md", dest: ".qwen/skills/crit/SKILL.md", hint: "Run /crit in Qwen Code to start a review loop"},
-		{source: "integrations/qwen/skills/crit-cli/SKILL.md", dest: ".qwen/skills/crit-cli/SKILL.md", hint: "The crit-cli skill is available to Qwen Code agents when needed"},
-		{source: "integrations/qwen/skills/crit-story/SKILL.md", dest: ".qwen/skills/crit-story/SKILL.md", hint: "Run /crit-story in Qwen Code to author a story and continue the review loop"},
-		{source: "integrations/qwen/skills/crit-decide/SKILL.md", dest: ".qwen/skills/crit-decide/SKILL.md", hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
+		{source: "integrations/qwen/skills/crit-plus/SKILL.md", dest: ".qwen/skills/crit-plus/SKILL.md", hint: "Run /crit-plus in Qwen Code to start a review loop"},
+		{source: "integrations/qwen/skills/crit-plus-cli/SKILL.md", dest: ".qwen/skills/crit-plus-cli/SKILL.md", hint: "The crit-plus-cli skill is available to Qwen Code agents when needed"},
+		{source: "integrations/qwen/skills/crit-plus-story/SKILL.md", dest: ".qwen/skills/crit-plus-story/SKILL.md", hint: "Run /crit-plus-story in Qwen Code to author a story and continue the review loop"},
+		{source: "integrations/qwen/skills/crit-plus-decide/SKILL.md", dest: ".qwen/skills/crit-plus-decide/SKILL.md", hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
 	},
 	"pi": {
 		// Pi auto-discovers skills in both .pi/skills/ (project-local) and
 		// ~/.pi/agent/skills/ (global). Different shape between modes, so
 		// globalDest redirects the global install to the agent/skills path.
-		{source: "integrations/pi/skills/crit/SKILL.md", dest: ".pi/skills/crit/SKILL.md", globalDest: ".pi/agent/skills/crit/SKILL.md", globalDestKind: globalDestRelHome, hint: "Run /skill:crit in Pi to start a review loop"},
-		{source: "integrations/pi/skills/crit-cli/SKILL.md", dest: ".pi/skills/crit-cli/SKILL.md", globalDest: ".pi/agent/skills/crit-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-cli skill is available to Pi agents when needed"},
-		{source: "integrations/pi/skills/crit-story/SKILL.md", dest: ".pi/skills/crit-story/SKILL.md", globalDest: ".pi/agent/skills/crit-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "Run /skill:crit-story in Pi to author a story and continue the review loop"},
-		{source: "integrations/pi/skills/crit-decide/SKILL.md", dest: ".pi/skills/crit-decide/SKILL.md", globalDest: ".pi/agent/skills/crit-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
+		{source: "integrations/pi/skills/crit-plus/SKILL.md", dest: ".pi/skills/crit-plus/SKILL.md", globalDest: ".pi/agent/skills/crit-plus/SKILL.md", globalDestKind: globalDestRelHome, hint: "Run /skill:crit-plus in Pi to start a review loop"},
+		{source: "integrations/pi/skills/crit-plus-cli/SKILL.md", dest: ".pi/skills/crit-plus-cli/SKILL.md", globalDest: ".pi/agent/skills/crit-plus-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-plus-cli skill is available to Pi agents when needed"},
+		{source: "integrations/pi/skills/crit-plus-story/SKILL.md", dest: ".pi/skills/crit-plus-story/SKILL.md", globalDest: ".pi/agent/skills/crit-plus-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "Run /skill:crit-plus-story in Pi to author a story and continue the review loop"},
+		{source: "integrations/pi/skills/crit-plus-decide/SKILL.md", dest: ".pi/skills/crit-plus-decide/SKILL.md", globalDest: ".pi/agent/skills/crit-plus-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
 	},
 	"hermes": {
 		// Hermes only auto-discovers skills under HERMES_HOME (default ~/.hermes/skills/).
 		// Project-local .hermes/skills/ is not loaded unless added to `external_dirs` in
 		// ~/.hermes/config.yaml — surfaced via the hint below.
-		{source: "integrations/hermes/skills/crit/SKILL.md", dest: ".hermes/skills/crit/SKILL.md", globalDest: ".hermes/skills/crit/SKILL.md", globalDestKind: globalDestRelHome, hint: "Run /crit in Hermes to start a review loop"},
-		{source: "integrations/hermes/skills/crit-cli/SKILL.md", dest: ".hermes/skills/crit-cli/SKILL.md", globalDest: ".hermes/skills/crit-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-cli skill is available to Hermes agents when needed"},
-		{source: "integrations/hermes/skills/crit-story/SKILL.md", dest: ".hermes/skills/crit-story/SKILL.md", globalDest: ".hermes/skills/crit-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "Run /crit-story in Hermes to author a story and continue the review loop"},
-		{source: "integrations/hermes/skills/crit-decide/SKILL.md", dest: ".hermes/skills/crit-decide/SKILL.md", globalDest: ".hermes/skills/crit-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
+		{source: "integrations/hermes/skills/crit-plus/SKILL.md", dest: ".hermes/skills/crit-plus/SKILL.md", globalDest: ".hermes/skills/crit-plus/SKILL.md", globalDestKind: globalDestRelHome, hint: "Run /crit-plus in Hermes to start a review loop"},
+		{source: "integrations/hermes/skills/crit-plus-cli/SKILL.md", dest: ".hermes/skills/crit-plus-cli/SKILL.md", globalDest: ".hermes/skills/crit-plus-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-plus-cli skill is available to Hermes agents when needed"},
+		{source: "integrations/hermes/skills/crit-plus-story/SKILL.md", dest: ".hermes/skills/crit-plus-story/SKILL.md", globalDest: ".hermes/skills/crit-plus-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "Run /crit-plus-story in Hermes to author a story and continue the review loop"},
+		{source: "integrations/hermes/skills/crit-plus-decide/SKILL.md", dest: ".hermes/skills/crit-plus-decide/SKILL.md", globalDest: ".hermes/skills/crit-plus-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
 	},
 	"gemini": {
-		{source: "integrations/gemini/skills/crit-cli/SKILL.md", dest: ".gemini/skills/crit-cli/SKILL.md", globalDest: ".gemini/skills/crit-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-cli skill is available to Gemini CLI agents when needed"},
-		{source: "integrations/gemini/commands/crit.toml", dest: ".gemini/commands/crit.toml", globalDest: ".gemini/commands/crit.toml", globalDestKind: globalDestRelHome, hint: "Run /crit in Gemini CLI to start a review loop"},
-		{source: "integrations/gemini/skills/crit-story/SKILL.md", dest: ".gemini/skills/crit-story/SKILL.md", globalDest: ".gemini/skills/crit-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-story skill is available to Gemini CLI agents when needed"},
-		{source: "integrations/gemini/skills/crit-decide/SKILL.md", dest: ".gemini/skills/crit-decide/SKILL.md", globalDest: ".gemini/skills/crit-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
-		{source: "integrations/gemini/commands/crit-story.toml", dest: ".gemini/commands/crit-story.toml", globalDest: ".gemini/commands/crit-story.toml", globalDestKind: globalDestRelHome, hint: "Run /crit-story in Gemini CLI to author a story and continue the review loop"},
-		{source: "integrations/gemini/commands/crit-decide.toml", dest: ".gemini/commands/crit-decide.toml", globalDest: ".gemini/commands/crit-decide.toml", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
-		{source: "integrations/gemini/hooks/policy.toml", dest: ".gemini/policies/crit.toml", globalDest: ".gemini/policies/crit.toml", globalDestKind: globalDestRelHome, hint: "The crit policy allows exit_plan_mode without confirmation"},
+		{source: "integrations/gemini/skills/crit-plus-cli/SKILL.md", dest: ".gemini/skills/crit-plus-cli/SKILL.md", globalDest: ".gemini/skills/crit-plus-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-plus-cli skill is available to Gemini CLI agents when needed"},
+		{source: "integrations/gemini/commands/crit-plus.toml", dest: ".gemini/commands/crit-plus.toml", globalDest: ".gemini/commands/crit-plus.toml", globalDestKind: globalDestRelHome, hint: "Run /crit-plus in Gemini CLI to start a review loop"},
+		{source: "integrations/gemini/skills/crit-plus-story/SKILL.md", dest: ".gemini/skills/crit-plus-story/SKILL.md", globalDest: ".gemini/skills/crit-plus-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-plus-story skill is available to Gemini CLI agents when needed"},
+		{source: "integrations/gemini/skills/crit-plus-decide/SKILL.md", dest: ".gemini/skills/crit-plus-decide/SKILL.md", globalDest: ".gemini/skills/crit-plus-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
+		{source: "integrations/gemini/commands/crit-plus-story.toml", dest: ".gemini/commands/crit-plus-story.toml", globalDest: ".gemini/commands/crit-plus-story.toml", globalDestKind: globalDestRelHome, hint: "Run /crit-plus-story in Gemini CLI to author a story and continue the review loop"},
+		{source: "integrations/gemini/commands/crit-plus-decide.toml", dest: ".gemini/commands/crit-plus-decide.toml", globalDest: ".gemini/commands/crit-plus-decide.toml", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
+		{source: "integrations/gemini/hooks/policy.toml", dest: ".gemini/policies/crit-plus.toml", globalDest: ".gemini/policies/crit-plus.toml", globalDestKind: globalDestRelHome, hint: "The crit-plus policy allows exit_plan_mode without confirmation"},
 	},
 	"grok": {
 		// Grok auto-discovers .grok/skills/ both project-locally and in ~/.grok/skills/ globally.
 		// Same shape in both cases, so no globalDest redirect is needed.
-		{source: "integrations/grok/skills/crit/SKILL.md", dest: ".grok/skills/crit/SKILL.md", hint: "Run /crit in Grok to start a review loop"},
-		{source: "integrations/grok/skills/crit-cli/SKILL.md", dest: ".grok/skills/crit-cli/SKILL.md", hint: "The crit-cli skill is available to Grok agents when needed"},
-		{source: "integrations/grok/skills/crit-story/SKILL.md", dest: ".grok/skills/crit-story/SKILL.md", hint: "Run /crit-story in Grok to author a story and continue the review loop"},
-		{source: "integrations/grok/skills/crit-decide/SKILL.md", dest: ".grok/skills/crit-decide/SKILL.md", hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
+		{source: "integrations/grok/skills/crit-plus/SKILL.md", dest: ".grok/skills/crit-plus/SKILL.md", hint: "Run /crit-plus in Grok to start a review loop"},
+		{source: "integrations/grok/skills/crit-plus-cli/SKILL.md", dest: ".grok/skills/crit-plus-cli/SKILL.md", hint: "The crit-plus-cli skill is available to Grok agents when needed"},
+		{source: "integrations/grok/skills/crit-plus-story/SKILL.md", dest: ".grok/skills/crit-plus-story/SKILL.md", hint: "Run /crit-plus-story in Grok to author a story and continue the review loop"},
+		{source: "integrations/grok/skills/crit-plus-decide/SKILL.md", dest: ".grok/skills/crit-plus-decide/SKILL.md", hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
 	},
 	"ampcode": {
 		// Amp discovers project skills in .agents/skills/ and global skills in
 		// ~/.config/agents/skills/ (highest priority per Amp's skill precedence).
 		// Different paths between modes, so globalDest redirects the global install.
-		{source: "integrations/ampcode/skills/crit/SKILL.md", dest: ".agents/skills/crit/SKILL.md", globalDest: ".config/agents/skills/crit/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask Amp to use crit to start a review loop"},
-		{source: "integrations/ampcode/skills/crit-cli/SKILL.md", dest: ".agents/skills/crit-cli/SKILL.md", globalDest: ".config/agents/skills/crit-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-cli skill is available to Amp agents when needed"},
-		{source: "integrations/ampcode/skills/crit-story/SKILL.md", dest: ".agents/skills/crit-story/SKILL.md", globalDest: ".config/agents/skills/crit-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask Amp to use crit-story to author a story and continue the review loop"},
-		{source: "integrations/ampcode/skills/crit-decide/SKILL.md", dest: ".agents/skills/crit-decide/SKILL.md", globalDest: ".config/agents/skills/crit-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-decide for structured choices and revision feedback"},
+		{source: "integrations/ampcode/skills/crit-plus/SKILL.md", dest: ".agents/skills/crit-plus/SKILL.md", globalDest: ".config/agents/skills/crit-plus/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask Amp to use crit-plus to start a review loop"},
+		{source: "integrations/ampcode/skills/crit-plus-cli/SKILL.md", dest: ".agents/skills/crit-plus-cli/SKILL.md", globalDest: ".config/agents/skills/crit-plus-cli/SKILL.md", globalDestKind: globalDestRelHome, hint: "The crit-plus-cli skill is available to Amp agents when needed"},
+		{source: "integrations/ampcode/skills/crit-plus-story/SKILL.md", dest: ".agents/skills/crit-plus-story/SKILL.md", globalDest: ".config/agents/skills/crit-plus-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask Amp to use crit-plus-story to author a story and continue the review loop"},
+		{source: "integrations/ampcode/skills/crit-plus-decide/SKILL.md", dest: ".agents/skills/crit-plus-decide/SKILL.md", globalDest: ".config/agents/skills/crit-plus-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
 	},
 }
 
 // legacyIntegrationFile describes an obsolete destination that could keep
-// auto-invoking Crit after an upgrade. Cleanup only removes byte-for-byte known
+// auto-invoking Crit Plus after an upgrade. Cleanup only removes byte-for-byte known
 // Crit-managed content; user-edited files are preserved with a warning.
 type legacyIntegrationFile struct {
 	dest           string
@@ -291,8 +291,8 @@ type legacyIntegrationFile struct {
 var legacyIntegrationFiles = map[string][]legacyIntegrationFile{
 	"cline": {
 		{
-			dest:           ".clinerules/crit.md",
-			globalDest:     "Cline/Rules/crit.md",
+			dest:           ".clinerules/crit-plus.md",
+			globalDest:     "Cline/Rules/crit-plus.md",
 			globalDestKind: globalDestDocuments,
 			hash:           "1dd945643385c93d5f64f723808ff6aa4bcf80dc80e58804d07db926782d6a6f",
 		},
@@ -300,45 +300,45 @@ var legacyIntegrationFiles = map[string][]legacyIntegrationFile{
 	"codex": {
 		{
 			// Hard allow_implicit_invocation:false gate — replaced by skill wording.
-			dest:           ".agents/skills/crit/agents/openai.yaml",
-			globalDest:     ".agents/skills/crit/agents/openai.yaml",
+			dest:           ".agents/skills/crit-plus/agents/openai.yaml",
+			globalDest:     ".agents/skills/crit-plus/agents/openai.yaml",
 			globalDestKind: globalDestRelHome,
 			hash:           "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
 		},
 	},
 	"codex-plugin": {
 		{
-			dest:           "plugins/crit/skills/crit/agents/openai.yaml",
-			globalDest:     ".codex/plugins/crit/skills/crit/agents/openai.yaml",
+			dest:           "plugins/crit-plus/skills/crit-plus/agents/openai.yaml",
+			globalDest:     ".codex/plugins/crit-plus/skills/crit-plus/agents/openai.yaml",
 			globalDestKind: globalDestRelHome,
 			hash:           "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
 		},
 		{
 			// Loose skills installed alongside the plugin (project and ~/.agents).
-			dest:           ".agents/skills/crit/agents/openai.yaml",
-			globalDest:     ".agents/skills/crit/agents/openai.yaml",
+			dest:           ".agents/skills/crit-plus/agents/openai.yaml",
+			globalDest:     ".agents/skills/crit-plus/agents/openai.yaml",
 			globalDestKind: globalDestRelHome,
 			hash:           "a1499d95abd8447558c535fe5554adcc3c9b988a0a39264a6283d430effe1e94",
 		},
 	},
 	"opencode": {
 		{
-			dest:           ".opencode/skills/crit/SKILL.md",
-			globalDest:     ".agents/skills/crit/SKILL.md",
+			dest:           ".opencode/skills/crit-plus/SKILL.md",
+			globalDest:     ".agents/skills/crit-plus/SKILL.md",
 			globalDestKind: globalDestRelHome,
 			hash:           "f5e50b2db106a09cd6818f4ee8124ed31c05072dd8a2692f814a1540c185c48b",
 		},
 	},
 	"windsurf": {
 		{
-			dest: ".windsurf/rules/crit.md",
+			dest: ".windsurf/rules/crit-plus.md",
 			hash: "ad2c053399d1d0c1ed1fde03e2a7985446e02bf84114718b26c3a6b34eaafbd2",
 		},
 	},
 }
 
 // availableIntegrations returns the sorted list of integration names that
-// `crit install <name>` accepts. Derived from integrationMap keys plus the
+// `crit-plus install <name>` accepts. Derived from integrationMap keys plus the
 // special-cased "aider" entry (which does not live in the map because its
 // install flow is bespoke — see installAider).
 func availableIntegrations() []string {
@@ -483,13 +483,13 @@ func installIntegration(name string, force bool) error {
 		if err := installCodexPluginActivation(global, home, codexMarketplaceName); err != nil {
 			return err
 		}
-		hints = append(hints, "The Crit Codex plugin is enabled as crit@"+codexMarketplaceName)
+		hints = append(hints, "The Crit Plus Codex plugin is enabled as crit-plus@"+codexMarketplaceName)
 	}
 	if name == "hermes" && !global {
 		fmt.Println()
 		fmt.Println("  Note: Hermes only auto-discovers skills from ~/.hermes/skills/.")
 		fmt.Println("  For project-local skills to load, either:")
-		fmt.Println("    a) run `cd ~ && crit install hermes` to install globally, or")
+		fmt.Println("    a) run `cd ~ && crit-plus install hermes` to install globally, or")
 		fmt.Println("    b) add `.hermes/skills` to `external_dirs` under the `skills` section")
 		fmt.Println("       of ~/.hermes/config.yaml (Hermes scans those dirs read-only).")
 	}
@@ -518,15 +518,15 @@ func cleanupLegacyIntegrationFiles(name string, global bool, home string) {
 			continue
 		}
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: could not inspect obsolete Crit integration %s: %v\n", dest, err)
+			fmt.Fprintf(os.Stderr, "Warning: could not inspect obsolete Crit Plus integration %s: %v\n", dest, err)
 			continue
 		}
 		if computeFileHash(data) != legacy.hash {
-			fmt.Fprintf(os.Stderr, "Warning: preserving modified obsolete Crit integration %s; remove it manually to prevent automatic invocation\n", dest)
+			fmt.Fprintf(os.Stderr, "Warning: preserving modified obsolete Crit Plus integration %s; remove it manually to prevent automatic invocation\n", dest)
 			continue
 		}
 		if err := os.Remove(dest); err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: could not remove obsolete Crit integration %s: %v\n", dest, err)
+			fmt.Fprintf(os.Stderr, "Warning: could not remove obsolete Crit Plus integration %s: %v\n", dest, err)
 			continue
 		}
 		fmt.Printf("  Removed:   %s (obsolete auto-invoked integration)\n", dest)
@@ -577,9 +577,9 @@ func codexPluginMarketplacePath(global bool, home string) string {
 
 func codexPluginMarketplaceSourcePath(global bool) string {
 	if global {
-		return "./.codex/plugins/crit"
+		return "./.codex/plugins/crit-plus"
 	}
-	return "./plugins/crit"
+	return "./plugins/crit-plus"
 }
 
 type codexPluginMarketplace struct {
@@ -895,7 +895,7 @@ func cloneRawMessages(in map[string]json.RawMessage) map[string]json.RawMessage 
 
 func desiredCodexMarketplacePlugin(sourcePath string) codexMarketplacePlugin {
 	return codexMarketplacePlugin{
-		Name: "crit",
+		Name: "crit-plus",
 		Source: codexMarketplacePluginSource{
 			Source: "local",
 			Path:   sourcePath,
@@ -949,7 +949,7 @@ func installCodexPluginMarketplace(path, sourcePath string, force bool) (string,
 	next := make([]codexMarketplacePlugin, 0, len(existing.Plugins)+1)
 	found := false
 	for _, plugin := range existing.Plugins {
-		if plugin.Name != "crit" {
+		if plugin.Name != "crit-plus" {
 			next = append(next, plugin)
 			continue
 		}
@@ -973,7 +973,7 @@ func installCodexPluginMarketplace(path, sourcePath string, force bool) (string,
 		changed = true
 	}
 	if !changed {
-		fmt.Printf("  Skipped:   %s (Crit plugin already registered, use --force to overwrite)\n", path)
+		fmt.Printf("  Skipped:   %s (Crit Plus plugin already registered, use --force to overwrite)\n", path)
 		return marketplaceName, nil
 	}
 	existing.Plugins = next
@@ -1021,7 +1021,7 @@ func samePath(a, b string) bool {
 	return absA == absB
 }
 
-const codexPluginEmbeddedPrefix = "integrations/codex/plugin/crit/"
+const codexPluginEmbeddedPrefix = "integrations/codex/plugin/crit-plus/"
 
 //nolint:unparam // global is passed for symmetry with other install* funcs; activation always targets ~/.codex
 func installCodexPluginActivation(global bool, home, marketplaceName string) error {
@@ -1040,7 +1040,7 @@ func installCodexPluginActivation(global bool, home, marketplaceName string) err
 
 	codexRoot := codexHome(home)
 	cacheBase := filepath.Join(codexRoot, "plugins", "cache")
-	cacheRoot := filepath.Join(cacheBase, marketplaceName, "crit", version)
+	cacheRoot := filepath.Join(cacheBase, marketplaceName, "crit-plus", version)
 	if err := requirePathWithin(cacheBase, cacheRoot); err != nil {
 		return err
 	}
@@ -1050,7 +1050,7 @@ func installCodexPluginActivation(global bool, home, marketplaceName string) err
 	fmt.Printf("  Installed: %s\n", cacheRoot)
 
 	configPath := filepath.Join(codexRoot, "config.toml")
-	if err := installCodexPluginConfig(configPath, "crit@"+marketplaceName); err != nil {
+	if err := installCodexPluginConfig(configPath, "crit-plus@"+marketplaceName); err != nil {
 		return err
 	}
 	return nil
@@ -1306,7 +1306,7 @@ func ensureTrailingNewline(s string) string {
 	return s + "\n"
 }
 
-// installGeminiSettings merges the crit plan-hook into .gemini/settings.json,
+// installGeminiSettings merges the crit-plus plan-hook into .gemini/settings.json,
 // creating the file if it doesn't exist. Idempotent: skips if the
 // exit_plan_mode hook is already present (unless --force).
 func installGeminiSettings(path string, force bool) {
@@ -1350,7 +1350,7 @@ func installGeminiSettings(path string, force bool) {
 		"hooks": []interface{}{
 			map[string]interface{}{
 				"type":    "command",
-				"command": "crit plan-hook",
+				"command": "crit-plus plan-hook",
 				"timeout": 345600000,
 			},
 		},

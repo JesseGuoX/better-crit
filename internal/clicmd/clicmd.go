@@ -57,7 +57,7 @@ func Plural(n int) string {
 func MustGetwd() (string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
-		return "", ExitError{Code: 1, Err: fmt.Errorf("crit: unable to determine current working directory: %w", err)}
+		return "", ExitError{Code: 1, Err: fmt.Errorf("crit-plus: unable to determine current working directory: %w", err)}
 	}
 	return wd, nil
 }
@@ -78,7 +78,7 @@ func RequireFlagValue(args []string, i int, flag string) (string, error) {
 // ReorderFlagsFirst rewrites args so all flags (and their values) precede
 // positional arguments, without changing the relative order within either
 // group. flag.Parse stops parsing at the first non-flag argument, so
-// `crit <file> --no-open` silently treats "--no-open" as a second file
+// `crit-plus <file> --no-open` silently treats "--no-open" as a second file
 // argument instead of a flag. Passing the reordered slice through
 // flag.Parse lets users place flags anywhere on the command line.
 //

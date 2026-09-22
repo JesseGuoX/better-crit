@@ -1,4 +1,6 @@
-# Contributing to Crit
+# Contributing to Crit Plus
+
+Crit Plus is an enhanced fork of [Crit](https://github.com/tomasz-tomczyk/crit), originally created by **Tomasz Tomczyk**. Original MIT license and copyright are preserved; see [NOTICE](NOTICE).
 
 ## Before You Start
 
@@ -13,8 +15,8 @@ See [Other Install Methods](README.md#other-install-methods) in the README for b
 ```bash
 make build-all
 # Outputs to dist/:
-#   crit-darwin-arm64, crit-darwin-amd64
-#   crit-linux-amd64, crit-linux-arm64
+#   crit-plus-darwin-arm64, crit-plus-darwin-amd64
+#   crit-plus-linux-amd64, crit-plus-linux-arm64
 ```
 
 ## Go Tests
@@ -25,7 +27,7 @@ go test ./...
 
 ## E2E Tests
 
-The `test/e2e/` directory has a Playwright test suite that runs the full frontend against a real Crit server. Requires Node.js (listed in `mise.toml`).
+The `test/e2e/` directory has a Playwright test suite that runs the full frontend against a real Crit Plus server. Requires Node.js (listed in `mise.toml`).
 
 ```bash
 cd test/e2e && npm install && npx playwright install chromium
@@ -40,10 +42,10 @@ make e2e-report                                       # View HTML report
 
 ## Local Testing & Seed Fixtures
 
-`make test-diff` is a manual, visual seed harness for the review UI. It builds `crit`, spins up several local server instances — each seeding a different representative review scenario — prints their localhost URLs, and then blocks so you can open the tabs and eyeball the result. It is **not** an automated assertion suite; it exists for the parts of the review UI where visual correctness matters and automated assertions are awkward to write.
+`make test-diff` is a manual, visual seed harness for the review UI. It builds `crit-plus`, spins up several local server instances — each seeding a different representative review scenario — prints their localhost URLs, and then blocks so you can open the tabs and eyeball the result. It is **not** an automated assertion suite; it exists for the parts of the review UI where visual correctness matters and automated assertions are awkward to write.
 
 ```bash
-make test-diff          # builds crit, seeds the scenarios, runs from port 3001 up
+make test-diff          # builds crit-plus, seeds the scenarios, runs from port 3001 up
 ```
 
 Each instance binds a consecutive port starting at the one you pass (default `3001`) and covers a distinct scenario:
@@ -63,30 +65,30 @@ The harness seeds comments, swaps in v2 content to simulate agent edits, and sig
 
 ## Integration Tests
 
-These exercise crit against its real collaborators — `crit-web` and GitHub. They are heavier than the unit suite and live behind build tags so `go test ./...` stays fast and hermetic. Extend them when you touch the surfaces they cover.
+These exercise crit-plus against its real collaborators — `crit-web` and GitHub. They are heavier than the unit suite and live behind build tags so `go test ./...` stays fast and hermetic. Extend them when you touch the surfaces they cover.
 
-### crit ↔ crit-web share roundtrip
+### crit-plus ↔ crit-web share roundtrip
 
 `make e2e-share` runs the share roundtrip in `share_integration_test.go` (build tag `integration`): share a review, fetch web-authored comments, re-share without duplicates, unpublish. It needs a local `crit-web` checkout at `../crit-web` (or `CRIT_WEB_DIR`) and PostgreSQL running locally.
 
 ```bash
-make e2e-share                                   # build crit, start crit-web on :4001, run all TestShareSync*, tear down
+make e2e-share                                   # build crit-plus, start crit-web on :4001, run all TestShareSync*, tear down
 ./scripts/e2e-share.sh --serve                   # start crit-web for manual inspection (logs review URLs)
 ./scripts/e2e-share.sh -run TestShareSyncFullLifecycle   # one case
 ```
 
 When you change the share payload, comment sync, or any crit-web interaction, **add a `TestShareSync*` case** so the new behavior is covered, and use `--serve` to inspect the result on the web. See `scripts/AGENTS.md` for prerequisites, the full case list, and the seed helpers (`critShareCmd`, `seedComment`, `logReview`, etc.).
 
-### crit ↔ GitHub PR roundtrip
+### crit-plus ↔ GitHub PR roundtrip
 
-`make e2e-roundtrip` runs the live GitHub PR roundtrip in `roundtrip_integration_test.go` (build tag `e2e_github`): each scenario opens a real sandbox PR, drives `crit pull` / `crit push` through one state transition, and asserts on both local review-file and live PR state. It needs `gh` authenticated and `CRIT_ROUNDTRIP_REPO=<owner>/crit-roundtrip-sandbox` exported. Scenarios are slow (~10–25s each) and rate-limited, which is why they stay out of CI.
+`make e2e-roundtrip` runs the live GitHub PR roundtrip in `roundtrip_integration_test.go` (build tag `e2e_github`): each scenario opens a real sandbox PR, drives `crit-plus pull` / `crit-plus push` through one state transition, and asserts on both local review-file and live PR state. It needs `gh` authenticated and `CRIT_ROUNDTRIP_REPO=<owner>/crit-roundtrip-sandbox` exported. Scenarios are slow (~10–25s each) and rate-limited, which is why they stay out of CI.
 
 ```bash
 make e2e-roundtrip                                              # all scenarios
 ./scripts/e2e-roundtrip.sh -run TestRoundtrip_PushIsIdempotent -v   # one
 ```
 
-When you change `crit pull` / `crit push`, GitHub comment-bucket logic, or reply posting, **add a `TestRoundtrip_<Name>` scenario** for the new state transition. If a scenario is currently `t.Skip`'d against a known bug and your change fixes it, remove the skip and run it. See `test/roundtrip/README.md` for one-time setup and authoring notes.
+When you change `crit-plus pull` / `crit-plus push`, GitHub comment-bucket logic, or reply posting, **add a `TestRoundtrip_<Name>` scenario** for the new state transition. If a scenario is currently `t.Skip`'d against a known bug and your change fixes it, remove the skip and run it. See `test/roundtrip/README.md` for one-time setup and authoring notes.
 
 ### Leave a seed behind
 

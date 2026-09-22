@@ -8,7 +8,7 @@ import (
 	"github.com/tomasz-tomczyk/crit/internal/prompt"
 )
 
-// EnvPrefix is the namespace for hook environment variables. Crit sets
+// EnvPrefix is the namespace for hook environment variables. Crit Plus sets
 // CRIT_REVIEW_PATH, CRIT_SESSION_KEY, CRIT_MODE, CRIT_APPROVED, etc.
 const EnvPrefix = "CRIT_"
 

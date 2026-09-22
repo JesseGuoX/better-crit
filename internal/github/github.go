@@ -126,7 +126,7 @@ func DetectPR(prFlag int) (int, error) {
 	}
 	out, err := exec.Command("gh", "pr", "view", "--json", "number", "--jq", ".number").Output()
 	if err != nil {
-		return 0, fmt.Errorf("no PR found for current branch (try: crit pull <pr-number>)")
+		return 0, fmt.Errorf("no PR found for current branch (try: crit-plus pull <pr-number>)")
 	}
 	n, err := strconv.Atoi(strings.TrimSpace(string(out)))
 	if err != nil {
@@ -183,7 +183,7 @@ func displayName(login, name string) string {
 }
 
 // userNameCache memoizes login → display-name lookups for the duration of a
-// single `crit pull`. The /pulls/.../comments REST payload only returns
+// single `crit-plus pull`. The /pulls/.../comments REST payload only returns
 // `login`, so we hit /users/{login} once per unique commenter.
 type userNameCache map[string]string
 
@@ -463,7 +463,7 @@ func fetchPRComments(id forge.ChangeID) ([]ghComment, error) {
 	if ghSupportsAPISlurp() {
 		return fetchPRCommentsWithSlurp(id)
 	}
-	// TODO: Remove this compatibility path once Crit requires gh v2.48.0+,
+	// TODO: Remove this compatibility path once Crit Plus requires gh v2.48.0+,
 	// which added `gh api --slurp`.
 	return fetchPRCommentsWithoutSlurp(id)
 }
@@ -586,12 +586,12 @@ func fetchCurrentRepoOwnerName() (string, string, error) {
 // review-thread comment on the PR, gathered from the reviewThreads GraphQL
 // edge. Threads carry the resolved bit only at the thread level, not on the
 // individual REST /pulls/{n}/comments rows — so this is the only path that
-// surfaces "reviewer clicked Resolve on github.com" to `crit pull`. See #453.
+// surfaces "reviewer clicked Resolve on github.com" to `crit-plus pull`. See #453.
 //
 // Pagination: GitHub caps reviewThreads at 100 nodes and comments-per-thread
 // at 100. We page on the outer connection; very large discussions
 // (>100 threads or >100 replies in one thread) are still rare enough at
-// crit's scale that the inner cap is acceptable. If we ever hit it, the
+// crit-plus's scale that the inner cap is acceptable. If we ever hit it, the
 // merge logic degrades gracefully — only the unseen replies miss the
 // resolved bit, the root still gets it.
 func fetchPRThreadResolved(id forge.ChangeID) (map[int64]bool, error) {
@@ -819,8 +819,8 @@ func updateDuplicateRoot(
 //
 // The asymmetry mirrors the existing pull semantics for Body (dedup matches
 // existing comments and never overwrites local edits): a local user may have
-// resolved a thread via crit / crit-web independently of github.com, and
-// `crit pull` should not undo that.
+// resolved a thread via crit-plus / crit-web independently of github.com, and
+// `crit-plus pull` should not undo that.
 func mergeRootComment(cj *session.CritJSON, gc ghComment, replyMap map[int64][]ghComment, now string, names userNameCache, scope inheritedScope, pendingDeletes map[int64]bool, threadResolved map[int64]bool) int {
 	cf, ok := cj.Files[gc.Path]
 	if !ok {
@@ -918,7 +918,7 @@ func mergeGHComments(cj *session.CritJSON, ghComments []ghComment) int {
 // stamping for range-mode pulls. scope.DiffScope == "" matches legacy
 // working-tree behavior. threadResolved (databaseID -> isResolved) is
 // applied to root comments to mirror github.com thread-resolution state.
-// See spec §E "Write path — `crit pull` import path".
+// See spec §E "Write path — `crit-plus pull` import path".
 func mergeGHCommentsScoped(cj *session.CritJSON, ghComments []ghComment, scope inheritedScope, threadResolved map[int64]bool) int {
 	return mergeGHCommentsWithNames(cj, ghComments, make(userNameCache), scope, threadResolved)
 }

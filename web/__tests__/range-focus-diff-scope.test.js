@@ -34,6 +34,7 @@ const loadSingleFile = new Function(`
   function langFromPath() { return ''; }
   function buildCodeLineBlocks() { return []; }
   function parseMarkdown() { return { blocks: [], tocItems: [] }; }
+  function initialViewMode() { return 'diff'; }
   ${extractFunction('loadSingleFile').replace(/^function /, 'async function ')}
   return loadSingleFile;
 `)();

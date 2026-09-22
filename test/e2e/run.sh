@@ -18,20 +18,20 @@ STUB_PORT="${CRIT_TEST_STUB_PORT:-3133}"
 PERF_PORT="${CRIT_TEST_PERF_PORT:-3134}"
 STUB2_PORT="${CRIT_TEST_STUB2_PORT:-3135}"
 
-# Build crit once (skip if CRIT_BIN already points to an existing binary, e.g. CI coverage builds)
+# Build crit-plus once (skip if CRIT_BIN already points to an existing binary, e.g. CI coverage builds)
 if [ -n "${CRIT_BIN:-}" ] && [ -f "$CRIT_BIN" ]; then
   echo "Using pre-built binary: $CRIT_BIN"
 else
   BIN_DIR=$(mktemp -d)
   trap 'rm -rf "$BIN_DIR"' EXIT
   export CRIT_BIN="$BIN_DIR/$(e2e_bin_name)"
-  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit)
+  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit-plus)
 fi
 
 # Ensure the Chromium build matching this project's pinned @playwright/test is
 # installed. The browser cache (~/Library/Caches/ms-playwright on macOS) is
 # global and version-specific, so a machine that only has another project's
-# Playwright version (e.g. crit-web's) won't have the build crit needs and every
+# Playwright version (e.g. crit-web's) won't have the build crit-plus needs and every
 # test fails with "Executable doesn't exist". Idempotent — skips the download
 # when the build is already cached, so it's a fast no-op in CI and on reruns.
 (cd "$SCRIPT_DIR" && npx playwright install chromium)
@@ -67,7 +67,7 @@ PERF_PID=$!
 cleanup() {
   kill "$GIT_PID" "$GIT2_PID" "$FILE_PID" "$SINGLE_PID" "$NOGIT_PID" "$MULTI_PID" "$RANGE_PID" "$LIVE_PID" "$SHARE_PID" "$PERF_PID" 2>/dev/null || true
   wait "$GIT_PID" "$GIT2_PID" "$FILE_PID" "$SINGLE_PID" "$NOGIT_PID" "$MULTI_PID" "$RANGE_PID" "$LIVE_PID" "$SHARE_PID" "$PERF_PID" 2>/dev/null || true
-  # On Git Bash `kill <bash-pid>` doesn't reap the spawned crit.exe child;
+  # On Git Bash `kill <bash-pid>` doesn't reap the spawned crit-plus.exe child;
   # taskkill /T flushes the whole tree.
   e2e_kill_stray_crit
   rm -rf "${BIN_DIR:-}"

@@ -1,4 +1,4 @@
-// Package forge defines the hosting-provider boundary used by Crit's remote
+// Package forge defines the hosting-provider boundary used by Crit Plus's remote
 // review integrations. It deliberately contains only normalized data and an
 // interface; provider-specific API payloads stay in internal/github and
 // internal/gitlab.
@@ -48,7 +48,7 @@ type RepoRef struct {
 	CloneURL string
 }
 
-// ChangeRequest is the provider-neutral metadata Crit needs for focus mode.
+// ChangeRequest is the provider-neutral metadata Crit Plus needs for focus mode.
 type ChangeRequest struct {
 	ID              ChangeID
 	URL             string

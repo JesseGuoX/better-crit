@@ -4,18 +4,18 @@
 # Usage: ./test/shell/test-daemon-reuse.sh [port]
 #
 # Reproduces the workflow from GitHub issues #184 and #185:
-#   1. Start crit on a specific file (plan.md) with a fixed port
+#   1. Start crit-plus on a specific file (plan.md) with a fixed port
 #   2. Add comments, finish the review
-#   3. Verify the prompt tells the agent to run "crit <file>" (not bare "crit")
-#   4. Edit the file, re-run "crit <file>" on the same port
+#   3. Verify the prompt tells the agent to run "crit-plus <file>" (not bare "crit-plus")
+#   4. Edit the file, re-run "crit-plus <file>" on the same port
 #   5. Confirm the daemon is reused (round 2, not a new server)
 #   6. Approve (finish with no unresolved comments)
 #   7. Confirm the daemon shuts down and the port is freed
-#   8. Start bare "crit" in git mode on the same port
+#   8. Start bare "crit-plus" in git mode on the same port
 #   9. Confirm git mode loads successfully
 #
 # This catches:
-#   - #185: prompt saying "crit" instead of "crit <file>"
+#   - #185: prompt saying "crit-plus" instead of "crit-plus <file>"
 #   - #184: daemon not shutting down on approve, blocking the port
 
 set -e
@@ -24,11 +24,11 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 PORT="${1:-3198}"
-BINARY="$ROOT/crit"
+BINARY="$ROOT/crit-plus"
 
 if [ ! -f "$BINARY" ]; then
   echo "Binary not found — building..."
-  (cd "$ROOT" && go build -o crit ./cmd/crit)
+  (cd "$ROOT" && go build -o crit-plus ./cmd/crit-plus)
 fi
 
 # Kill any stale process on our test port
@@ -126,10 +126,10 @@ check() {
 }
 
 echo ""
-echo "=== Phase 1: File-mode review with crit $PLAN_FILE ==="
+echo "=== Phase 1: File-mode review with crit-plus $PLAN_FILE ==="
 echo ""
 
-# Start crit with plan.md
+# Start crit-plus with plan.md
 (cd "$WORKDIR" && "$BINARY" _serve --no-open --port "$PORT" "$PLAN_FILE") &
 DAEMON_PID=$!
 wait_for_server "$PORT"
@@ -165,11 +165,11 @@ FINISH_RESP=$(api -X POST "http://127.0.0.1:$PORT/api/finish")
 PROMPT=$(echo "$FINISH_RESP" | python3 -c "import json,sys; print(json.load(sys.stdin)['prompt'])")
 
 # Check that prompt includes file args (issue #185)
-check "Prompt says 'crit $PLAN_FILE' (not bare 'crit')" \
-  "$(echo "$PROMPT" | grep -q "crit $PLAN_FILE" && echo true || echo false)"
+check "Prompt says 'crit-plus $PLAN_FILE' (not bare 'crit-plus')" \
+  "$(echo "$PROMPT" | grep -q "crit-plus $PLAN_FILE" && echo true || echo false)"
 
 echo ""
-echo "=== Phase 2: Agent edits file, re-runs crit $PLAN_FILE (same port) ==="
+echo "=== Phase 2: Agent edits file, re-runs crit-plus $PLAN_FILE (same port) ==="
 echo ""
 
 # Simulate agent editing the file
@@ -203,18 +203,18 @@ EOF
 sleep 1.5  # let file watcher detect the change
 
 # Extract the reinvoke command from the prompt (the "When done run: `...`" part).
-# On main this will be bare "crit"; with the fix it will be "crit plan.md".
+# On main this will be bare "crit-plus"; with the fix it will be "crit-plus plan.md".
 REINVOKE_CMD=$(echo "$PROMPT" | python3 -c "
 import sys, re
 m = re.search(r'When done run: \x60(.+?)\x60', sys.stdin.read())
-print(m.group(1) if m else 'crit')
+print(m.group(1) if m else 'crit-plus')
 ")
 echo "  Prompt says to run: $REINVOKE_CMD"
 
 # Run exactly what the prompt told us, with the same fixed port.
-# With the bug (main): bare "crit" computes a different session key → starts a NEW daemon → port conflict.
-# With the fix: "crit plan.md" finds the existing daemon → blocks on review-cycle (correct).
-REINVOKE_ARGS="${REINVOKE_CMD#crit}"
+# With the bug (main): bare "crit-plus" computes a different session key → starts a NEW daemon → port conflict.
+# With the fix: "crit-plus plan.md" finds the existing daemon → blocks on review-cycle (correct).
+REINVOKE_ARGS="${REINVOKE_CMD#crit-plus}"
 REINVOKE_LOG="$WORKDIR/reinvoke.log"
 (cd "$WORKDIR" && $BINARY --no-open --port "$PORT" $REINVOKE_ARGS > "$REINVOKE_LOG" 2>&1) &
 REINVOKE_PID=$!
@@ -253,7 +253,7 @@ echo ""
 # Delete all comments to simulate "all resolved"
 api -X DELETE "http://127.0.0.1:$PORT/api/comments" > /dev/null
 
-# Start a crit client that blocks on review-cycle — this simulates the real
+# Start a crit-plus client that blocks on review-cycle — this simulates the real
 # agent workflow where a client is connected when finish is triggered.
 # The client detects the approve (empty prompt) and kills the daemon.
 APPROVE_LOG="$WORKDIR/approve.log"
@@ -279,7 +279,7 @@ kill $APPROVE_PID 2>/dev/null || true
 wait $APPROVE_PID 2>/dev/null || true
 
 echo ""
-echo "=== Phase 4: Start bare 'crit' in git mode on same port ==="
+echo "=== Phase 4: Start bare 'crit-plus' in git mode on same port ==="
 echo ""
 
 # Make a change on the feature branch so git mode has something to show
@@ -294,7 +294,7 @@ EOF
 git -C "$WORKDIR" add -A
 git -C "$WORKDIR" commit -q -m "add monitoring section"
 
-# Start bare crit (git mode) on the same port — should work since daemon shut down
+# Start bare crit-plus (git mode) on the same port — should work since daemon shut down
 (cd "$WORKDIR" && "$BINARY" _serve --no-open --port "$PORT") &
 GIT_DAEMON_PID=$!
 wait_for_server "$PORT"

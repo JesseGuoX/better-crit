@@ -35,7 +35,7 @@ if [ -n "${CRIT_BIN:-}" ] && [ -f "$CRIT_BIN" ]; then
   echo "Using pre-built binary: $CRIT_BIN"
 else
   CRIT_BIN="$BIN_DIR/$(e2e_bin_name)"
-  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit)
+  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit-plus)
 fi
 
 # 3. Launch upstream on a free port; capture origin from its stdout.
@@ -60,8 +60,8 @@ echo "upstream listening at $UPSTREAM_ORIGIN" >&2
 # 4. Isolate HOME so config files don't leak.
 export HOME="$FAKE_HOME"
 
-# 5. Launch crit _serve in live mode on a fixed port.
-#    (Bypassing `crit live` daemon-spawn keeps the process foreground and
+# 5. Launch crit-plus _serve in live mode on a fixed port.
+#    (Bypassing `crit-plus live` daemon-spawn keeps the process foreground and
 #    on a deterministic port — Playwright wants a single child to wait on.)
 "$CRIT_BIN" _serve --no-open --port "$PORT" --live-origin "$UPSTREAM_ORIGIN" &
 CRIT_PID=$!

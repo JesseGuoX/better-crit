@@ -22,7 +22,7 @@ The popup relay must hit the **same crit-web API endpoints** with the **same pay
 
 When `proxy_auth: true` (global config), crit-web sits behind an SSO reverse proxy. The terminal cannot complete that auth flow — only the browser can (via the `/share-receiver` popup relay).
 
-**Terminal subcommands** that HTTP-call crit-web directly (today: `crit share`, `crit fetch`, `crit unpublish`) must call `checkProxyAuthCLIAllowed("crit <cmd>")` at the top of their `Run*` entrypoint and exit with the shared error message. Do not attempt the network call.
+**Terminal subcommands** that HTTP-call crit-web directly (today: `crit-plus share`, `crit-plus fetch`, `crit-plus unpublish`) must call `checkProxyAuthCLIAllowed("crit-plus <cmd>")` at the top of their `Run*` entrypoint and exit with the shared error message. Do not attempt the network call.
 
 **Browser UI actions** (Share / Pull / Unpublish / Re-share buttons in the review page) must still work: implement both transports per Rule 1 — direct when `proxy_auth` is false, popup relay when true (`web/crit-share.js` + crit-web `share_receiver/handlers.js`).
 
@@ -44,6 +44,6 @@ When adding a **new** crit-web interaction, decide which surface owns it:
 - **Terminal-only** (rare): document that it won't work behind SSO, or don't add it.
 - **Both**: direct Go HTTP path + browser relay path; terminal path still blocked when `proxy_auth` is on unless you have a non-HTTP auth story.
 
-Integration tests that spawn the `crit` binary must isolate config — use `runCritCmd` / `runCritCmdWithHome` with a temp `HOME`, not the developer's real `~/.crit.config.json`.
+Integration tests that spawn the `crit-plus` binary must isolate config — use `runCritCmd` / `runCritCmdWithHome` with a temp `HOME`, not the developer's real `~/.crit.config.json`.
 
 </important>

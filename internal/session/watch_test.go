@@ -442,7 +442,7 @@ func TestCarryForwardComment_PreservesResolvedRound(t *testing.T) {
 
 // TestCarryForwardComment_PreservesLastPushedBodyHash guards the GitHub-sync
 // dedup hash. Without it, every already-pushed comment looks "never pushed"
-// after a round bump and `crit push` would re-PATCH (or double-post) bodies
+// after a round bump and `crit-plus push` would re-PATCH (or double-post) bodies
 // that are actually unchanged.
 func TestCarryForwardComment_PreservesLastPushedBodyHash(t *testing.T) {
 	old := Comment{
@@ -772,7 +772,7 @@ func TestCarryForward_AnchorEditedInPlaceNotDrifted(t *testing.T) {
 // The agent addressed a wording comment by cutting the clause out of the
 // middle of the line, so the line keeps only its prefix and suffix. LCS still
 // maps it to the same row, so the comment belongs there — a Drifted flag here
-// would also silently drop it from `crit push` to GitLab.
+// would also silently drop it from `crit-plus push` to GitLab.
 func TestCarryForward_ClauseDeletedFromMiddleOfLineNotDrifted(t *testing.T) {
 	dir := t.TempDir()
 	tsxPath := filepath.Join(dir, "Routes.tsx")

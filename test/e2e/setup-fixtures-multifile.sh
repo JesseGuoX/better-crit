@@ -148,15 +148,15 @@ EXFILE
 
 git add -A && git commit -q -m "initial commit"
 
-# Build crit binary outside the fixture dir (skip if CRIT_BIN is set)
+# Build crit-plus binary outside the fixture dir (skip if CRIT_BIN is set)
 if [ -z "${CRIT_BIN:-}" ]; then
   CRIT_BIN="$BIN_DIR/$(e2e_bin_name)"
-  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit)
+  (cd "$CRIT_SRC" && go build -o "$CRIT_BIN" ./cmd/crit-plus)
 fi
 
 # Isolate from user's ~/.crit.config.json (and USERPROFILE on Windows).
 e2e_export_fake_home "$DIR"
 
-# Run crit in file mode with explicit files AND a directory
+# Run crit-plus in file mode with explicit files AND a directory
 # --share-url enables the Share button so E2E tests can exercise the share payload
 exec "$CRIT_BIN" _serve --no-open --port "$PORT" --share-url "http://localhost:19999" plan.md main.go handler.ex lib/

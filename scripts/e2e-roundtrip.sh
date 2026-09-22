@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# End-to-end integration test runner for the crit ↔ GitHub PR roundtrip.
-# Builds crit, then runs Go tests behind build tag e2e_github against a real
+# End-to-end integration test runner for the crit-plus ↔ GitHub PR roundtrip.
+# Builds crit-plus, then runs Go tests behind build tag e2e_github against a real
 # GitHub PR in the sandbox repo configured via CRIT_ROUNDTRIP_REPO.
 #
 # Usage:
@@ -33,7 +33,7 @@ echo "→ Building crit..."
 make -C "$CRIT_DIR" build -j
 
 export CRIT_ROUNDTRIP_REPO
-export CRIT_BINARY="$CRIT_DIR/crit"
+export CRIT_BINARY="$CRIT_DIR/crit-plus"
 
 cd "$CRIT_DIR"
 exec go test -tags e2e_github -count=1 -timeout 20m -run TestRoundtrip "$@" ./...
