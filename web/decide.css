@@ -86,12 +86,13 @@ button.primary:hover:not(:disabled) { background: var(--crit-brand-cta-hover); }
   .workspace { grid-template-columns: minmax(0, 1fr); padding-top: 24px; gap: 20px; }
   .sidebar { position: static; max-height: none; }
   .sidebar > h2, .sidebar > p, .sidebar nav { display: none; }
-  .counts { display: flex; gap: 24px; margin: 0; padding: 0 0 16px; }
+  .counts { display: flex; flex-wrap: wrap; gap: 24px; margin: 0; padding: 0 0 16px; }
   .count-row { gap: 10px; }
   .heading { margin-bottom: 22px; }
   .options { grid-template-columns: 1fr; }
 }
 @media (max-width: 480px) {
+  .topbar { flex-wrap: wrap; }
   .topbar-actions { gap: 12px; }
   .theme-label { font-size: 0; }
   .theme-label select { font-size: 12px; max-width: 100px; }

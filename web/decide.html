@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>crit+ · 裁定</title>
+  <title>crit+ · Decisions</title>
   <link rel="icon" href="/favicon.ico">
   <link rel="stylesheet" href="/theme.css">
   <link rel="stylesheet" href="/decide.css">
@@ -14,35 +14,35 @@
   <script defer src="/decide.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#items">跳转到裁定条目</a>
+  <a class="skip-link" href="#items">Skip to decisions</a>
   <header class="topbar">
-    <a class="brand" href="/decide" title="crit+ — 基于 Tomasz Tomczyk 的 Crit">crit<span class="brand-plus">+</span><span class="brand-label">裁定</span></a>
+    <a class="brand" href="/decide" title="crit+ — based on Crit by Tomasz Tomczyk">crit<span class="brand-plus">+</span><span class="brand-label">Decisions</span></a>
     <div class="topbar-actions">
       <span id="revision" class="muted"></span>
-      <label class="theme-label">外观 <select id="theme"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label>
+      <label class="theme-label">Appearance <select id="theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
     </div>
   </header>
   <div class="workspace">
-    <aside class="sidebar" aria-label="裁定导航">
+    <aside class="sidebar" aria-label="Decision navigation">
       <p class="eyebrow">DECISIONS</p>
-      <h2>由你来定</h2>
-      <p class="muted">选择方案，或告诉 agent<br>需要如何修改。</p>
+      <h2>Your call</h2>
+      <p class="muted">Choose an option or tell the agent what to change.</p>
       <div id="counts" class="counts" aria-live="polite"></div>
-      <nav id="navigation" aria-label="条目列表"></nav>
-      <p class="sidebar-note">推荐仅供参考。<br>未选择的条目会保持待定。</p>
-      <p class="sidebar-note">基于 <a href="https://github.com/tomasz-tomczyk/crit" target="_blank" rel="noopener">Crit</a> · Tomasz Tomczyk</p>
+      <nav id="navigation" aria-label="Decision items"></nav>
+      <p class="sidebar-note">Recommendations are suggestions. Unanswered items stay pending.</p>
+      <p class="sidebar-note">Based on <a href="https://github.com/tomasz-tomczyk/crit" target="_blank" rel="noopener">Crit</a> · Tomasz Tomczyk</p>
     </aside>
     <main id="main">
-      <div class="heading"><p class="eyebrow">HUMAN IN THE LOOP</p><h1 id="title">正在加载裁定清单…</h1><div id="context" class="markdown muted"></div></div>
+      <div class="heading"><p class="eyebrow">HUMAN IN THE LOOP</p><h1 id="title">Loading decisions…</h1><div id="context" class="markdown muted"></div></div>
       <div id="notice" class="notice" role="status" hidden></div>
-      <div id="error" class="error" role="alert" hidden><span id="error-text"></span><button id="reload" type="button">加载最新版本</button></div>
+      <div id="error" class="error" role="alert" hidden><span id="error-text"></span><button id="reload" type="button">Load latest version</button></div>
       <div id="items" tabindex="-1"></div>
-      <details id="history" class="history" hidden><summary>历史轮次</summary><div id="history-content"></div></details>
+      <details id="history" class="history" hidden><summary>Round history</summary><div id="history-content"></div></details>
     </main>
   </div>
   <footer class="submitbar">
-    <div><strong id="save-status" role="status">正在连接</strong><p id="submit-hint">可随时提交，未决定的条目会保留为待定。</p></div>
-    <button id="submit" class="primary" type="button" disabled>提交裁定</button>
+    <div><strong id="save-status" role="status">Connecting…</strong><p id="submit-hint">Submit anytime. Unanswered items remain pending.</p></div>
+    <button id="submit" class="primary" type="button" disabled>Submit decisions</button>
   </footer>
 </body>
 </html>

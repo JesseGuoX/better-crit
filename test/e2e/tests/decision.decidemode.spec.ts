@@ -71,13 +71,13 @@ test('stdin CLI returns partial snapshot after flushing choices and revision fee
   await page.getByRole('checkbox', { name: 'CSV', exact: true }).check();
   await page.locator('#item-1 summary').click();
   await page.locator('#feedback-1').fill('增加 XML 导出');
-  await page.getByRole('button', { name: '提交裁定', exact: true }).click();
+  await page.getByRole('button', { name: 'Submit decisions', exact: true }).click();
   const result = await decisions.initial.result;
   expect(result.completed).toBe(false);
   expect(result.items.map(item => item.status)).toEqual(['decided', 'revision_requested', 'pending']);
   expect(result.items[1].selected).toEqual(['json', 'csv']);
   expect(result.items[1].feedback).toBe('增加 XML 导出');
-  await expect(page.getByRole('button', { name: '已提交', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Submitted', exact: true })).toBeDisabled();
   await expect(page.getByRole('radio', { name: 'SQLite', exact: true })).toBeChecked();
   await expect(page.locator('#feedback-1')).toHaveValue('增加 XML 导出');
   await expect(page.locator('#feedback-1')).toBeDisabled();
@@ -87,18 +87,18 @@ test('stdin CLI returns partial snapshot after flushing choices and revision fee
 
 test('all pending is a valid submission and can be explicitly reopened', async ({ page, decisions }) => {
   await page.goto(decisions.initial.url);
-  await page.getByRole('button', { name: '提交裁定', exact: true }).click();
+  await page.getByRole('button', { name: 'Submit decisions', exact: true }).click();
   const pending = await decisions.initial.result;
   expect(pending.completed).toBe(false);
   expect(pending.items.every(item => item.status === 'pending')).toBe(true);
   const next = await decisions.start(checklist(), true, ['--new-round']);
-  await expect(page.locator('#revision')).toHaveText('第 2 轮');
+  await expect(page.locator('#revision')).toHaveText('Round 2');
   await page.getByRole('radio', { name: 'SQLite', exact: true }).check();
   await page.getByRole('checkbox', { name: 'JSON', exact: true }).check();
   await page.getByRole('radio', { name: '以后再做', exact: true }).check();
-  await page.getByRole('button', { name: '提交裁定', exact: true }).click();
+  await page.getByRole('button', { name: 'Submit decisions', exact: true }).click();
   expect((await next.result).completed).toBe(true);
-  await expect(page.locator('#notice')).toContainText('所有条目已裁定');
+  await expect(page.locator('#notice')).toContainText('All items in this round are decided');
 });
 
 test('saved drafts survive page reload and daemon restart without releasing the agent', async ({ page, request, decisions }) => {
@@ -115,7 +115,7 @@ test('saved drafts survive page reload and daemon restart without releasing the 
   const recovered = await decisions.start(checklist());
   await page.goto(recovered.url);
   await expect(page.locator('#feedback-0')).toHaveValue('请说明备份方案');
-  await page.getByRole('button', { name: '提交裁定', exact: true }).click();
+  await page.getByRole('button', { name: 'Submit decisions', exact: true }).click();
   expect((await recovered.result).items[0].status).toBe('revision_requested');
 });
 
@@ -123,11 +123,11 @@ test('new rounds carry confirmed choices, invalidate changed options and preserv
   await page.goto(decisions.initial.url);
   await page.getByRole('radio', { name: 'SQLite', exact: true }).check();
   await page.getByRole('checkbox', { name: 'JSON', exact: true }).check();
-  await page.getByRole('button', { name: '提交裁定', exact: true }).click();
+  await page.getByRole('button', { name: 'Submit decisions', exact: true }).click();
   await decisions.initial.result;
   const changed = checklist(); changed.items[1].options[0].description = 'JSON 现在还包含私人数据。';
   const next = await decisions.start(changed);
-  await expect(page.locator('#revision')).toHaveText('第 2 轮');
+  await expect(page.locator('#revision')).toHaveText('Round 2');
   await expect(page.getByRole('radio', { name: 'SQLite', exact: true })).toBeChecked();
   await expect(page.getByRole('checkbox', { name: 'JSON', exact: true })).not.toBeChecked();
   await expect(page.locator('#item-1 .changed')).toBeVisible();
@@ -135,7 +135,7 @@ test('new rounds carry confirmed choices, invalidate changed options and preserv
   expect(stale.status()).toBe(409);
   await page.locator('#history > summary').click();
   await expect(page.locator('#history-content')).toContainText('SQLite');
-  await page.getByRole('button', { name: '提交裁定', exact: true }).click();
+  await page.getByRole('button', { name: 'Submit decisions', exact: true }).click();
   expect((await next.result).items.map(item => item.status)).toEqual(['decided', 'pending', 'pending']);
 });
 
@@ -148,11 +148,11 @@ test('a dirty browser refuses stale updates until the user loads the latest vers
   const changed = checklist(); changed.items[0].options[0].description = 'Changed option';
   const response = await request.put(decisions.initial.url + '/api/decision', { data: { checklist: changed, base_revision: 1 } });
   expect(response.ok()).toBeTruthy();
-  await expect(page.locator('#error')).toContainText('当前修改仍保留');
-  await expect(page.getByRole('button', { name: '提交裁定', exact: true })).toBeDisabled();
+  await expect(page.locator('#error')).toContainText('Your changes are still on this page');
+  await expect(page.getByRole('button', { name: 'Submit decisions', exact: true })).toBeDisabled();
   await expect(page.getByRole('radio', { name: 'SQLite', exact: true })).toBeChecked();
-  await page.getByRole('button', { name: '加载最新版本' }).click();
-  await expect(page.locator('#revision')).toHaveText('第 2 轮');
+  await page.getByRole('button', { name: 'Load latest version' }).click();
+  await expect(page.locator('#revision')).toHaveText('Round 2');
   await expect(page.getByRole('radio', { name: 'SQLite', exact: true })).not.toBeChecked();
 });
 
@@ -179,7 +179,7 @@ test('responsive themes, keyboard controls and sanitized Markdown', async ({ pag
   await page.setViewportSize({ width: 375, height: 900 });
   const radio = page.getByRole('radio', { name: 'SQLite', exact: true });
   await radio.focus(); await page.keyboard.press('Space'); await expect(radio).toBeChecked();
-  await page.locator('#item-0').getByRole('button', { name: '清除选择' }).click();
+  await page.locator('#item-0').getByRole('button', { name: 'Clear selection' }).click();
   await expect(radio).not.toBeChecked();
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: testInfo.outputPath('decide-mobile.png'), fullPage: true });
