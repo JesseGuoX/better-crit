@@ -379,7 +379,7 @@ Configuration:
   Global: ~/.crit.config.json   Project: .crit.config.json (in repo root)
   Run 'crit-plus config' to see all keys and resolved values.
 
-Fork: https://github.com/JesseGuoX/better-crit
+Fork: https://github.com/JesseGuoX/crit-plus
 Upstream Crit: https://github.com/tomasz-tomczyk/crit
 `, strings.Join(visibleCommandNames(), ", "), strings.Join(availableIntegrations(), ", "))
 }

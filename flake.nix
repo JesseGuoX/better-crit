@@ -29,7 +29,7 @@
             '';
             meta = with nixpkgs.lib; {
               description = "Crit Plus, an enhanced fork of Crit by Tomasz Tomczyk";
-              homepage = "https://github.com/JesseGuoX/better-crit";
+              homepage = "https://github.com/JesseGuoX/crit-plus";
               license = licenses.mit;
               mainProgram = "crit-plus";
             };

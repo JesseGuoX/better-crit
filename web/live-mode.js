@@ -276,7 +276,7 @@
         '<span><strong>Commenting unavailable</strong> — crit+ could not connect to this page.</span>' +
         '</span>' +
         '<p class="crit-live-context-help">You can still browse. crit+ cannot inject its commenting agent. ' +
-        '<a class="crit-live-context-guide" id="liveUnavailableGuide" href="https://github.com/tomasz-tomczyk/crit/blob/main/docs/live-mode.md" target="_blank" rel="noopener noreferrer">Troubleshooting guide</a>' +
+        '<a class="crit-live-context-guide" id="liveUnavailableGuide" href="https://github.com/JesseGuoX/crit-plus/blob/main/docs/live-mode.md" target="_blank" rel="noopener noreferrer">Troubleshooting guide</a>' +
         '</p>' +
         '</div>' +
         '<div class="crit-live-iframe-pane-inner">' +

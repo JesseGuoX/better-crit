@@ -159,6 +159,7 @@ func TestIntegrationMap_SnapshotGlobalRouting(t *testing.T) {
 			{".codex/plugins/crit-plus/skills/crit-plus-story/SKILL.md", globalDestRelHome},
 			{".codex/plugins/crit-plus/skills/crit-plus-decide/SKILL.md", globalDestRelHome},
 			{".codex/plugins/crit-plus/hooks/hooks.json", globalDestRelHome},
+			{".codex/plugins/crit-plus/README.md", globalDestRelHome},
 		},
 		"hermes": {{".hermes/skills/crit-plus/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-plus-cli/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-plus-story/SKILL.md", globalDestRelHome}, {".hermes/skills/crit-plus-decide/SKILL.md", globalDestRelHome}},
 		"pi":     {{".pi/agent/skills/crit-plus/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-plus-cli/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-plus-story/SKILL.md", globalDestRelHome}, {".pi/agent/skills/crit-plus-decide/SKILL.md", globalDestRelHome}},
@@ -532,6 +533,15 @@ func TestInstallIntegration_GeminiWritesSettingsJSON(t *testing.T) {
 	t.Error("exit_plan_mode hook not found in .gemini/settings.json")
 }
 
+func codexPluginCacheTestRoot(t *testing.T, home, marketplace string) string {
+	t.Helper()
+	version, err := codexPluginEmbeddedManifestVersion()
+	if err != nil {
+		t.Fatal(err)
+	}
+	return filepath.Join(home, ".codex", "plugins", "cache", marketplace, "crit-plus", version)
+}
+
 func TestInstallIntegration_CodexPluginEndToEnd(t *testing.T) {
 	root := t.TempDir()
 	dir := filepath.Join(root, "project")
@@ -554,6 +564,7 @@ func TestInstallIntegration_CodexPluginEndToEnd(t *testing.T) {
 		".agents/skills/crit-plus-cli/SKILL.md",
 		".agents/skills/crit-plus-decide/SKILL.md",
 		"plugins/crit-plus/.codex-plugin/plugin.json",
+		"plugins/crit-plus/README.md",
 		"plugins/crit-plus/skills/crit-plus/SKILL.md",
 		"plugins/crit-plus/skills/crit-plus-cli/SKILL.md",
 		"plugins/crit-plus/skills/crit-plus-decide/SKILL.md",
@@ -580,12 +591,13 @@ func TestInstallIntegration_CodexPluginEndToEnd(t *testing.T) {
 	assertCritMarketplacePathExists(t, marketplacePath, dir)
 	assertCodexPluginEnabled(t, filepath.Join(home, ".codex", "config.toml"), "crit-plus@local")
 	for _, path := range []string{
-		".codex/plugins/cache/local/crit-plus/local/.codex-plugin/plugin.json",
-		".codex/plugins/cache/local/crit-plus/local/skills/crit-plus/SKILL.md",
-		".codex/plugins/cache/local/crit-plus/local/skills/crit-plus-decide/SKILL.md",
-		".codex/plugins/cache/local/crit-plus/local/hooks/hooks.json",
+		filepath.Join(codexPluginCacheTestRoot(t, home, "local"), ".codex-plugin/plugin.json"),
+		filepath.Join(codexPluginCacheTestRoot(t, home, "local"), "README.md"),
+		filepath.Join(codexPluginCacheTestRoot(t, home, "local"), "skills/crit-plus/SKILL.md"),
+		filepath.Join(codexPluginCacheTestRoot(t, home, "local"), "skills/crit-plus-decide/SKILL.md"),
+		filepath.Join(codexPluginCacheTestRoot(t, home, "local"), "hooks/hooks.json"),
 	} {
-		if _, err := os.Stat(filepath.Join(home, path)); err != nil {
+		if _, err := os.Stat(path); err != nil {
 			t.Fatalf("expected cache file %s to be written: %v", path, err)
 		}
 	}
@@ -612,6 +624,7 @@ func TestInstallIntegration_CodexPluginGlobalEndToEnd(t *testing.T) {
 		".agents/skills/crit-plus-cli/SKILL.md",
 		".agents/skills/crit-plus-decide/SKILL.md",
 		".codex/plugins/crit-plus/.codex-plugin/plugin.json",
+		".codex/plugins/crit-plus/README.md",
 		".codex/plugins/crit-plus/skills/crit-plus/SKILL.md",
 		".codex/plugins/crit-plus/skills/crit-plus-cli/SKILL.md",
 		".codex/plugins/crit-plus/skills/crit-plus-decide/SKILL.md",
@@ -629,10 +642,11 @@ func TestInstallIntegration_CodexPluginGlobalEndToEnd(t *testing.T) {
 	assertCritMarketplacePathExists(t, marketplacePath, home)
 	assertCodexPluginEnabled(t, filepath.Join(home, ".codex", "config.toml"), "crit-plus@local")
 	for _, path := range []string{
-		".codex/plugins/cache/local/crit-plus/local/.codex-plugin/plugin.json",
-		".codex/plugins/cache/local/crit-plus/local/skills/crit-plus-decide/SKILL.md",
+		filepath.Join(codexPluginCacheTestRoot(t, home, "local"), ".codex-plugin/plugin.json"),
+		filepath.Join(codexPluginCacheTestRoot(t, home, "local"), "README.md"),
+		filepath.Join(codexPluginCacheTestRoot(t, home, "local"), "skills/crit-plus-decide/SKILL.md"),
 	} {
-		if _, err := os.Stat(filepath.Join(home, path)); err != nil {
+		if _, err := os.Stat(path); err != nil {
 			t.Fatalf("expected global cache file %s to be written: %v", path, err)
 		}
 	}
@@ -672,7 +686,7 @@ func TestInstallIntegration_CodexPluginDoesNotActivateExistingProjectFiles(t *te
 	}
 	for _, path := range []string{
 		staleHookPath,
-		filepath.Join(home, ".codex/plugins/cache/local/crit-plus/local/hooks/hooks.json"),
+		filepath.Join(codexPluginCacheTestRoot(t, home, "local"), "hooks/hooks.json"),
 	} {
 		data, err := os.ReadFile(path)
 		if err != nil {
@@ -1015,9 +1029,24 @@ func TestCodexPluginCachePathComponentsAreValidated(t *testing.T) {
 	}
 }
 
-func TestCodexPluginManifestVersionRejectsWhitespace(t *testing.T) {
-	if _, err := codexPluginManifestVersionFromBytes([]byte(`{"version":"   "}`)); err == nil {
-		t.Fatal("expected whitespace version to be rejected")
+func TestCodexPluginManifestVersion(t *testing.T) {
+	for _, version := range []string{"1.8.10", "1.8.10-rc.1+build.2", "local"} {
+		data, err := json.Marshal(map[string]string{"version": version})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got, err := codexPluginManifestVersionFromBytes(data); err != nil || got != version {
+			t.Errorf("version = %q, %v; want %q, nil", got, err, version)
+		}
+	}
+	for _, version := range []string{"   ", ".", "..", "../outside", `..\outside`, "/tmp/plugin", "1.8.10 ", "1.8.10.", "v1:stream", "ümlaut"} {
+		data, err := json.Marshal(map[string]string{"version": version})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := codexPluginManifestVersionFromBytes(data); err == nil {
+			t.Errorf("expected version %q to be rejected", version)
+		}
 	}
 	if got, err := codexPluginManifestVersionFromBytes([]byte(`{}`)); err != nil || got != "local" {
 		t.Fatalf("version = %q, %v; want local, nil", got, err)

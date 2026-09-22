@@ -1,8 +1,20 @@
-# Crit Plus Integrations
+# crit+ Integrations
 
-Crit Plus (`crit-plus`) is an enhanced fork of [Crit](https://github.com/tomasz-tomczyk/crit), originally created by **Tomasz Tomczyk**. The upstream MIT license and copyright are preserved.
+crit+ (`crit-plus`) is an enhanced fork of [Crit](https://github.com/tomasz-tomczyk/crit), originally created by **Tomasz Tomczyk**. The upstream MIT license and copyright are preserved.
 
-Drop-in configuration files that teach your AI coding tool to use Crit Plus for reviewing plans and code changes and collecting human decisions.
+Drop-in configuration files that teach your AI coding tool to use crit+ for reviewing plans and code changes and collecting human decisions.
+
+## Marketplace details
+
+The public brand is **crit+**; plugin IDs, executable names, and skills use
+`crit-plus`. Each plugin page includes usage instructions and credits the original
+Crit project:
+
+| Platform | Plugin details | Marketplace source |
+| --- | --- | --- |
+| Claude Code | [crit+ for Claude Code](claude-code/README.md) | [Repository marketplace](../.claude-plugin/marketplace.json) |
+| Cursor | [crit+ for Cursor](cursor/README.md) | [Repository marketplace](../.cursor-plugin/marketplace.json) |
+| Codex | [crit+ for Codex](codex/plugin/crit-plus/README.md) | Local marketplace registered by `crit-plus install codex-plugin` |
 
 ## Quick install
 
@@ -42,7 +54,7 @@ For the full experience, install via the plugin marketplace. This gives you:
 - A `/crit-plus-decide` skill for decision checklists, partial submissions, and revision rounds
 
 ```
-claude plugin marketplace add /absolute/path/to/crit-plus
+claude plugin marketplace add JesseGuoX/crit-plus
 claude plugin install crit-plus@crit-plus
 ```
 
@@ -62,9 +74,9 @@ Both approaches teach the review cycle, CLI operations, story reviews, and struc
 ## Claude Code plan approval mode
 
 The Claude Code plugin intercepts `ExitPlanMode` with a narrowly matched
-`PermissionRequest` hook. By default, approving in Crit Plus allows the plan exit and
+`PermissionRequest` hook. By default, approving in crit+ allows the plan exit and
 leaves Claude Code to restore its existing permission mode. To choose the mode
-deterministically, set `plan_approve_mode` in your global Crit Plus config:
+deterministically, set `plan_approve_mode` in your global crit+ config:
 
 ```json
 {
@@ -78,7 +90,7 @@ running `crit-plus plan` still opens a review.
 
 Supported values are `default`, `manual`, `acceptEdits`, `plan`, `auto`,
 `dontAsk`, and `bypassPermissions`. The `manual` alias requires Claude Code
-2.1.200 or newer. On approval, Crit Plus returns Claude Code's documented
+2.1.200 or newer. On approval, crit+ returns Claude Code's documented
 `decision.updatedPermissions` entry:
 
 ```json
@@ -113,7 +125,7 @@ For the full Codex experience, install the plugin. This gives you:
 - A `$crit-plus` skill for the review loop (plus loose copies under `.agents/skills/` so bare `$crit-plus` works even outside the plugin)
 - A `crit-plus-cli` skill that auto-activates when working with review files, `crit-plus comment`, `crit-plus pull/push`, etc.
 - `$crit-plus-story` and `$crit-plus-decide` skills for story reviews and structured human decisions
-- A **proposed-plan review hook** — intercepts Codex's `Stop` hook when the agent proposes a plan in Plan mode, writes it to disk, and opens Crit Plus for inline review before the turn ends
+- A **proposed-plan review hook** — intercepts Codex's `Stop` hook when the agent proposes a plan in Plan mode, writes it to disk, and opens crit+ for inline review before the turn ends
 
 ```bash
 cd ~ && crit-plus install codex-plugin    # global (recommended)
@@ -140,13 +152,13 @@ Disable automatic plan review per shell or globally with
 ## Invocation policy
 
 The interactive `crit-plus` review cycle is wording-gated, not hard-disabled.
-Skill descriptions and workflow docs tell agents to launch Crit Plus only when the
+Skill descriptions and workflow docs tell agents to launch crit+ only when the
 user invokes the platform command (`/crit-plus`, `$crit-plus`, `/skill:crit-plus`, `/crit-plus.md`,
-or Windsurf's `/crit-plus`, as appropriate) or directly asks to use Crit Plus. A normal
+or Windsurf's `/crit-plus`, as appropriate) or directly asks to use crit+. A normal
 request to review code, a plan, a diff, a PR, or a page does not count.
 
 `crit-plus-cli` is intentionally model-discoverable. It teaches agents how to leave
-and reply to Crit Plus comments, interpret review JSON, share reviews, and synchronize
+and reply to crit+ comments, interpret review JSON, share reviews, and synchronize
 GitHub PR feedback, but it does not start the interactive review cycle.
 
 `crit-plus-story` is wording-gated like `/crit-plus`: agents author a chaptered story
@@ -168,7 +180,7 @@ existing plan-exit hooks for automatic plan review.
 All integrations follow the same pattern:
 
 1. **Pick the review target** — current git changes by default, or an explicit file, plan, PR, or commit range when the user names one
-2. **Launch Crit Plus** — the agent runs the matching `crit-plus` command to open the review in your browser
+2. **Launch crit+** — the agent runs the matching `crit-plus` command to open the review in your browser
 3. **Address feedback** — after review, the agent reads the review file to find your inline comments and revises the target
 4. **Continue the review loop** — the agent reruns the printed next-round command until you finish with no unresolved comments
 
@@ -191,7 +203,7 @@ files are added but existing loose skills and conventions are preserved.
 Codex plugin files and its activation cache are refreshed on every plugin
 install; `--force` also updates its loose skill copies.
 
-For example, ask “Use Crit Plus to let me choose between these proposals”, invoke
+For example, ask “Use crit+ to let me choose between these proposals”, invoke
 `$crit-plus-decide` in Codex, or `/crit-plus-decide` in Claude Code. Input is currently
 JSON; Markdown is supported within the context and description strings.
 

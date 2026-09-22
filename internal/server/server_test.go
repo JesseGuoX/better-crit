@@ -1447,7 +1447,7 @@ func TestGetConfig(t *testing.T) {
 
 func TestCheckForUpdates(t *testing.T) {
 	gh := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/repos/JesseGuoX/better-crit/releases/latest" {
+		if r.URL.Path != "/repos/JesseGuoX/crit-plus/releases/latest" {
 			http.NotFound(w, r)
 			return
 		}

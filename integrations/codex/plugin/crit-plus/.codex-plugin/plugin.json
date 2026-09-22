@@ -1,32 +1,40 @@
 {
   "name": "crit-plus",
-  "description": "Crit Plus: an enhanced fork of Crit by Tomasz Tomczyk, with inline review and structured human decisions.",
+  "version": "1.8.10",
+  "description": "crit+: browser-based code and Markdown review, story walkthroughs, and structured human decisions. An enhanced fork of Crit by Tomasz Tomczyk.",
+  "author": {
+    "name": "JesseGuoX; based on Crit by Tomasz Tomczyk"
+  },
+  "homepage": "https://github.com/JesseGuoX/crit-plus",
+  "repository": "https://github.com/JesseGuoX/crit-plus",
+  "license": "MIT",
   "keywords": [
     "code-review",
-    "diff",
+    "markdown",
     "inline-comments",
     "plan-review",
-    "decisions"
+    "decisions",
+    "crit"
   ],
   "skills": "./skills/",
-  "hooks": "./hooks/hooks.json",
   "interface": {
-    "displayName": "Crit Plus",
-    "shortDescription": "Code review and human decisions for Codex",
-    "longDescription": "Crit Plus: an enhanced fork of Crit by Tomasz Tomczyk, with inline review and structured human decisions.",
+    "displayName": "crit+",
+    "shortDescription": "Review code, refine plans, and make decisions",
+    "longDescription": "crit+ brings browser-based code and Markdown review to Codex, with inline comments, chaptered story walkthroughs, and review rounds. It adds a refreshed Markdown layout with wide-screen support and structured decision pages: compare options and recommendations, choose an option, or request changes. Agents read submitted decisions and continue with the choices you made; unanswered items stay pending. Includes four skills and a proposed-plan review hook. Requires the crit-plus CLI on PATH. Maintained by JesseGuoX as an enhanced fork of Crit, originally created by Tomasz Tomczyk (https://github.com/tomasz-tomczyk/crit). The upstream MIT license and copyright are preserved.",
     "developerName": "JesseGuoX; based on Crit by Tomasz Tomczyk",
     "category": "Developer Tools",
     "capabilities": [
       "Code Review",
+      "Markdown Review",
       "Plan Review",
-      "Hooks",
-      "Decisions"
+      "Story Walkthroughs",
+      "Human Decisions"
     ],
+    "websiteURL": "https://github.com/JesseGuoX/crit-plus",
     "defaultPrompt": [
       "Use $crit-plus to review my current code changes.",
-      "Use $crit-plus to review this PR.",
+      "Use $crit-plus-story to walk me through this diff.",
       "Use $crit-plus-decide to collect my choices on these proposals."
     ]
-  },
-  "homepage": "https://github.com/JesseGuoX/better-crit"
+  }
 }

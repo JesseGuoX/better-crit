@@ -1,6 +1,5 @@
 {
   "name": "crit-plus",
-  "displayName": "crit+",
   "version": "1.8.10",
   "description": "crit+: browser-based code and Markdown review, story walkthroughs, and structured human decisions. An enhanced fork of Crit by Tomasz Tomczyk.",
   "author": {
@@ -16,5 +15,6 @@
     "plan-review",
     "decisions",
     "crit"
-  ]
+  ],
+  "skills": "./skills/"
 }

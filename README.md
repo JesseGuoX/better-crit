@@ -1,9 +1,9 @@
-# Crit Plus (`crit-plus`)
+# crit+ (`crit-plus`)
 
-Crit Plus (`crit-plus`) is an enhanced fork of [Crit](https://github.com/tomasz-tomczyk/crit), originally created by **Tomasz Tomczyk**. The upstream MIT license and copyright are preserved.
+crit+ (`crit-plus`) is an enhanced fork of [Crit](https://github.com/tomasz-tomczyk/crit), originally created by **Tomasz Tomczyk**. The upstream MIT license and copyright are preserved.
 
-[![CI](https://github.com/JesseGuoX/better-crit/actions/workflows/test.yml/badge.svg)](https://github.com/JesseGuoX/better-crit/actions/workflows/test.yml)
-[![Release](https://img.shields.io/github/release/JesseGuoX/better-crit.svg)](https://github.com/JesseGuoX/better-crit/releases)
+[![CI](https://github.com/JesseGuoX/crit-plus/actions/workflows/test.yml/badge.svg)](https://github.com/JesseGuoX/crit-plus/actions/workflows/test.yml)
+[![Release](https://img.shields.io/github/release/JesseGuoX/crit-plus.svg)](https://github.com/JesseGuoX/crit-plus/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Review and comment on plans, code diffs, frontend elements and send feedback directly to your agent.
@@ -54,7 +54,7 @@ commands or review approval hooks. See the [agent guide](internal/decision/guide
 Build this fork from its checkout (Go and Make are required):
 
 ```bash
-git clone https://github.com/JesseGuoX/better-crit.git crit-plus
+git clone https://github.com/JesseGuoX/crit-plus.git crit-plus
 cd crit-plus
 make build
 ./crit-plus --version
@@ -70,7 +70,7 @@ install -m 755 crit-plus "$HOME/.local/bin/crit-plus"
 Ensure `$HOME/.local/bin` is on your PATH. On Windows, build with
 `go build -o crit-plus.exe ./cmd/crit` and put `crit-plus.exe` on your PATH.
 `make build-all` produces `dist/crit-plus-<os>-<arch>` binaries, with `.exe`
-for Windows. Release binaries belong to [this fork's releases](https://github.com/JesseGuoX/better-crit/releases).
+for Windows. Release binaries belong to [this fork's releases](https://github.com/JesseGuoX/crit-plus/releases).
 
 Nix users can run `nix build .` or `nix run . -- --help` from this checkout.
 The original `brew install crit` and upstream Go install commands install
@@ -95,7 +95,7 @@ at [crit.md](https://crit.md) is an upstream service.
 ### 2. Integrate with your agent
 Claude Code:
 ```
-claude plugin marketplace add /absolute/path/to/crit-plus
+claude plugin marketplace add JesseGuoX/crit-plus
 claude plugin install crit-plus@crit-plus
 ```
 
@@ -434,7 +434,7 @@ Run your own scripts when you **Finish Review** or **Approve** — deterministic
 }
 ```
 
-See the **[command hooks guide](docs/agent-hooks.md)** for the full env-var/stdin reference, trust flow, and examples (including the “snapshot commented-on files” recipe). Reference example hook scripts live under [`docs/example-hooks/`](https://github.com/tomasz-tomczyk/crit/tree/main/docs/example-hooks) in the repo — they're documentation, not installed by `crit-plus install` and not tracked among the integrations (hooks are opt-in and not used by default).
+See the **[command hooks guide](docs/agent-hooks.md)** for the full env-var/stdin reference, trust flow, and examples (including the “snapshot commented-on files” recipe). Reference example hook scripts live under [`docs/example-hooks/`](https://github.com/JesseGuoX/crit-plus/tree/main/docs/example-hooks) in the repo — they're documentation, not installed by `crit-plus install` and not tracked among the integrations (hooks are opt-in and not used by default).
 
 ### Global-only config keys
 
@@ -515,7 +515,7 @@ crit-plus --no-ignore
 Requires Go 1.26+:
 
 ```bash
-git clone https://github.com/JesseGuoX/better-crit.git crit-plus
+git clone https://github.com/JesseGuoX/crit-plus.git crit-plus
 cd crit-plus
 go build -o crit-plus ./cmd/crit
 mkdir -p "$HOME/.local/bin"
@@ -533,22 +533,22 @@ go build -o crit-plus ./cmd/crit
 ### Nix
 
 ```bash
-nix run github:JesseGuoX/better-crit -- --help
+nix run github:JesseGuoX/crit-plus -- --help
 ```
 
 Or add it to a `flake.nix`:
 
 ```nix
-inputs.crit-plus.url = "github:JesseGuoX/better-crit";
+inputs.crit-plus.url = "github:JesseGuoX/crit-plus";
 ```
 
 ### Download Binary
 
-Grab the latest binary for your platform from [Releases](https://github.com/JesseGuoX/better-crit/releases).
+Grab the latest binary for your platform from [Releases](https://github.com/JesseGuoX/crit-plus/releases).
 
 ### Windows
 
-Native Windows: download `crit-plus-windows-amd64.exe` (or `crit-plus-windows-arm64.exe`) from [Releases](https://github.com/JesseGuoX/better-crit/releases), rename to `crit-plus.exe`, and place it on your `PATH`.
+Native Windows: download `crit-plus-windows-amd64.exe` (or `crit-plus-windows-arm64.exe`) from [Releases](https://github.com/JesseGuoX/crit-plus/releases), rename to `crit-plus.exe`, and place it on your `PATH`.
 
 WSL: install the Linux binary as you would on Linux (`make build`, `nix run`, or download `crit-plus-linux-amd64` from Releases). Crit Plus detects WSL and opens URLs in your Windows host browser via `wslview` / `powershell.exe` / `cmd.exe`.
 

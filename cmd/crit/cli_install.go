@@ -223,6 +223,7 @@ var integrationMap = map[string][]integration{
 		{source: "integrations/codex/plugin/crit-plus/skills/crit-plus-story/SKILL.md", dest: "plugins/crit-plus/skills/crit-plus-story/SKILL.md", globalDest: ".codex/plugins/crit-plus/skills/crit-plus-story/SKILL.md", globalDestKind: globalDestRelHome, hint: "The plugin-packaged crit-plus-story skill is available to Codex as $crit-plus-story"},
 		{source: "integrations/codex/plugin/crit-plus/skills/crit-plus-decide/SKILL.md", dest: "plugins/crit-plus/skills/crit-plus-decide/SKILL.md", globalDest: ".codex/plugins/crit-plus/skills/crit-plus-decide/SKILL.md", globalDestKind: globalDestRelHome, hint: "Ask the agent to use crit-plus-decide for structured choices and revision feedback"},
 		{source: "integrations/codex/plugin/crit-plus/hooks/hooks.json", dest: "plugins/crit-plus/hooks/hooks.json", globalDest: ".codex/plugins/crit-plus/hooks/hooks.json", globalDestKind: globalDestRelHome, hint: "The Crit Plus plugin includes a Codex Stop hook for proposed-plan review"},
+		{source: "integrations/codex/plugin/crit-plus/README.md", dest: "plugins/crit-plus/README.md", globalDest: ".codex/plugins/crit-plus/README.md", globalDestKind: globalDestRelHome, hint: "The crit+ plugin includes usage instructions and original Crit attribution"},
 	},
 	"qwen": {
 		// Qwen Code auto-discovers .qwen/skills/ project-locally and ~/.qwen/skills/ globally —
@@ -1079,10 +1080,21 @@ func codexPluginManifestVersionFromBytes(data []byte) (string, error) {
 	if err := json.Unmarshal(data, &manifest); err != nil {
 		return "", fmt.Errorf("parsing Codex plugin manifest: %w", err)
 	}
-	if manifest.Version != "" {
-		return validCodexPluginSegment(manifest.Version, "Codex plugin version")
+	if manifest.Version == "" {
+		return "local", nil
 	}
-	return "local", nil
+	// Versions allow SemVer separators that marketplace names do not. Keep the
+	// value a single cache-directory component, including on Windows.
+	if manifest.Version == "." || manifest.Version == ".." || strings.HasSuffix(manifest.Version, ".") {
+		return "", fmt.Errorf("invalid Codex plugin version %q", manifest.Version)
+	}
+	for _, r := range manifest.Version {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || strings.ContainsRune("._-+", r) {
+			continue
+		}
+		return "", fmt.Errorf("invalid Codex plugin version %q", manifest.Version)
+	}
+	return manifest.Version, nil
 }
 
 func copyCodexPluginCacheFromEmbedded(dst string) error {

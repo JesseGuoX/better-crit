@@ -32,8 +32,9 @@ func main() {
 		if info.IsDir() {
 			return nil
 		}
-		// Skip README files — they're documentation, not installable integrations
-		if strings.EqualFold(filepath.Base(path), "README.md") {
+		// Only the Codex plugin README is installed with the integration.
+		pluginReadme := filepath.Join(integrationsDir, "codex", "plugin", "crit-plus", "README.md")
+		if strings.EqualFold(filepath.Base(path), "README.md") && path != pluginReadme {
 			return nil
 		}
 		data, err := os.ReadFile(path)

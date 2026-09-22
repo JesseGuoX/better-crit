@@ -965,7 +965,7 @@
         kind: 'crit-update',
         version: configRes.latest_version,
         label: 'crit+ ' + configRes.latest_version + ' available',
-        labelUrl: 'https://github.com/tomasz-tomczyk/crit/releases/tag/v' + configRes.latest_version,
+        labelUrl: 'https://github.com/JesseGuoX/crit-plus/releases/tag/v' + configRes.latest_version,
         hint: 'Open Updates for release-specific update instructions'
       });
     }

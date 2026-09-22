@@ -420,7 +420,7 @@ func TestCheckInstalledIntegrations_CodexPluginCacheStale(t *testing.T) {
 	if !ok {
 		t.Fatalf("unexpected codex-plugin source path %q", f.source)
 	}
-	cachePath := filepath.Join(homeDir, ".codex", "plugins", "cache", "local", "crit-plus", "local", relPath)
+	cachePath := filepath.Join(codexPluginCacheTestRoot(t, homeDir, "local"), relPath)
 	os.MkdirAll(filepath.Dir(cachePath), 0o755)
 	os.WriteFile(cachePath, []byte("old cached skill"), 0o644)
 
@@ -455,7 +455,7 @@ func TestCheckInstalledIntegrations_CodexPluginCacheUsesMarketplaceName(t *testi
 	if !ok {
 		t.Fatalf("unexpected codex-plugin source path %q", f.source)
 	}
-	cachePath := filepath.Join(homeDir, ".codex", "plugins", "cache", "personal", "crit-plus", "local", relPath)
+	cachePath := filepath.Join(codexPluginCacheTestRoot(t, homeDir, "personal"), relPath)
 	os.MkdirAll(filepath.Dir(cachePath), 0o755)
 	os.WriteFile(cachePath, []byte("old cached skill"), 0o644)
 
@@ -534,7 +534,7 @@ func TestCheckInstalledIntegrations_CodexPluginMissingMarketplaceConfigAndCache(
 	want := []string{
 		filepath.Join(projectDir, ".agents", "plugins", "marketplace.json"),
 		filepath.Join(homeDir, ".codex", "config.toml"),
-		filepath.Join(homeDir, ".codex", "plugins", "cache", "local", "crit-plus", "local", ".codex-plugin", "plugin.json"),
+		filepath.Join(codexPluginCacheTestRoot(t, homeDir, "local"), ".codex-plugin", "plugin.json"),
 	}
 	for _, path := range want {
 		found := false

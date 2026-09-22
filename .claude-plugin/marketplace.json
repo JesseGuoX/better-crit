@@ -4,12 +4,25 @@
   "owner": {
     "name": "JesseGuoX"
   },
+  "metadata": {
+    "description": "crit+: browser-based code and Markdown review, story walkthroughs, and structured human decisions. An enhanced fork of Crit by Tomasz Tomczyk."
+  },
   "plugins": [
     {
       "name": "crit-plus",
-      "description": "Crit Plus: an enhanced fork of Crit by Tomasz Tomczyk, with inline review and structured human decisions.",
+      "description": "crit+: browser-based code and Markdown review, story walkthroughs, and structured human decisions. An enhanced fork of Crit by Tomasz Tomczyk.",
       "source": "./integrations/claude-code",
-      "homepage": "https://github.com/JesseGuoX/better-crit",
+      "homepage": "https://github.com/JesseGuoX/crit-plus",
+      "repository": "https://github.com/JesseGuoX/crit-plus",
+      "license": "MIT",
+      "keywords": [
+        "code-review",
+        "markdown",
+        "inline-comments",
+        "plan-review",
+        "decisions",
+        "crit"
+      ],
       "category": "development"
     }
   ]

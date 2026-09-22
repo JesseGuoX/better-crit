@@ -230,7 +230,7 @@ test('renderUpdatesPane: groups Crit Plus releases and integration work', () => 
   assert.match(pane.innerHTML, /Release notes and downloads/);
   assert.match(pane.innerHTML, /class="updates-release-notes"/);
   assert.match(pane.innerHTML, /data-copy="make build"/);
-  assert.match(pane.innerHTML, /github\.com\/JesseGuoX\/better-crit\/releases/);
+  assert.match(pane.innerHTML, /github\.com\/JesseGuoX\/crit-plus\/releases/);
   assert.doesNotMatch(pane.innerHTML, /brew upgrade crit|go install github\.com\/tomasz-tomczyk/);
   assert.match(pane.innerHTML, /v1\.0\.0/);
   assert.match(pane.innerHTML, /Claude Code/);

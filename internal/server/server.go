@@ -442,7 +442,7 @@ func (s *Server) CheckForUpdates() {
 		base = "https://api.github.com"
 	}
 	client := &http.Client{Timeout: 5 * time.Second}
-	resp, err := client.Get(base + "/repos/JesseGuoX/better-crit/releases/latest")
+	resp, err := client.Get(base + "/repos/JesseGuoX/crit-plus/releases/latest")
 	if err != nil {
 		return
 	}

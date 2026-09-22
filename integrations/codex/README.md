@@ -1,8 +1,11 @@
-# Crit Plus — Codex CLI Integration
+# crit+ — Codex CLI Integration
 
-Crit Plus (`crit-plus`) is an enhanced fork of [Crit](https://github.com/tomasz-tomczyk/crit), originally created by **Tomasz Tomczyk**. The upstream MIT license and copyright are preserved.
+crit+ (`crit-plus`) is an enhanced fork of [Crit](https://github.com/tomasz-tomczyk/crit), originally created by **Tomasz Tomczyk**. The upstream MIT license and copyright are preserved.
 
-Drop-in configuration files that teach the OpenAI Codex CLI to use Crit Plus for reviewing plans and code changes and collecting human decisions.
+Drop-in configuration files that teach the OpenAI Codex CLI to use crit+ for reviewing plans and code changes and collecting human decisions.
+
+See [crit+ for Codex](plugin/crit-plus/README.md) for the marketplace overview,
+features, attribution, and example prompts.
 
 ## What's included
 
@@ -13,6 +16,7 @@ Drop-in configuration files that teach the OpenAI Codex CLI to use Crit Plus for
 | `skills/crit-plus-story/SKILL.md` | `crit-plus install codex` | Chaptered diff overview followed by inline review |
 | `skills/crit-plus-decide/SKILL.md` | `crit-plus install codex` | Decision checklist — choices, recommendations, revision feedback, and follow-up rounds |
 | `plugin/crit-plus/.codex-plugin/plugin.json` | `crit-plus install codex-plugin` | Codex plugin manifest (skills + hooks) |
+| `plugin/crit-plus/README.md` | `crit-plus install codex-plugin` | Plugin detail page with usage and upstream attribution |
 | `plugin/crit-plus/skills/*` | `crit-plus install codex-plugin` | Plugin-packaged copies of the skills |
 | `plugin/crit-plus/hooks/hooks.json` | `crit-plus install codex-plugin` | `Stop` hook → `crit-plus plan-hook --mode codex` for proposed-plan review |
 
@@ -34,7 +38,7 @@ cd ~ && crit-plus install codex-plugin      # global: ~/.codex/plugins/crit-plus
 
 The plugin install also:
 
-1. Registers Crit Plus in `.agents/plugins/marketplace.json` (project) or `~/.agents/plugins/marketplace.json` (global)
+1. Registers crit+ in `.agents/plugins/marketplace.json` (project) or `~/.agents/plugins/marketplace.json` (global)
 2. Enables `crit-plus@local` in `~/.codex/config.toml`
 3. Sets `features.plugins`, `features.hooks`, and `features.plugin_hooks` to `true` in that config
 
